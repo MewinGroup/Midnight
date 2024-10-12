@@ -1,18 +1,69 @@
 ---
-import Loginform from "../components/Loginform.astro"
-import ThemeToggle from "../components/ThemeToggle.astro"
+import Layout from "@Layouts/layout.astro"
 ---
 
-<html lang="en" class="dark">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body class="bg-white text-black dark:bg-slate-900 dark:text-black">
-		<ThemeToggle />
-		<Loginform title="Accede a tu cuenta" />
-	</body>
-</html>
+<Layout title="Inicio">
+<div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-slate-900">
+  <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full dark:bg-gray-800">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6 dark:text-cyan-300">Iniciar Sesión</h2>
+    
+    <form id="loginForm" class="space-y-6">
+      <div>
+        <label for="nombre" class="block text-sm font-medium text-gray-700 dark:text-cyan-300">Nombre de Usuario</label>
+        <input type="text" id="nombre" name="nombre" required 
+               class="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-600 dark:text-gray-100" 
+               placeholder="Ingresa tu nombre de usuario" autocomplete="off" />
+      </div>
+      
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-cyan-300">Contraseña</label>
+        <input type="password" id="password" name="password" required 
+               class="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-600 dark:text-gray-100" 
+               placeholder="Ingresa tu contraseña" />
+      </div>
+      
+      <div class="flex items-center justify-between">
+        <div class="text-sm">
+          <a href="#" class="font-medium text-blue-600 hover:text-blue-500 dark:text-gray-200 dark:hover:text-gray-300">¿Olvidaste tu contraseña?</a>
+        </div>
+      </div>
+
+      <div>
+        <button type="submit" 
+                class="w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          Iniciar Sesión
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const loginForm = document.getElementById('loginForm');
+
+  loginForm.addEventListener('submit', async function(event) {
+    event.preventDefault(); 
+
+    const username = document.getElementById('nombre').value; 
+    const password = document.getElementById('password').value; 
+
+    const data = { username, password };
+
+    const response = await fetch('http://localhost/Login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data) 
+    });
+ 
+    const result = await response.json(); 
+    if (result.authcode){    
+      document.cookie = `authcode=${result.authcode}; path=/`; // Guardar authcode en una cookie
+      window.location.href = '/ControlPanel';
+    }
+    console.log(result);
+  });
+</script>
+
+</Layout>

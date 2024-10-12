@@ -1,9 +1,17 @@
 ---
 import MenuItem from './menu/MenuItem.astro';
 
+// Definir la propiedad tipo
+export interface Props {
+  tipo: number;
+}
+const { tipo } = Astro.props;
+
 ---
+
 <style>
-    /* Posición inicial del círculo */
+    /*font awesome icons*/
+       /* Posición inicial del círculo */
 .dot {
     transform: translateX(0); /* Posición inicial */
 }
@@ -28,16 +36,15 @@ input:checked + .block {
         </button>
     </div>
     <nav class="flex-1 mt-10">
-        <ul class="space-y-6 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-100 overflow-y-auto">
-            <!-- Lista de elementos del sidebar (sin cambios) -->
-            <MenuItem href="/Panel" iconClass="fa-solid fa-house fa-xl" text="Inicio" onClick="setActive(this)" />
+        <ul class="space-y-6 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-100 overflow-x-hidden overflow-y-auto">
+            {tipo === 1 && <MenuItem href="/ControlPanel" iconClass="fa-solid fa-house fa-xl" text="Inicio" onClick="setActive(this)" />}
             <MenuItem href="#" iconClass="fas fa-users fa-xl" text="Clientes" onClick="setActive(this)" />
-            <MenuItem href="#" iconClass="fas fa-shopping-cart fa-xl" text="Ventas" onClick="setActive(this)" />
-            <MenuItem href="#" iconClass="fa-solid fa-address-book fa-xl" text="Empleados" onClick="setActive(this)" />
-            <MenuItem href="#" iconClass="fas fa-truck fa-xl" text="Proveedores" onClick="setActive(this)" />
-            <MenuItem href="#" iconClass="fas fa-file-alt fa-xl" text="Finanzas" onClick="setActive(this)" />
-            <MenuItem href="#" iconClass="fas fa-bag-shopping fa-xl" text="Compras" onClick="setActive(this)" />
-            <MenuItem href="#" iconClass="fa-solid fa-box fa-xl" text="Inventario" onClick="setActive(this)" />
+            {tipo !== 3 && <MenuItem href="#" iconClass="fas fa-shopping-cart fa-xl" text="Ventas" onClick="setActive(this)" />}
+            {tipo === 1 && <MenuItem href="#" iconClass="fa-solid fa-address-book fa-xl" text="Empleados" onClick="setActive(this)" />}
+            {tipo === 1 && <MenuItem href="#" iconClass="fas fa-truck fa-xl" text="Proveedores" onClick="setActive(this)" />}
+            {tipo === 1 && <MenuItem href="#" iconClass="fas fa-file-alt fa-xl" text="Finanzas" onClick="setActive(this)" />}
+            {tipo !== 3 && <MenuItem href="#" iconClass="fas fa-bag-shopping fa-xl" text="Compras" onClick="setActive(this)" />}
+            {tipo !== 3 && <MenuItem href="#" iconClass="fa-solid fa-box fa-xl" text="Inventario" onClick="setActive(this)" />}
             <MenuItem href="/" iconClass="fas fa-sign-out-alt fa-xl" text="Cerrar Sesion" onClick="setActive(this)" />
             <li class="group relative px-4 py-2 flex items-center space-x-4 cursor-pointer">
                 <!-- Switch de cambio de tema -->
