@@ -34,28 +34,21 @@ if (authcode) {
 <Layout title="Panel de Control">
       <script>
 
-        //por hacer
-      // document.addEventListener('DOMContentLoaded', async () => {
-      //   // Función para obtener el valor de una cookie por su nombre
-      //   function getCookie(name) {
-      //     const value = `; ${document.cookie}`;
-      //     const parts = value.split(`; ${name}=`);
-      //     if (parts.length === 2) return parts.pop().split(';').shift();
-      //   }
-    
-      //   const authcode = getCookie('authcode');
-      //   const ftc = await fetch('http://localhost/user/verify', {
-      //     method: 'POST',
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify({ authcode: authcode }),
-      //   });
-      //   const auths = await ftc.json();
-      //   if (auths.status !== 200 || auths.message !== "Authorized") {
-      //     window.location.href = '/';
-      //   }
-      // });
+      document.addEventListener('DOMContentLoaded', async () => {  
+      const authcode = localStorage.getItem('authcode');
+
+      const ftc = await fetch('http://localhost/user/verify', {
+            method: 'POST',
+            headers: {
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({ authcode: authcode }),
+         });
+         const auths = await ftc.json();
+         if (auths.status !== 200 || auths.message !== "Authorized") {
+           window.location.href = '/';
+         }
+       });
     </script>
   <div
     class="flex flex-col md:flex-row bg-gray-100 h-screen dark:bg-gray-800 dark:text-white"
