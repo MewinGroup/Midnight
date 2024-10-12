@@ -13,48 +13,92 @@ function getCookie(cookies, name) {
 
 // Obtener cookies desde el request headers
 const cookies = Astro.request.headers.get('cookie') || '';
-const authcode = getCookie(cookies, 'authcode');
+const authCode = getCookie(cookies, 'authcode');
+let weeklySales = 0;
+let sales24hTotal = 0;
+let totalSalesTotal = 0;
+let userName = "Usuario";
+let userType = 3;
+let userRange = "Principiante";
+let venta = {
+  Cliente: '',
+  Total: 0,
+  Fecha: ''
+};
 
-let user = "holiii";
-let tipo;
-if (authcode) {
-  const response = await fetch('http://localhost/user/getinfo', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ authcode: authcode }), 
+if (authCode) {
+  async function fetchData(url, method, body) {
+    const response = await fetch(url, {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    return response.json();
+  }
+  
+  const userInfo = await fetchData('http://localhost/user/getinfo', 'POST', { authcode: authCode });
+  userName = userInfo.Nombre;
+  userType = userInfo.Tipo;
+  
+  if (userType === 1) {
+    userRange = "Administrador";
+  } else if (userType === 2) {
+    userRange = "Vendedor";
+  } else {
+    userRange = "No autorizado";
+  }
+  
+  const ultimaVenta = await fetchData('http://localhost/ventas/ultimaventa', 'POST', { authcode: authCode });
+  // Ventas de la última semana
+  const salesData = await fetchData('http://localhost/ventas/ventasbydaterange', 'POST', {
+    authcode: authCode,
+    start: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
+    end: new Date().toISOString(),
   });
-  const data = await response.json();
-  user = data.Nombre;
-  tipo = data.Tipo;
+  const sales24h = await fetchData('http://localhost/ventas/ventasbydaterange', 'POST', {
+    authcode: authCode,
+    start: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(),
+    end: new Date().toISOString(),
+  });
+  const totalSales = await fetchData('http://localhost/ventas/ventasbydaterange', 'POST', {
+    authcode: authCode,
+    start: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString(),
+    end: new Date().toISOString(),
+  });
+//{ Cliente: '4rX8Ei2Jrn', Fecha: '2024-10-12T23:36:55.000Z', Total: 15 }
+  venta = ultimaVenta
+  console.log(venta);
+
+  weeklySales = salesData.message[0].Total;
+  sales24hTotal = sales24h.message[0].Total;
+  totalSalesTotal = totalSales.message[0].Total;
+  
 }
 ---
 
 <Layout title="Panel de Control">
-      <script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {  
+      const authCode = localStorage.getItem('authcode');
 
-      document.addEventListener('DOMContentLoaded', async () => {  
-      const authcode = localStorage.getItem('authcode');
-
-      const ftc = await fetch('http://localhost/user/verify', {
-            method: 'POST',
-            headers: {
-             'Content-Type': 'application/json',
-           },
-           body: JSON.stringify({ authcode: authcode }),
-         });
-         const auths = await ftc.json();
-         if (auths.status !== 200 || auths.message !== "Authorized") {
-           window.location.href = '/';
-         }
-       });
-    </script>
-  <div
-    class="flex flex-col md:flex-row bg-gray-100 h-screen dark:bg-gray-800 dark:text-white"
-  >
+      const authResponse = await fetch('http://localhost/user/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ authcode: authCode }),
+      });
+      const authData = await authResponse.json();
+      if (authData.status !== 200 || authData.message !== "Authorized") {
+        window.location.href = '/';
+      }
+    });
+  </script>
+  <div class="flex flex-col md:flex-row bg-gray-100 h-screen dark:bg-gray-800 dark:text-white">
     <!-- Sidebar -->
-    <Sidebar tipo={tipo} />
+    <Sidebar tipo={userType} />
 
     <!-- Main Content -->
     <br /><br />
@@ -63,45 +107,25 @@ if (authcode) {
 
       <div class="flex items-center justify-end mb-6">
         <div class="flex items-center space-x-2">
-          <div
-            class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-500"
-          >
-            <img
-              src="https://avatars.githubusercontent.com/u/178928214?v=4"
-              alt="Foto de perfil"
-              class="w-full h-full object-cover"
-            />
+          <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-500">
+            <img src="https://avatars.githubusercontent.com/u/178928214?v=4" alt="Foto de perfil" class="w-full h-full object-cover" />
           </div>
           <div class="text-right">
-            <h1 class="text-xl font-bold">Hola, {user}</h1>
-            <p class="text-gray-600 dark:text-gray-400 text-sm">test</p>
+            <h1 class="text-xl font-bold">Hola, {userName}</h1>
+            <p class="text-gray-600 dark:text-gray-400 text-sm">{userRange}</p>
           </div>
         </div>
       </div>
       <!-- Contenido de tarjetas -->
       <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
         <!-- Tarjeta Total Sales -->
-        <Card
-          title="Ventas Totales"
-          amount="$25,024"
-          description="El ultimo Mes"
-        />
-        <Card
-          title="Ventas Recientes"
-          amount="$14,160"
-          description="Ultimas 24 Horas"
-        />
-        <Card
-          title="Ventas Semanales"
-          amount="$10,864"
-          description="Ultima Semana"
-        />
+        <Card title="Ventas Totales" description="El ultimo Mes">${totalSalesTotal}</Card>
+        <Card title="Ventas Recientes" description="Ultimas 24 Horas">${sales24hTotal}</Card>
+        <Card title="Ventas Semanales" description="Ultima Semana">${weeklySales}</Card>
       </div>
 
       <!-- Tabla de órdenes recientes -->
-      <div
-        class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
-      >
+      <div class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700">
         <h2 class="text-xl font-semibold">Pedidos Recientes</h2>
         <table class="min-w-full mt-4 table-auto dark:border-gray-700">
           <thead class="dark:border-gray-700">
@@ -116,13 +140,8 @@ if (authcode) {
             <tr>
               <td class="border px-4 py-2 dark:border-gray-500">Garanon</td>
               <td class="border px-4 py-2 dark:border-gray-500">85671</td>
-              <td class="border px-4 py-2 dark:border-gray-500"
-                >Tarjeta de Credito</td
-              >
-              <td
-                class="border px-4 py-2 dark:border-gray-500 dark:text-yellow-300 text-yellow-500"
-                >Pendiente</td
-              >
+              <td class="border px-4 py-2 dark:border-gray-500">Tarjeta de Credito</td>
+              <td class="border px-4 py-2 dark:border-gray-500 dark:text-yellow-300 text-yellow-500">Pendiente</td>
             </tr>
             <!-- Más filas según sea necesario -->
           </tbody>
@@ -130,20 +149,12 @@ if (authcode) {
       </div>
 
       <!-- Actualizaciones recientes -->
-      <div
-        class="mt-6 bg-white p-6 rounded-lg shadow-md dark:bg-gray-700 dark:text-white"
-      >
-        <h2 class="text-xl font-semibold dark:text-white">
-          Ventas Realizadas Recientemente
-        </h2>
+      <div class="mt-6 bg-white p-6 rounded-lg shadow-md dark:bg-gray-700 dark:text-white">
+        <h2 class="text-xl font-semibold dark:text-white">Ventas Realizadas Recientemente</h2>
         <ul class="mt-4 space-y-4">
           <li class="flex items-center">
-            <span class="text-gray-600 dark:text-white"
-              >El caballo 503 ha recibido su orden de Garanon</span
-            >
-            <span class="ml-auto text-gray-500 text-sm dark:text-white"
-              >08/10/2024</span
-            >
+            <span class="text-gray-600 dark:text-white">El cliente {venta.Cliente} realizó una venta por un total de {venta.Total} dolares</span>
+            <span class="ml-auto text-gray-500 text-sm dark:text-white">{venta.Fecha}</span>
           </li>
           <!-- Más actualizaciones según sea necesario -->
         </ul>
