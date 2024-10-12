@@ -59,10 +59,11 @@ import Layout from "@Layouts/layout.astro"
  
     const result = await response.json(); 
     if (result.authcode){    
+      // Setting a value
+      localStorage.setItem('authcode', 'result.authcode');
       document.cookie = `authcode=${result.authcode}; path=/`; // Guardar authcode en una cookie
       window.location.href = '/ControlPanel';
     }
-    console.log(result);
   });
 </script>
 
