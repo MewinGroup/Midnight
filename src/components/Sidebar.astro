@@ -37,7 +37,7 @@ input:checked + .block {
     </div>
     <nav class="flex-1 mt-10">
         <ul class="space-y-6 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-100 overflow-x-hidden overflow-y-auto">
-            {tipo === 1 && <MenuItem href="/ControlPanel" iconClass="fa-solid fa-house fa-xl" text="Inicio" onClick="setActive(this)" />}
+            {tipo === 1 && <MenuItem href="/dashboard" iconClass="fa-solid fa-house fa-xl" text="Inicio" onClick="setActive(this)" />}
             {tipo !== 3 &&<MenuItem href="#" iconClass="fas fa-users fa-xl" text="Clientes" onClick="setActive(this)" /> }
             {tipo !== 3 && <MenuItem href="#" iconClass="fas fa-shopping-cart fa-xl" text="Ventas" onClick="setActive(this)" />}
             {tipo === 1 && <MenuItem href="#" iconClass="fa-solid fa-address-book fa-xl" text="Empleados" onClick="setActive(this)" />}
