@@ -1,16 +1,18 @@
 ---
-import Sidebar from "@components/Sidebar.astro"
+import Sidebar from "@Components/Sidebar.astro"
 ---
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Cliente</title>
+    <title>Editar Cliente</title>
     <style>
         /* Diseño de tarjeta centrada y responsive */
         .container {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -79,13 +81,26 @@ import Sidebar from "@components/Sidebar.astro"
         .btn-submit {
             background-color: #3b82f6;
         }
+
+        /* Estilos para la barra de búsqueda */
+        .search-bar {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.25rem;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="card">
-        <h2 class="text-2xl font-bold mb-4">Agregar Cliente</h2>
+        <h2 class="text-2xl font-bold mb-4">Editar Cliente</h2>
+
+        <!-- Barra de búsqueda -->
+        <input type="text" id="search" placeholder="Buscar cliente..." class="search-bar" autocomplete="off">
 
         <!-- Formulario -->
         <form action="#" method="POST" class="space-y-4">
@@ -102,7 +117,7 @@ import Sidebar from "@components/Sidebar.astro"
             <!-- Botones -->
             <div class="flex justify-end space-x-4">
                 <a href="/Clientes"><button type="button" class="btn btn-cancel">Cancelar</button></a>
-                <button type="submit" class="btn btn-submit">Enviar</button>
+                <button type="submit" class="btn btn-submit">Actualizar</button>
             </div>
         </form>
     </div>

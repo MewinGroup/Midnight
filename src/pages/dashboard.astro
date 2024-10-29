@@ -3,7 +3,7 @@ export const prerender = false;
 const data = Astro.locals;
 import Layout from "@Layouts/layout.astro";
 import Sidebar from "@Components/Sidebar.astro";
-import Card from "@Components/menu/Card.astro";
+import Card from "@Components/Menu/Card.astro";
 import { verify, userinfo } from "@Lib/auth";
 
 if (await verify(data.token?.value) == false) {
