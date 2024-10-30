@@ -1,188 +1,114 @@
 ---
+const data = Astro.locals;
+import { verify, userinfo } from "@Lib/auth";
 export const prerender = false;
 import Layout from "@Layouts/layout.astro";
-import Sidebar from "@components/sidebar.astro";
+import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
-// Función para obtener el valor de una cookie desde el servidor
-function getCookie(cookies, name) {
-    const value = `; ${cookies}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-}
 
-// Obtener cookies desde el request headers
-const cookies = Astro.request.headers.get("cookie") || "";
-const authCode = getCookie(cookies, "authcode");
-let weeklySales = 0;
-let sales24hTotal = 0;
-let totalSalesTotal = 0;
-let userName = "Usuario";
-let userType = 3;
-let userRange = "Principiante";
-let venta = {
-    Cliente: "",
-    Total: 0,
-    Fecha: "",
-};
-
-if (authCode) {
-    async function fetchData(url, method, body) {
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-        });
-        return response.json();
-    }
-
-    const userInfo = await fetchData("http://localhost/user/getinfo", "POST", {
-        authcode: authCode,
+if ((await verify(data.token?.value)) == false) {
+    return new Response(null, {
+        status: 302,
+        headers: {
+            Location: "/",
+        },
     });
-    userName = userInfo.Nombre;
-    userType = userInfo.Tipo;
-
-    if (userType === 1) {
-        userRange = "Administrador";
-    } else if (userType === 2) {
-        userRange = "Vendedor";
-    } else {
-        userRange = "No autorizado";
-    }
-
-    const ultimaVenta = await fetchData(
-        "http://localhost/ventas/ultimaventa",
-        "POST",
-        { authcode: authCode },
-    );
-    // Ventas de la última semana
-    const salesData = await fetchData(
-        "http://localhost/ventas/ventasbydaterange",
-        "POST",
-        {
-            authcode: authCode,
-            start: new Date(
-                new Date().setDate(new Date().getDate() - 7),
-            ).toISOString(),
-            end: new Date().toISOString(),
-        },
-    );
-    const sales24h = await fetchData(
-        "http://localhost/ventas/ventasbydaterange",
-        "POST",
-        {
-            authcode: authCode,
-            start: new Date(
-                new Date().setDate(new Date().getDate() - 1),
-            ).toISOString(),
-            end: new Date().toISOString(),
-        },
-    );
-    const totalSales = await fetchData(
-        "http://localhost/ventas/ventasbydaterange",
-        "POST",
-        {
-            authcode: authCode,
-            start: new Date(
-                new Date().setMonth(new Date().getMonth() - 1),
-            ).toISOString(),
-            end: new Date().toISOString(),
-        },
-    );
-    //{ Cliente: '4rX8Ei2Jrn', Fecha: '2024-10-12T23:36:55.000Z', Total: 15 }
-    venta = ultimaVenta;
-    console.log(venta);
-
-    weeklySales = salesData.message[0].Total;
-    sales24hTotal = sales24h.message[0].Total;
-    totalSalesTotal = totalSales.message[0].Total;
 }
+const token = data.token?.value;
+const res = await userinfo(token);
+const user = res[0];
 ---
+
 <Layout title="Panel de Control">
     <script>
-        document.addEventListener("DOMContentLoaded", async () => {
-            const authCode = localStorage.getItem("authcode");
-
-            const authResponse = await fetch("http://localhost/user/verify", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ authcode: authCode }),
-            });
-            const authData = await authResponse.json();
-            if (authData.status !== 200 || authData.message !== "Authorized") {
-                window.location.href = "/";
-            }
-        });
-    </script>
-    <script>
-        document.getElementById("add").addEventListener("click", function() {
+        document.getElementById("add").addEventListener("click", function () {
             // Cambia la URL por la dirección a la que quieres redirigir
             window.location.href = "/add";
         });
-        document.getElementById("editButton").addEventListener("click", function() {
-            // Cambia la URL por la dirección a la que quieres redirigir
-            window.location.href = "/edit";
-        });
+        document
+            .getElementById("editButton")
+            .addEventListener("click", function () {
+                // Cambia la URL por la dirección a la que quieres redirigir
+                window.location.href = "/edit";
+            });
     </script>
     <div
-        class="flex flex-col md:flex-row xl:flex-row bg-gray-100 h-screen dark:bg-gray-800 dark:text-white ">
+        class="flex flex-col md:flex-row xl:flex-row bg-gray-100 h-screen dark:bg-gray-800 dark:text-white"
+    >
         <!-- Sidebar -->
-        <Sidebar tipo={userType} />
+        <Sidebar tipo={user.tipo_perfil}>
+            <div class="flex-1 p-4 md:p-6 bg-gray-100 dark:bg-gray-800">
+                <h1 class="text-3xl font-bold mb-6">
+                    <i class="fa-solid fa-address-book"></i> Listado de Clientes
+                </h1>
 
-        <!-- Main Content -->
-        <br /><br />
-        <div class="flex-1 p-4 md:p-6 bg-gray-100 dark:bg-gray-800">
-            <h1 class="text-3xl font-bold mb-6">
-                <i class="fa-solid fa-address-book"></i> Listado de Clientes
-            </h1>
-
-            <div class="flex items-center justify-end mb-6">
-                <div class="flex items-center space-x-2">
-                    <div
-                        class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-500"
-                    >
-                        <img
-                            src="https://avatars.githubusercontent.com/u/178928214?v=4"
-                            alt="Foto de perfil"
-                            class="w-full h-full object-cover"
-                        />
-                    </div>
-                    <div class="text-right">
-                        <h1 class="text-xl font-bold">Hola, {userName}</h1>
-                        <p class="text-gray-600 dark:text-gray-400 text-sm">
-                            {userRange}
-                        </p>
+                <div class="flex items-center justify-end mb-6">
+                    <div class="flex items-center space-x-2">
+                        <div
+                            class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-500"
+                        >
+                            <img
+                                src="https://avatars.githubusercontent.com/u/178928214?v=4"
+                                alt="Foto de perfil"
+                                class="w-full h-full object-cover"
+                            />
+                        </div>
+                        <div class="text-right">
+                            <h1 class="text-xl font-bold">
+                                Hola, {user.nombre}
+                            </h1>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">
+                                {
+                                    user.tipo == 1
+                                        ? "Administrador"
+                                        : user.tipo == 2
+                                          ? "Vendedor"
+                                          : "Usuario"
+                                }
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <!-- Contenido de tarjetas -->
-            <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Tarjeta Total Sales -->
-                <Card
-                    title="Herramientas"
-                    description="Manejo de datos de usuario">
-                    <div class="flex space-x-4">
-                        <div id="add" class="w-16 h-16 dark:bg-indigo-500 bg-sky-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer" id="openModalBtn">
-                            <i class="fa-solid fa-plus text-4xl"></i>
-                            <span class="text-xs">Agregar</span></a>
+                <!-- Contenido de tarjetas -->
+                <div
+                    class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6"
+                >
+                    <!-- Tarjeta Total Sales -->
+                    <Card
+                        title="Herramientas"
+                        description="Manejo de datos de usuario"
+                    >
+                        <div class="flex space-x-4">
+                            <div
+                                id="add"
+                                class="w-16 h-16 dark:bg-indigo-500 bg-sky-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                                id="openModalBtn"
+                            >
+                                <i class="fa-solid fa-plus text-4xl"></i>
+                                <span class="text-xs">Agregar</span>
+                            </div>
                         </div>
-                        <div id="editButton" class="w-16 h-16 dark:bg-emerald-500 bg-lime-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer">
+                        <div
+                            id="editButton"
+                            class="w-16 h-16 dark:bg-emerald-500 bg-lime-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                        >
                             <i class="fa-solid fa-pen text-4xl"></i>
                             <span class="text-xs">Editar</span>
                         </div>
-                        <div class="w-16 h-16 dark:bg-rose-500 bg-pink-600 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer">
+                        <div
+                            class="w-16 h-16 dark:bg-rose-500 bg-pink-600 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                        >
                             <i class="fa-solid fa-trash text-4xl"></i>
                             <span class="text-xs">Eliminar</span>
                         </div>
-                        <div class="w-16 h-16 dark:bg-amber-500 bg-orange-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer">
+                        <div
+                            class="w-16 h-16 dark:bg-amber-500 bg-orange-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                        >
                             <i class="fa-solid fa-chart-pie text-4xl"></i>
                             <span class="text-xs">Detalles</span>
                         </div>
-                    </div>
                     </Card>
+                </div>
                 <Card title="Total de Clientes" description="Total"
                     ><i class="fa-solid fa-person"></i> 1</Card
                 >
@@ -250,7 +176,8 @@ if (authCode) {
                     </tbody>
                 </table>
             </div>
-        </div>
+        </Sidebar>
+
+        <!-- Main Content -->
     </div>
 </Layout>
-
