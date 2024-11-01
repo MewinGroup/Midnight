@@ -68,7 +68,15 @@ const tipoClienteMap = {
             </div>
             <div class="text-right">
               <h1 class="text-xl font-bold">Hola, {user.nombre}</h1>
-              <p class="text-gray-600 dark:text-gray-400 text-sm"></p>
+              <p class="text-gray-600 dark:text-gray-400 text-sm">
+                {
+                  user.tipo_perfil == 1
+                    ? "Administrador"
+                    : user.tipo_perfil == 2
+                      ? "Vendedor"
+                      : "Usuario"
+                }
+              </p>
             </div>
           </div>
         </div>
