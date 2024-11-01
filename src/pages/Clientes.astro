@@ -205,7 +205,7 @@ const tipoClienteMap = {
           </h2>
 
           <!-- Formulario -->
-          <form name="agregar" method="POST" class="space-y-4">
+          <form name="agregarcliente" method="POST" class="space-y-4">
             <label
               for="nombre"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
@@ -290,14 +290,14 @@ const tipoClienteMap = {
             />
 
             <label
-              for="Ncr"
+              for="Nrc"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2">NCR</label
             >
             <input
               type="text"
-              id="Ncr"
-              name="Ncr"
-              placeholder="NCR"
+              id="Nrc"
+              name="Nrc"
+              placeholder="NRC"
               required
               class="form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
@@ -324,8 +324,7 @@ const tipoClienteMap = {
                 Cancelar
               </button>
               <button
-                type="button"
-                onclick="addcliente()"
+                type="submit"
                 class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
               >
                 Enviar
@@ -337,19 +336,56 @@ const tipoClienteMap = {
     </Sidebar>
   </div>
 </Layout>
-<script>
+<script type="module">
+  const formcliente = document.forms.agregarcliente;
+  formcliente.addEventListener("submit", (e) => {
+    e.preventDefault();
+    addcliente();
+  });
   function addcliente() {
-    //verifica que todo este correcto
-    const nombre = (document.getElementById("nombre") as HTMLInputElement)
-      .value;
-    const tipo = (document.getElementById("tipo") as HTMLInputElement).value;
-    const direccion = (document.getElementById("Direccion") as HTMLInputElement)
-      .value;
-    const telefono = (document.getElementById("Telefono") as HTMLInputElement)
-      .value;
-    const dui = (document.getElementById("Dui") as HTMLInputElement).value;
-    const nit = (document.getElementById("Nit") as HTMLInputElement).value;
-    const ncr = (document.getElementById("Ncr") as HTMLInputElement).value;
-    const giro = (document.getElementById("Giro") as HTMLInputElement).value;
+    // Verifica que todo esté correcto
+
+    const nombre = formcliente.nombre.value;
+    const tipo = formcliente.tipo.value;
+    const direccion = formcliente.Direccion.value;
+    const telefono = formcliente.Telefono.value;
+    const dui = formcliente.Dui.value;
+    const nit = formcliente.Nit.value;
+    const nrc = formcliente.Nrc.value;
+    const giro = formcliente.Giro.value;
+    //get token from cookie
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token"))
+      .split("=")[1];
+    // Envía los datos al servidor
+    fetch("http://localhost:8000/clientes/agregar", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nombre: nombre,
+        tipo_cliente: tipo,
+        direccion: direccion,
+        telefono: telefono,
+        dui: dui,
+        nit: nit,
+        nrc: nrc,
+        giro: giro,
+        fecha_registro: new Date().toISOString(),
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.status == 200) {
+          alert("Cliente agregado correctamente");
+          document.getElementById("Addmodal").close();
+        } else {
+          alert("Error al agregar el cliente");
+        }
+      });
   }
 </script>
