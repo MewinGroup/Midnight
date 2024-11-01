@@ -85,15 +85,15 @@ const tipoClienteMap = {
           <Card title="Herramientas" description="Manejo de datos de usuario">
             <div class="flex column">
               <div class="flex space-x-4 p-1">
-                <div
+                <a
                   id="add"
                   class="w-16 h-16 dark:bg-indigo-500 bg-sky-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
                   id="openModalBtn"
-                  onclick="document.getElementById('modal').showModal()"
+                  onclick="document.getElementById('Addmodal').showModal()"
                 >
                   <i class="fa-solid fa-plus text-4xl"></i>
                   <span class="text-xs">Agregar</span>
-                </div>
+                </a>
               </div>
               <div class="flex space-x-4 p-1">
                 <div
@@ -196,99 +196,140 @@ const tipoClienteMap = {
 
       <!-- Main Content -->
       <!-- Modal hidden as defaul -->
-         <Modal id="add">
+      <Modal id="Addmodal">
         <div
-          class="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
         >
-          <h2 class="text-2xl font-bold mb-4">Agregar Cliente</h2>
-      
+          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+            Agregar Cliente
+          </h2>
+
           <!-- Formulario -->
-          <form action="#" method="POST" class="space-y-4">
+          <form name="agregar" method="POST" class="space-y-4">
+            <label
+              for="nombre"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >Nombre</label
+            >
             <input
               type="text"
               id="nombre"
               name="nombre"
               placeholder="Nombre"
               required
-              class="form-field w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
-            <input
-              type="text"
+
+            <label
+              for="tipo"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >Tipo Cliente</label
+            >
+            <select
               id="tipo"
               name="tipo"
-              placeholder="Tipo Cliente"
               required
-              class="form-field w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+              class="form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            >
+              <option value="1">Natural</option>
+              <option value="2">Jurídico</option>
+            </select>
+
+            <label
+              for="Direccion"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >Dirección</label
+            >
             <textarea
               id="Direccion"
               name="Direccion"
               placeholder="Dirección"
               required
               rows="2"
-              class="form-field w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             ></textarea>
+
+            <label
+              for="Telefono"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >Teléfono</label
+            >
             <input
               type="text"
               id="Telefono"
               name="Telefono"
               placeholder="Teléfono"
               required
-              class="form-field w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
+
+            <label
+              for="Dui"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
+            >
             <input
               type="text"
               id="Dui"
               name="Dui"
               placeholder="DUI"
               required
-              class="form-field w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
+
+            <label
+              for="Nit"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
+            >
             <input
               type="text"
               id="Nit"
               name="Nit"
               placeholder="NIT"
               required
-              class="form-field w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
+
+            <label
+              for="Ncr"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NCR</label
+            >
             <input
               type="text"
               id="Ncr"
               name="Ncr"
               placeholder="NCR"
               required
-              class="form-field w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
+
+            <label
+              for="Giro"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Giro</label
+            >
             <input
               type="text"
               id="Giro"
               name="Giro"
               placeholder="Giro"
               required
-              class="form-field w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
-            <input
-              type="date"
-              id="Fecha"
-              name="Fecha"
-              required
-              class="form-field w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-      
             <!-- Botones -->
             <div class="flex justify-end space-x-4">
               <button
                 type="button"
                 class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('modal').close()"
-                >Cancelar</button
+                onclick="document.getElementById('Addmodal').close()"
               >
+                Cancelar
+              </button>
               <button
-                type="submit"
+                type="button"
+                onclick="addcliente()"
                 class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
-                >Enviar</button
               >
+                Enviar
+              </button>
             </div>
           </form>
         </div>
@@ -296,3 +337,19 @@ const tipoClienteMap = {
     </Sidebar>
   </div>
 </Layout>
+<script>
+  function addcliente() {
+    //verifica que todo este correcto
+    const nombre = (document.getElementById("nombre") as HTMLInputElement)
+      .value;
+    const tipo = (document.getElementById("tipo") as HTMLInputElement).value;
+    const direccion = (document.getElementById("Direccion") as HTMLInputElement)
+      .value;
+    const telefono = (document.getElementById("Telefono") as HTMLInputElement)
+      .value;
+    const dui = (document.getElementById("Dui") as HTMLInputElement).value;
+    const nit = (document.getElementById("Nit") as HTMLInputElement).value;
+    const ncr = (document.getElementById("Ncr") as HTMLInputElement).value;
+    const giro = (document.getElementById("Giro") as HTMLInputElement).value;
+  }
+</script>

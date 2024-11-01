@@ -1,6 +1,23 @@
+---
+interface DialogProps {
+  open: boolean;
+  onClose: () => void;
+  id: string;
+}
+
+const { open, onClose, id } = Astro.props as DialogProps;
+---
+
+<style>
+  dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semi-transparente */
+    transition: opacity 0.3s ease-in-out; /* Transición suave */
+  }
+</style>
+
 <dialog
-  id="modal"
-  class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden"
+  id={id}
+  class="fixed inset-0 bg-gray-600 bg-opacity-50 items-center transition-opacity duration-300 ease-in-out rounded-lg"
 >
-  <slot></slot>
+  <slot />
 </dialog>
