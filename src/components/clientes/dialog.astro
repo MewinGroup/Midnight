@@ -13,11 +13,36 @@ const { open, onClose, id } = Astro.props as DialogProps;
     background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semi-transparente */
     transition: opacity 0.3s ease-in-out; /* Transición suave */
   }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #6c757d;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #495057;
+}
+
+.scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: #6c757d transparent;
+}
+
 </style>
 
 <dialog
   id={id}
-  class="fixed inset-0 bg-gray-600 bg-opacity-50 items-center transition-opacity duration-300 ease-in-out rounded-lg"
+  class=" inset-0 bg-gray-600 bg-opacity-50 items-center transition-opacity duration-300 ease-in-out rounded-lg"
 >
   <slot />
 </dialog>
