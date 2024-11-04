@@ -5,10 +5,9 @@ import { verify, userinfo } from "@Lib/auth";
 import Layout from "@Layouts/layout.astro";
 import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
-import { totalclientes, clientes } from "@Lib/clientes";
-import Tabla from "@components/clientes/Tabla.astro";
+//Aqui va para conseguir el total de ventas
+import Tabla from "@components/ventas/Tabla.astro";
 import Modal from "@components/clientes/dialog.astro";
-import Alertas from "@components/alertas.astro";
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -31,11 +30,12 @@ try {
     statusText: "Internal Server Error",
   });
 }
-
+//Hay que cambiar esto
 const user = res[0];
+/*
 const clients = (await clientes(token)) || [];
 const total = (await totalclientes(token)) || { total: 0 };
-
+*/
 const tipoClienteMap = {
   1: "Natural",
   2: "Jurídico",
@@ -80,7 +80,7 @@ const tipoClienteMap = {
     <Sidebar tipo={user.tipo_perfil}>
       <div class="flex-1 p-4 md:p-6 dark:bg-gray-800">
         <h1 class="text-3xl font-bold mb-6">
-          <i class="fa-solid fa-address-book"></i> Listado de Clientes
+            <i class="fa-solid fa-cash-register"></i> Listado de Ventas
         </h1>
 
         <div class="flex items-center justify-end mb-6">
@@ -111,9 +111,8 @@ const tipoClienteMap = {
         </div>
         <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Alertas />
-          <Card title="Herramientas" description="Manejo de datos de usuario">
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+          <Card title="Herramientas" description="Manejo de datos de ventas">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-2">
               <div class="flex justify-center">
                 <a
                   id="add"
@@ -136,15 +135,6 @@ const tipoClienteMap = {
               </div>
               <div class="flex justify-center">
                 <div
-                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-rose-500 bg-pink-600 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Deletemodal').showModal()"
-                >
-                  <i class="fa-solid fa-trash text-xl md:text-3xl"></i>
-                  <span class="text-xs md:text-sm font-bold">Eliminar</span>
-                </div>
-              </div>
-              <div class="flex justify-center">
-                <div
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-amber-500 bg-orange-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
                   onclick="document.getElementById('Detailmodal').showModal()"
                 >
@@ -155,13 +145,12 @@ const tipoClienteMap = {
             </div>
           </Card>
 
-          <Card title="Total de Clientes" description="Total"
-            ><i class="fa-solid fa-person"></i> {total?.total || 0}</Card
+          <Card title="Total de Ventas" description="Total"
+            ><i class="fa-solid fa-money-check-dollar"></i> 0</Card
           >
-          <Card title="Clientes Recientes" description="El ultimo Mes"
-            ><i class="fa-solid fa-user-clock"></i> {total?.lastmonth || 0}
+          <Card title="Ventas Recientes" description="El ultimo Mes"
+            ><i class="fa-solid fa-receipt"></i> 0
           </Card>
-
         </div>
 
         <!-- Tabla de órdenes recientes -->
@@ -173,66 +162,54 @@ const tipoClienteMap = {
             <slot>
               <!--foreach cliente fill a column -->
               {
-                clients.map((cliente) => {
-                  const tipoCliente =
-                    tipoClienteMap[cliente.tipo_cliente] || "Desconocido";
-                  return (
                     <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
                       <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
                         <input
                           type="checkbox"
                           name="cliente"
-                          value={cliente.Idcliente}
                         />
                       </td>
                       <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                        {cliente.Idcliente}
+                        0001
                       </td>
                       <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        {cliente.nombre}
+                        Factura
                       </td>
                       <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        {tipoCliente}
+                        CCF
                       </td>
                       <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        {cliente.direccion}
+                        04/11/2024
                       </td>
                       <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        {cliente.telefono}
+                        John Jarrison
                       </td>
                       <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        {cliente.dui}
+                        Orden de compra
                       </td>
                       <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        {cliente.nit}
+                        Efectivo
+                      </td>
+                      <td class=" text-red-500 px-1 py-2 max-w-full overflow-hidden text-ellipsis">
+                        Finalizado
                       </td>
                       <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        {cliente.nrc}
+                        $1007.99
                       </td>
                       <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        {cliente.giro}
+                        $131.04 (13%)
                       </td>
                       <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        {cliente.fecha_registro}
+                        $1,139.03
+                      </td>
+                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
+                        Juan
                       </td>
                     </tr>
-                  );
-                })
-              }
+                }
             </slot>
           </Tabla>
         </div>
-
-        <!-- Actualizaciones recientes -->
-        <div
-          class="mt-6 bg-white p-6 rounded-lg shadow-md dark:bg-gray-700 dark:text-white"
-        >
-          <h2 class="text-xl font-semibold dark:text-white">
-            Ventas Realizadas Recientemente
-          </h2>
-          <ul class="mt-4 space-y-4"></ul>
-        </div>
-      </div>
 
       <!-- Addmodal Content -->
       <!-- Modal hidden as defaul -->
@@ -242,31 +219,31 @@ const tipoClienteMap = {
           class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
         >
           <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Agregar Cliente
+            Agregar Venta
           </h2>
 
           <!-- Formulario -->
           <form name="agregar" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
+            <label for="Documento" class="text-x1 text-gray-700 dark:text-gray-300"
+              >Documento Fiscal</label
             >
             <input
               type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
+              id="Documento"
+              name="Documento"
+              placeholder="Documento Fiscal"
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
 
             <label
-              for="tipo"
+              for="Correlativo"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Tipo Cliente</label
+              >Correlativo Documento Fiscal</label
             >
             <select
-              id="tipo"
-              name="tipo"
+              id="Correlativo"
+              name="Correlativo"
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             >
@@ -275,81 +252,116 @@ const tipoClienteMap = {
             </select>
 
             <label
-              for="Direccion"
+              for="FechaVenta"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Dirección</label
+              >Fecha de Venta</label
             >
-            <textarea
-              id="Direccion"
-              name="Direccion"
-              placeholder="Dirección"
+            <input
+              id="FechaVenta"
+              type="date"
+              name="FechaVenta"
               required
-              rows="2"
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></textarea>
+            ></input>
 
             <label
-              for="Telefono"
+              for="Cliente"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Teléfono</label
+              >Cliente</label
             >
             <input
               type="text"
-              id="Telefono"
-              name="Telefono"
-              placeholder="Teléfono"
+              id="Cliente"
+              name="Cliente"
+              placeholder="Nombre del Cliente"
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
 
             <label
-              for="Dui"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
+              for="CondicionVenta"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Condicion de venta</label
             >
             <input
               type="text"
-              id="Dui"
-              name="Dui"
-              placeholder="DUI"
+              id="CondicionVenta"
+              name="CondicionVenta"
+              placeholder="Condicion de venta"
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
 
             <label
-              for="Nit"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
+              for="MetodoPago"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Metodo de Pago</label
             >
             <input
               type="text"
-              id="Nit"
-              name="Nit"
-              placeholder="NIT"
+              id="MetodoPago"
+              name="MetodoPago"
+              placeholder="Metodo de pago"
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
 
             <label
-              for="Nrc"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NCR</label
+              for="Estado"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Estado</label
             >
             <input
               type="text"
-              id="Nrc"
-              name="Nrc"
-              placeholder="NRC"
+              id="Estado"
+              name="Estado"
+              placeholder="Estado de la venta"
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
 
             <label
-              for="Giro"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Giro</label
+              for="Sumas"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Sumas</label
             >
             <input
               type="text"
-              id="Giro"
-              name="Giro"
-              placeholder="Giro"
+              id="Sumas"
+              name="Sumas"
+              placeholder="Sumas"
+              required
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <label
+              for="IVA"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">IVA</label
+            >
+            <input
+              type="text"
+              id="IVA"
+              name="IVA"
+              placeholder="Iva 13%"
+              required
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <label
+              for="Total"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Total</label
+            >
+            <input
+              type="text"
+              id="Total"
+              name="Total"
+              placeholder="Total de la venta"
+              required
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <label
+              for="Vendedor"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Vendedor</label
+            >
+            <input
+              type="text"
+              id="Vendedor"
+              name="Vendedor"
+              placeholder="Vendedor"
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
@@ -382,40 +394,30 @@ const tipoClienteMap = {
             Editar Cliente
           </h2>
 
-          <!-- Formulario -->
           <form name="editar" method="POST" class="space-b-4">
-            <label for="buscar" class="text-x1 text-gray-700 dark:text-gray-300"
-              ><i class="bi bi-search"></i> Buscar Cliente</label
+            <label for="Documento" class="text-x1 text-gray-700 dark:text-gray-300"
+              >Documento Fiscal</label
             >
             <input
               type="text"
-              id="buscar"
-              name="buscar"
-              placeholder="Buscar Cliente"
+              id="Documento"
+              name="Documento"
+              placeholder="Documento Fiscal"
               required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              placeholder="Nombre"
-              required
+              disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
 
             <label
-              for="tipo"
+              for="Correlativo"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Tipo Cliente</label
+              >Correlativo Documento Fiscal</label
             >
             <select
-              id="tipo"
-              name="tipo"
+              id="Correlativo"
+              name="Correlativo"
               required
+              disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             >
               <option value="1">Natural</option>
@@ -423,82 +425,125 @@ const tipoClienteMap = {
             </select>
 
             <label
-              for="Direccion"
+              for="FechaVenta"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Dirección</label
+              >Fecha de Venta</label
             >
-            <textarea
-              id="Direccion"
-              name="Direccion"
-              placeholder="Dirección"
+            <input
+              id="FechaVenta"
+              type="date"
+              name="FechaVenta"
               required
-              rows="2"
+              disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></textarea>
+            ></input>
 
             <label
-              for="Telefono"
+              for="Cliente"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Teléfono</label
+              >Cliente</label
             >
             <input
               type="text"
-              id="Telefono"
-              name="Telefono"
-              placeholder="Teléfono"
+              id="Cliente"
+              name="Cliente"
+              placeholder="Nombre del Cliente"
+              required
+              disabled
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+
+            <label
+              for="CondicionVenta"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Condicion de venta</label
+            >
+            <input
+              type="text"
+              id="CondicionVenta"
+              name="CondicionVenta"
+              placeholder="Condicion de venta"
+              required
+              disabled
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+
+            <label
+              for="MetodoPago"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Metodo de Pago</label
+            >
+            <input
+              type="text"
+              id="MetodoPago"
+              name="MetodoPago"
+              placeholder="Metodo de pago"
+              required
+              disabled
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+
+            <label
+              for="Estado"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Estado</label
+            >
+            <input
+              type="text"
+              id="Estado"
+              name="Estado"
+              placeholder="Estado de la venta"
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
 
             <label
-              for="Dui"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
+              for="Sumas"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Sumas</label
             >
             <input
               type="text"
-              id="Dui"
-              name="Dui"
-              placeholder="DUI"
+              id="Sumas"
+              name="Sumas"
+              placeholder="Sumas"
               required
+              disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
-
             <label
-              for="Nit"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
+              for="IVA"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">IVA</label
             >
             <input
               type="text"
-              id="Nit"
-              name="Nit"
-              placeholder="NIT"
+              id="IVA"
+              name="IVA"
+              placeholder="Iva 13%"
               required
+              disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
-
             <label
-              for="Ncr"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NCR</label
+              for="Total"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Total</label
             >
             <input
               type="text"
-              id="Ncr"
-              name="Ncr"
-              placeholder="NCR"
+              id="Total"
+              name="Total"
+              placeholder="Total de la venta"
               required
+              disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
-
             <label
-              for="Giro"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Giro</label
+              for="Vendedor"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Vendedor</label
             >
             <input
               type="text"
-              id="Giro"
-              name="Giro"
-              placeholder="Giro"
+              id="Vendedor"
+              name="Vendedor"
+              placeholder="Vendedor"
               required
+              disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
             <!-- Botones -->
@@ -531,39 +576,29 @@ const tipoClienteMap = {
           </h2>
 
           <!-- Formulario -->
-          <form name="eliminar" method="POST" class="space-b-4">
-            <label for="buscar" class="text-x1 text-gray-700 dark:text-gray-300"
-              ><i class="bi bi-search"></i> Buscar Cliente</label
+         
+          <form name="detalles" method="POST" class="space-b-4">
+            <label for="Documento" class="text-x1 text-gray-700 dark:text-gray-300"
+              >Documento Fiscal</label
             >
             <input
               type="text"
-              id="buscar"
-              name="buscar"
-              placeholder="Buscar Cliente"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              placeholder="Nombre"
+              id="Documento"
+              name="Documento"
+              placeholder="Documento Fiscal"
               required
               disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
 
             <label
-              for="tipo"
+              for="Correlativo"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Tipo Cliente</label
+              >Correlativo Documento Fiscal</label
             >
             <select
-              id="tipo"
-              name="tipo"
+              id="Correlativo"
+              name="Correlativo"
               required
               disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
@@ -573,86 +608,124 @@ const tipoClienteMap = {
             </select>
 
             <label
-              for="Direccion"
+              for="FechaVenta"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Dirección</label
+              >Fecha de Venta</label
             >
-            <textarea
-              id="Direccion"
-              name="Direccion"
-              placeholder="Dirección"
+            <input
+              id="FechaVenta"
+              type="date"
+              name="FechaVenta"
               required
               disabled
-              rows="2"
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></textarea>
+            ></input>
 
             <label
-              for="Telefono"
+              for="Cliente"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Teléfono</label
+              >Cliente</label
             >
             <input
               type="text"
-              id="Telefono"
-              name="Telefono"
-              placeholder="Teléfono"
+              id="Cliente"
+              name="Cliente"
+              placeholder="Nombre del Cliente"
               required
               disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
 
             <label
-              for="Dui"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
+              for="CondicionVenta"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Condicion de venta</label
             >
             <input
               type="text"
-              id="Dui"
-              name="Dui"
-              placeholder="DUI"
+              id="CondicionVenta"
+              name="CondicionVenta"
+              placeholder="Condicion de venta"
               required
               disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
 
             <label
-              for="Nit"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
+              for="MetodoPago"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Metodo de Pago</label
             >
             <input
               type="text"
-              id="Nit"
-              name="Nit"
-              placeholder="NIT"
+              id="MetodoPago"
+              name="MetodoPago"
+              placeholder="Metodo de pago"
               required
               disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
 
             <label
-              for="Ncr"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NCR</label
+              for="Estado"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Estado</label
             >
             <input
               type="text"
-              id="Ncr"
-              name="Ncr"
-              placeholder="NCR"
+              id="Estado"
+              name="Estado"
+              placeholder="Estado de la venta"
               required
               disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
 
             <label
-              for="Giro"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Giro</label
+              for="Sumas"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Sumas</label
             >
             <input
               type="text"
-              id="Giro"
-              name="Giro"
-              placeholder="Giro"
+              id="Sumas"
+              name="Sumas"
+              placeholder="Sumas"
+              required
+              disabled
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <label
+              for="IVA"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">IVA</label
+            >
+            <input
+              type="text"
+              id="IVA"
+              name="IVA"
+              placeholder="Iva 13%"
+              required
+              disabled
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <label
+              for="Total"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Total</label
+            >
+            <input
+              type="text"
+              id="Total"
+              name="Total"
+              placeholder="Total de la venta"
+              required
+              disabled
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <label
+              for="Vendedor"
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Vendedor</label
+            >
+            <input
+              type="text"
+              id="Vendedor"
+              name="Vendedor"
+              placeholder="Vendedor"
               required
               disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
@@ -687,7 +760,7 @@ const tipoClienteMap = {
           </h2>
 
           <!-- Formulario -->
-          <form name="detalle" method="POST" class="space-b-4">
+          <form name="agregar" method="POST" class="space-b-4">
             <label for="buscar" class="text-x1 text-gray-700 dark:text-gray-300"
               ><i class="bi bi-search"></i> Buscar Cliente</label
             >
@@ -878,8 +951,7 @@ const tipoClienteMap = {
     })
       .then((res) => {
         if (res.ok) {
-          //custom alert
-         //showAlert("Cliente agregado correctamente", "success");
+          alert("Cliente agregado correctamente");
           location.reload();
         } else {
           alert("Error al agregar el cliente");
