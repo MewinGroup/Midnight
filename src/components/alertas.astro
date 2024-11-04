@@ -1,0 +1,52 @@
+<script>
+    (function () {
+        function showAlert(
+            message: string,
+            type: string = "info",
+            options: { color?: string; size?: string; duration?: number; textColor?: string } = {}
+        ) {
+            const alertDiv = document.createElement("div");
+            alertDiv.className = `fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-lg text-white z-50 text-lg ${
+                type === "info"
+                    ? "bg-blue-600"
+                    : type === "success"
+                        ? "bg-green-600"
+                        : type === "warning"
+                            ? "bg-yellow-600"
+                            : "bg-red-600"
+            } transition-all duration-300 ease-in-out`;
+
+            if (options.color) {
+                alertDiv.style.backgroundColor = options.color;
+            }
+
+            if (options.size) {
+                alertDiv.style.fontSize = options.size;
+            }
+
+            if (options.textColor) {
+                alertDiv.style.color = options.textColor;
+            }
+
+            alertDiv.style.borderRadius = '20px';
+            alertDiv.style.padding = '15px 30px';
+            alertDiv.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+            alertDiv.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => {
+                alertDiv.style.opacity = '0';
+                alertDiv.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 300);
+            }, options.duration || 3000);
+        }
+
+        (window as any).showAlert = showAlert;
+    })();
+</script>
+
+

@@ -6,9 +6,11 @@
       "@*": [
         "src/*"
       ],
-      "@Components*":[
-      "src/Components/*"
+      "@Components*": [
+        "src/Components/*"
       ]
-    }
+    },
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js"
   }
 }

@@ -8,6 +8,7 @@ import Card from "@components/menu/Card.astro";
 import { totalclientes, clientes } from "@Lib/clientes";
 import Tabla from "@components/clientes/Tabla.astro";
 import Modal from "@components/clientes/dialog.astro";
+import Alertas from "@components/alertas.astro";
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -110,6 +111,7 @@ const tipoClienteMap = {
         </div>
         <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <Alertas />
           <Card title="Herramientas" description="Manejo de datos de usuario">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               <div class="flex justify-center">
@@ -159,6 +161,7 @@ const tipoClienteMap = {
           <Card title="Clientes Recientes" description="El ultimo Mes"
             ><i class="fa-solid fa-user-clock"></i> {total?.lastmonth || 0}
           </Card>
+
         </div>
 
         <!-- Tabla de órdenes recientes -->
@@ -875,7 +878,8 @@ const tipoClienteMap = {
     })
       .then((res) => {
         if (res.ok) {
-          alert("Cliente agregado correctamente");
+          //custom alert
+         //showAlert("Cliente agregado correctamente", "success");
           location.reload();
         } else {
           alert("Error al agregar el cliente");
