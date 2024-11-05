@@ -1,5 +1,6 @@
 ---
 export const prerender = false;
+import Alertas from "@components/alertas.astro";
 
 import Layout from "@Layouts/layout.astro";
 import { verify } from "@Lib/auth";
@@ -13,6 +14,7 @@ if ((await verify(data.token?.value)) == true) {
   });
 }
 ---
+<Alertas />
 
 <Layout title="Inicio">
   <div
@@ -104,14 +106,16 @@ if ((await verify(data.token?.value)) == true) {
         .then((data) => {
           console.log(data);
           if (data.access_token) {
-            //create a cookie with the token
-            document.cookie = `token=${data.access_token}; path=/`;
+            //create a cookie with the token that expires in 24 hours
+            document.cookie = `token=${data.access_token}; max-age=86400; path=/`;
             window.location.href = "/dashboard";
           } else {
-            alert("Usuario o contraseña incorrectos");
+            window.showAlert("Usuario o contraseña incorrectos", "error");
           }
         })
-        .catch((error) => console.error("Error:", error));
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     };
   </script>
 </Layout>

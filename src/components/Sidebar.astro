@@ -128,7 +128,7 @@ const { tipo } = Astro.props;
         )
       }
       <MenuItem
-        href="/"
+        id="logout"
         iconClass="fas fa-sign-out-alt fa-xl"
         text="Cerrar Sesion"
         onClick="setActive(this)"
@@ -192,6 +192,7 @@ const { tipo } = Astro.props;
       const themeToggle = document.getElementById("theme-toggle");
       const sunIcon = document.getElementById("sun-icon");
       const moonIcon = document.getElementById("moon-icon");
+      const logout = document.getElementById("logout");
       const prefersDarkScheme = window.matchMedia(
         "(prefers-color-scheme: dark)"
       );
@@ -253,6 +254,18 @@ const { tipo } = Astro.props;
 
       hamburger?.addEventListener("click", toggleSidebar);
       hamburgerHeader?.addEventListener("click", toggleSidebar);
+
+      logout.addEventListener("click", () => {
+        //remove the cookie "token"
+        const token = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("token"))
+          .split("=")[1];
+        //rem
+        document.cookie = `token=${token}; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+
+        window.location.href = "/";
+      });
     });
   </script>
 </div>

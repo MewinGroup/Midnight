@@ -1,8 +1,8 @@
 ---
-const { href, iconClass, text, onClick } = Astro.props;
+const { href, iconClass, text, onClick, id } = Astro.props;
 ---
 
-<li class="group relative px-4 py-2 flex items-center space-x-4 transition-transform transform hover:translate-x-2 duration-300 cursor-pointer">
+<li id={id} class="group relative px-4 py-2 flex items-center space-x-4 transition-transform transform hover:translate-x-2 duration-300 cursor-pointer">
     <a href={href} class="flex items-center space-x-4 w-full h-full">
         <span class="absolute left-0 top-0 h-full w-1 bg-transparent group-hover:bg-magenta-500 transition-colors"></span>
         <i class={iconClass}></i>
