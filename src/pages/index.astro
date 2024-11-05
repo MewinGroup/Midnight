@@ -1,5 +1,17 @@
 ---
+export const prerender = false;
+
 import Layout from "@Layouts/layout.astro";
+import { verify } from "@Lib/auth";
+const data = Astro.locals;
+if ((await verify(data.token?.value)) == true) {
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: "/dashboard",
+    },
+  });
+}
 ---
 
 <Layout title="Inicio">
@@ -92,10 +104,9 @@ import Layout from "@Layouts/layout.astro";
         .then((data) => {
           console.log(data);
           if (data.access_token) {
-          
-          //create a cookie with the token
-          document.cookie = `token=${data.access_token}; path=/`;
-          window.location.href = "/dashboard";
+            //create a cookie with the token
+            document.cookie = `token=${data.access_token}; path=/`;
+            window.location.href = "/dashboard";
           } else {
             alert("Usuario o contraseña incorrectos");
           }
@@ -104,3 +115,4 @@ import Layout from "@Layouts/layout.astro";
     };
   </script>
 </Layout>
+
