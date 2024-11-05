@@ -33,7 +33,7 @@ try {
 }
 
 const user = res[0];
-const clients = (await clientes(token)) || [];
+const clients = Array.isArray(await clientes(token)) ? await clientes(token) : [];
 const total = (await totalclientes(token)) || { total: 0 };
 
 const tipoClienteMap = {
