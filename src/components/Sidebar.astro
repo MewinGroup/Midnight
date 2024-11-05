@@ -40,8 +40,8 @@ input:checked + .block {
             {tipo === 1 && <MenuItem href="/dashboard" iconClass="fa-solid fa-house fa-xl" text="Inicio" onClick="setActive(this)" />}
             {tipo !== 3 &&<MenuItem href="/clientes" iconClass="fas fa-users fa-xl" text="Clientes" onClick="setActive(this)" /> }
             {tipo !== 3 && <MenuItem href="/ventas" iconClass="fas fa-shopping-cart fa-xl" text="Ventas" onClick="setActive(this)" />}
-            {tipo === 1 && <MenuItem href="#" iconClass="fa-solid fa-address-book fa-xl" text="Empleados" onClick="setActive(this)" />}
-            {tipo === 1 && <MenuItem href="#" iconClass="fas fa-truck fa-xl" text="Proveedores" onClick="setActive(this)" />}
+            {tipo === 1 && <MenuItem href="/empleados" iconClass="fa-solid fa-address-book fa-xl" text="Empleados" onClick="setActive(this)" />}
+            {tipo === 1 && <MenuItem href="/proveedores" iconClass="fas fa-truck fa-xl" text="Proveedores" onClick="setActive(this)" />}
             {tipo === 1 && <MenuItem href="#" iconClass="fas fa-file-alt fa-xl" text="Finanzas" onClick="setActive(this)" />}
             {tipo !== 3 && <MenuItem href="#" iconClass="fas fa-bag-shopping fa-xl" text="Compras" onClick="setActive(this)" />}
             {tipo !== 3 && <MenuItem href="#" iconClass="fa-solid fa-box fa-xl" text="Inventario" onClick="setActive(this)" />}
@@ -67,7 +67,7 @@ input:checked + .block {
 
 <!-- Encabezado en pantallas pequeñas -->
 <div id="header" class="md:hidden sm:hidden lg:hidden xl:hidden bg-gray-800 text-white flex items-center justify-between p-4 fixed top-0 left-0 right-0 z-50">
-    <h1 class="text-2xl font-bold">Inicio</h1>
+    <h1 class="text-2xl font-bold">Midnight</h1>
     <button id="hamburger-header" class="p-2 focus:outline-none" onclick="toggleSidebar()">
         <i class="fas fa-bars fa-lg"></i>
     </button>

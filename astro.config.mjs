@@ -6,14 +6,14 @@ import cloudflare from '@astrojs/cloudflare';
 
 
 
-import solidJs from '@astrojs/solid-js';
+
 
 
 
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), solidJs()],
+  integrations: [tailwind()],
   output: 'hybrid',
   adapter: cloudflare()
 });
