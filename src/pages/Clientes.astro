@@ -305,669 +305,683 @@ const tipoClienteMap = {
         </div>
 
         <!-- Actualizaciones recientes -->
-      
 
-      <Modal id="Addmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Agregar Cliente
-          </h2>
-
-          <!-- Formulario -->
-          <form
-            name="agregar"
-            method="POST"
-            class="space-b-4"
-            autocomplete="off"
+        <Modal id="Addmodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
           >
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
             >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
+              Agregar Cliente
+            </h2>
 
-            <label
-              for="tipo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Tipo Cliente</label
+            <!-- Formulario -->
+            <form
+              name="agregar"
+              method="POST"
+              class="space-b-4"
+              autocomplete="off"
             >
-            <select
-              id="tipo"
-              name="tipo"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="1">Natural</option>
-              <option value="2">Jurídico</option>
-            </select>
-
-            <label
-              for="Direccion"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Dirección</label
-            >
-            <textarea
-              id="Direccion"
-              name="Direccion"
-              placeholder="Dirección"
-              rows="2"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></textarea>
-
-            <label
-              for="Telefono"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Teléfono</label
-            >
-            <input
-              type="text"
-              id="Telefono"
-              name="Telefono"
-              placeholder="Teléfono"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Dui"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
-            >
-            <input
-              type="text"
-              id="Dui"
-              name="Dui"
-              placeholder="DUI"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Nit"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
-            >
-            <input
-              type="text"
-              id="Nit"
-              name="Nit"
-              placeholder="NIT"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Nrc"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NCR</label
-            >
-            <input
-              type="text"
-              id="Nrc"
-              name="Nrc"
-              placeholder="NRC"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Giro"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Giro</label
-            >
-            <input
-              type="text"
-              id="Giro"
-              name="Giro"
-              placeholder="Giro"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Addmodal').close()"
+              <label
+                for="nombre"
+                class="text-x1 text-gray-700 dark:text-gray-300">Nombre</label
               >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                id="addcl"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Enviar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <Modal id="Editmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Editar Cliente
-          </h2>
+              <input
+                type="text"
+                id="nombre"
+                name="Nombre"
+                placeholder="Nombre"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
 
-          <!-- Formulario -->
-          <form
-            name="editar"
-            method="POST"
-            class="space-b-4"
-            autocomplete="off"
+              <label
+                for="tipo"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Tipo Cliente</label
+              >
+              <select
+                id="tipo"
+                name="tipo"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="1">Natural</option>
+                <option value="2">Jurídico</option>
+              </select>
+
+              <label
+                for="Direccion"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Dirección</label
+              >
+              <textarea
+                id="Direccion"
+                name="Direccion"
+                placeholder="Dirección"
+                rows="2"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              ></textarea>
+
+              <label
+                for="Telefono"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Teléfono</label
+              >
+              <input
+                type="text"
+                id="Telefono"
+                name="Telefono"
+                placeholder="Teléfono"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Dui"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
+              >
+              <input
+                type="text"
+                id="Dui"
+                name="Dui"
+                placeholder="DUI"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Nit"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
+              >
+              <input
+                type="text"
+                id="Nit"
+                name="Nit"
+                placeholder="NIT"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Nrc"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">NCR</label
+              >
+              <input
+                type="text"
+                id="Nrc"
+                name="Nrc"
+                placeholder="NRC"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Giro"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Giro</label
+              >
+              <input
+                type="text"
+                id="Giro"
+                name="Giro"
+                placeholder="Giro"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Addmodal').close()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  id="addcl"
+                  class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  Enviar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+        <Modal id="Editmodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
           >
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
             >
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              placeholder="Nombre"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
+              Editar Cliente
+            </h2>
 
-            <label
-              for="tipo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Tipo Cliente</label
+            <!-- Formulario -->
+            <form
+              name="editar"
+              method="POST"
+              class="space-b-4"
+              autocomplete="off"
             >
-            <select
-              id="tipo"
-              name="tipo"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="1">Natural</option>
-              <option value="2">Jurídico</option>
-            </select>
-
-            <label
-              for="Direccion"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Dirección</label
-            >
-            <textarea
-              id="Direccion"
-              name="Direccion"
-              placeholder="Dirección"
-              rows="2"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></textarea>
-
-            <label
-              for="Telefono"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Teléfono</label
-            >
-            <input
-              type="text"
-              id="Telefono"
-              name="Telefono"
-              placeholder="Teléfono"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Dui"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
-            >
-            <input
-              type="text"
-              id="Dui"
-              name="Dui"
-              placeholder="DUI"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Nit"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
-            >
-            <input
-              type="text"
-              id="Nit"
-              name="Nit"
-              placeholder="NIT"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Ncr"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NCR</label
-            >
-            <input
-              type="text"
-              id="Ncr"
-              name="Ncr"
-              placeholder="NCR"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Giro"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Giro</label
-            >
-            <input
-              type="text"
-              id="Giro"
-              name="Giro"
-              placeholder="Giro"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Editmodal').close()"
+              <label
+                for="nombre"
+                class="text-x1 text-gray-700 dark:text-gray-300">Nombre</label
               >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                placeholder="Nombre"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="tipo"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Tipo Cliente</label
               >
-                Enviar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <Modal id="Detailmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Detalle Cliente
-          </h2>
-
-          <!-- Formulario -->
-          <form name="detalle" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              placeholder="Nombre"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="tipo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Tipo Cliente</label
-            >
-            <select
-              id="tipo"
-              name="tipo"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="1">Natural</option>
-              <option value="2">Jurídico</option>
-            </select>
-
-            <label
-              for="Direccion"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Dirección</label
-            >
-            <textarea
-              id="Direccion"
-              name="Direccion"
-              placeholder="Dirección"
-              required
-              disabled
-              rows="2"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></textarea>
-
-            <label
-              for="Telefono"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Teléfono</label
-            >
-            <input
-              type="text"
-              id="Telefono"
-              name="Telefono"
-              placeholder="Teléfono"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Dui"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
-            >
-            <input
-              type="text"
-              id="Dui"
-              name="Dui"
-              placeholder="DUI"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Nit"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
-            >
-            <input
-              type="text"
-              id="Nit"
-              name="Nit"
-              placeholder="NIT"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Ncr"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NCR</label
-            >
-            <input
-              type="text"
-              id="Ncr"
-              name="Ncr"
-              placeholder="NCR"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Giro"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Giro</label
-            >
-            <input
-              type="text"
-              id="Giro"
-              name="Giro"
-              placeholder="Giro"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Detailmodal').close()"
+              <select
+                id="tipo"
+                name="tipo"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
               >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onclick="detailcliente()"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+                <option value="1">Natural</option>
+                <option value="2">Jurídico</option>
+              </select>
+
+              <label
+                for="Direccion"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Dirección</label
               >
-                Enviar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
+              <textarea
+                id="Direccion"
+                name="Direccion"
+                placeholder="Dirección"
+                rows="2"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              ></textarea>
+
+              <label
+                for="Telefono"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Teléfono</label
+              >
+              <input
+                type="text"
+                id="Telefono"
+                name="Telefono"
+                placeholder="Teléfono"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Dui"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
+              >
+              <input
+                type="text"
+                id="Dui"
+                name="Dui"
+                placeholder="DUI"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Nit"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
+              >
+              <input
+                type="text"
+                id="Nit"
+                name="Nit"
+                placeholder="NIT"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Ncr"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">NCR</label
+              >
+              <input
+                type="text"
+                id="Ncr"
+                name="Ncr"
+                placeholder="NCR"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Giro"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Giro</label
+              >
+              <input
+                type="text"
+                id="Giro"
+                name="Giro"
+                placeholder="Giro"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Editmodal').close()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  Enviar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+        <Modal id="Detailmodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+            >
+              Detalle Cliente
+            </h2>
+
+            <!-- Formulario -->
+            <form name="detalle" class="space-b-4">
+              <label
+                for="nombre"
+                class="text-x1 text-gray-700 dark:text-gray-300">Nombre</label
+              >
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                placeholder="Nombre"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="tipo"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Tipo Cliente</label
+              >
+              <select
+                id="tipo"
+                name="tipo"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="1">Natural</option>
+                <option value="2">Jurídico</option>
+              </select>
+
+              <label
+                for="Direccion"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Dirección</label
+              >
+              <textarea
+                id="Direccion"
+                name="Direccion"
+                placeholder="Dirección"
+                required
+                disabled
+                rows="2"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              ></textarea>
+
+              <label
+                for="Telefono"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Teléfono</label
+              >
+              <input
+                type="text"
+                id="Telefono"
+                name="Telefono"
+                placeholder="Teléfono"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Dui"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
+              >
+              <input
+                type="text"
+                id="Dui"
+                name="Dui"
+                placeholder="DUI"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Nit"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
+              >
+              <input
+                type="text"
+                id="Nit"
+                name="Nit"
+                placeholder="NIT"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Ncr"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">NCR</label
+              >
+              <input
+                type="text"
+                id="Ncr"
+                name="Ncr"
+                placeholder="NCR"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Giro"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Giro</label
+              >
+              <input
+                type="text"
+                id="Giro"
+                name="Giro"
+                placeholder="Giro"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Detailmodal').close()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onclick="detailcliente()"
+                  class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  Enviar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+      </div>
     </Sidebar>
   </div>
-</Layout>
-<script type="module">
-  const clientes = document.getElementsByName("cliente");
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("token"))
-    .split("=")[1];
-  const addcl = document.getElementById("addcl");
-addcl.addEventListener("click", () => {
-  const formcliente = document.getElementsByName("agregar")[0];
-  if (!formcliente.Nombre.value) {
-  console.log("El nombre del cliente es requerido");
-  window.showAlert("El nombre del cliente es requerido", "error");
-  return;
-  }
-  addcliente();
-});
-  const actions = document.getElementById("acciones");
-  actions.addEventListener("click", () => {
-    const acciones = document.getElementsByClassName("acciones");
-    for (let i = 0; i < acciones.length; i++) {
-      acciones[i].classList.toggle("hidden");
-    }
-  });
-  const eliminar = document.getElementById("eliminar");
-  eliminar.addEventListener("click", async () => {
-    if (clientes.length === 0) {
-      window.showAlert("No hay clientes seleccionados", "error");
-      return;
-    }
-
-    for (let i = 0; i < clientes.length; i++) {
-      if (clientes[i].checked) {
-        const clienteNombre =
-          clientes[i].parentElement.parentElement.parentElement.children[1]
-            .textContent;
-        const confirmacion = await new Promise((resolve) => {
-          window.showAlert(
-            `¿Estás seguro que deseas eliminar al cliente \ncon nombre: ${clienteNombre}?`,
-            "confirm",
-            {
-              onCancel: () => {
-                console.log("Operación cancelada");
-                resolve(false);
-              },
-              onAccept: () => {
-                resolve(true);
-              },
-            }
-          );
-        });
-
-        if (confirmacion) {
-          await delcliente(clientes[i].value, i === clientes.length - 1);
-        }
-      }
-    }
-  });
-
-  const editar = document.getElementById("editButton");
-  editar.addEventListener("click", () => {
-    let selecionado;
-
-    const formeditar = document.getElementsByName("editar")[0];
-    for (let i = 0; i < clientes.length; i++) {
-      if (clientes[i].checked) {
-        selecionado = clientes[i].value;
-        break;
-      }
-    }
-    if (!selecionado) {
-      window.showAlert("No hay cliente seleccionado", "error");
-      return;
-    }
-    document.getElementById("Editmodal").showModal();
-    fetch("http://localhost:8000/clientes/detalles/" + selecionado, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        formeditar.nombre.value = data.nombre;
-        formeditar.tipo.value = data.tipo_cliente;
-        formeditar.Direccion.value = data.direccion;
-        formeditar.Telefono.value = data.telefono;
-        formeditar.Dui.value = data.dui;
-        formeditar.Nit.value = data.nit;
-        formeditar.Ncr.value = data.nrc;
-        formeditar.Giro.value = data.giro;
-      });
-
-    formeditar.addEventListener("submit", (e) => {
-      e.preventDefault();
-      if (!formeditar.nombre.value) {
+  <script type="module">
+    const clientes = document.getElementsByName("cliente");
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token"))
+      .split("=")[1];
+    const addcl = document.getElementById("addcl");
+    addcl.addEventListener("click", () => {
+      const formcliente = document.getElementsByName("agregar")[0];
+      if (!formcliente.Nombre.value) {
+        console.log("El nombre del cliente es requerido");
         window.showAlert("El nombre del cliente es requerido", "error");
         return;
       }
-      editcliente(selecionado);
+      addcliente();
     });
-  });
-
-  const detalle = document.getElementById("detallesbtn");
-  detalle.addEventListener("click", () => {
-    let selecionado;
-
-    const formdetalle = document.getElementsByName("detalle")[0];
-    for (let i = 0; i < clientes.length; i++) {
-      if (clientes[i].checked) {
-        selecionado = clientes[i].value;
-        break;
+    const actions = document.getElementById("acciones");
+    actions.addEventListener("click", () => {
+      const acciones = document.getElementsByClassName("acciones");
+      for (let i = 0; i < acciones.length; i++) {
+        acciones[i].classList.toggle("hidden");
       }
-    }
-    if (!selecionado) {
-      window.showAlert("No hay cliente seleccionado", "error");
-      return;
-    }
-    document.getElementById("Detailmodal").showModal();
-    fetch("http://localhost:8000/clientes/detalles/" + selecionado, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        formdetalle.nombre.value = data.nombre;
-        formdetalle.tipo.value = data.tipo_cliente;
-        formdetalle.Direccion.value = data.direccion;
-        formdetalle.Telefono.value = data.telefono;
-        formdetalle.Dui.value = data.dui;
-        formdetalle.Nit.value = data.nit;
-        formdetalle.Ncr.value = data.nrc;
-        formdetalle.Giro.value = data.giro;
+    });
+    const eliminar = document.getElementById("eliminar");
+    eliminar.addEventListener("click", async () => {
+      let seleccionado = false;
+
+      for (let i = 0; i < clientes.length; i++) {
+        if (clientes[i].checked) {
+          seleccionado = true;
+          const clienteNombre =
+            clientes[i].parentElement.parentElement.parentElement.children[1]
+              .textContent;
+          const confirmacion = await new Promise((resolve) => {
+            window.showAlert(
+              `¿Estás seguro que deseas eliminar al cliente \ncon nombre: ${clienteNombre}?`,
+              "confirm",
+              {
+                onCancel: () => {
+                  console.log("Operación cancelada");
+                  resolve(false);
+                },
+                onAccept: () => {
+                  resolve(true);
+                },
+              }
+            );
+          });
+
+          if (confirmacion) {
+            await delcliente(clientes[i].value, i === clientes.length - 1);
+          }
+        
+        }
+      }
+      if (!seleccionado) {
+        window.showAlert("No hay cliente seleccionado", "error");
+      }
+    });
+
+    const editar = document.getElementById("editButton");
+    editar.addEventListener("click", () => {
+      let selecionado;
+
+      const formeditar = document.getElementsByName("editar")[0];
+      for (let i = 0; i < clientes.length; i++) {
+        if (clientes[i].checked) {
+          selecionado = clientes[i].value;
+          break;
+        }
+      }
+      if (!selecionado) {
+        window.showAlert("No hay cliente seleccionado", "error");
+        return;
+      }
+      document.getElementById("Editmodal").showModal();
+      fetch("http://localhost:8000/clientes/detalles/" + selecionado, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          formeditar.nombre.value = data.nombre;
+          formeditar.tipo.value = data.tipo_cliente;
+          formeditar.Direccion.value = data.direccion;
+          formeditar.Telefono.value = data.telefono;
+          formeditar.Dui.value = data.dui;
+          formeditar.Nit.value = data.nit;
+          formeditar.Ncr.value = data.nrc;
+          formeditar.Giro.value = data.giro;
+        });
+
+      formeditar.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!formeditar.nombre.value) {
+          window.showAlert("El nombre del cliente es requerido", "error");
+          return;
+        }
+        editcliente(selecionado);
       });
-  });
-
-  function addcliente() {
-    const formcliente = document.getElementsByName("agregar")[0];
-    // Verifica que todo esté correcto
-    const nombre = formcliente.Nombre.value;
-
-    const tipo = formcliente.tipo.value;
-    const direccion = formcliente.Direccion.value;
-    const telefono = formcliente.Telefono.value;
-    const dui = formcliente.Dui.value;
-    const nit = formcliente.Nit.value;
-    const nrc = formcliente.Nrc.value;
-    const giro = formcliente.Giro.value;
-    //get token from cookie
-    // Envía los datos al servidor
-    fetch("http://localhost:8000/clientes/agregar", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nombre: nombre,
-        tipo_cliente: tipo,
-        direccion: direccion,
-        telefono: telefono,
-        dui: dui,
-        nit: nit,
-        nrc: nrc,
-        giro: giro,
-        fecha_registro: new Date().toISOString(),
-      }),
-    }).then((res) => {
-      if (res.ok) {
-        //custom alert
-        document.getElementById("Addmodal").close();
-        window.showAlert("Cliente agregado correctamente", "success");
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
-      } else {
-        window.showAlert("Error al agregar el cliente", "error");
-      }
     });
-  }
-  function delcliente(id, ultimo) {
-    fetch("http://localhost:8000/clientes/eliminar/" + id, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    }).then((res) => {
-      if (res.ok) {
-        //custom alert
-        document.getElementById("Addmodal").close();
-        window.showAlert("Cliente eliminado correctamente", "success");
-        if (ultimo) {
+
+    const detalle = document.getElementById("detallesbtn");
+    detalle.addEventListener("click", () => {
+      let selecionado;
+
+      const formdetalle = document.getElementsByName("detalle")[0];
+      for (let i = 0; i < clientes.length; i++) {
+        if (clientes[i].checked) {
+          selecionado = clientes[i].value;
+          break;
+        }
+      }
+      if (!selecionado) {
+        window.showAlert("No hay cliente seleccionado", "error");
+        return;
+      }
+      document.getElementById("Detailmodal").showModal();
+      fetch("http://localhost:8000/clientes/detalles/" + selecionado, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          formdetalle.nombre.value = data.nombre;
+          formdetalle.tipo.value = data.tipo_cliente;
+          formdetalle.Direccion.value = data.direccion;
+          formdetalle.Telefono.value = data.telefono;
+          formdetalle.Dui.value = data.dui;
+          formdetalle.Nit.value = data.nit;
+          formdetalle.Ncr.value = data.nrc;
+          formdetalle.Giro.value = data.giro;
+        });
+    });
+
+    function addcliente() {
+      const formcliente = document.getElementsByName("agregar")[0];
+      // Verifica que todo esté correcto
+      const nombre = formcliente.Nombre.value;
+
+      const tipo = formcliente.tipo.value;
+      const direccion = formcliente.Direccion.value;
+      const telefono = formcliente.Telefono.value;
+      const dui = formcliente.Dui.value;
+      const nit = formcliente.Nit.value;
+      const nrc = formcliente.Nrc.value;
+      const giro = formcliente.Giro.value;
+      //get token from cookie
+      // Envía los datos al servidor
+      fetch("http://localhost:8000/clientes/agregar", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombre: nombre,
+          tipo_cliente: tipo,
+          direccion: direccion,
+          telefono: telefono,
+          dui: dui,
+          nit: nit,
+          nrc: nrc,
+          giro: giro,
+          fecha_registro: new Date().toISOString(),
+        }),
+      }).then((res) => {
+        if (res.ok) {
+          //custom alert
+          document.getElementById("Addmodal").close();
+          window.showAlert("Cliente agregado correctamente", "success");
           setTimeout(() => {
             window.location.reload();
           }, 500);
+        } else {
+          window.showAlert("Error al agregar el cliente", "error");
         }
-      } else {
-        window.showAlert("Error al eliminar el cliente", "error");
-      }
-    });
-  }
-  function editcliente(id) {
-    const formeditar = document.getElementsByName("editar")[0];
-    const nombre = formeditar.nombre.value;
-    const tipo = formeditar.tipo.value;
-    const direccion = formeditar.Direccion.value;
-    const telefono = formeditar.Telefono.value;
-    const dui = formeditar.Dui.value;
-    const nit = formeditar.Nit.value;
-    const nrc = formeditar.Ncr.value;
-    const giro = formeditar.Giro.value;
-    //get token from cookie
+      });
+    }
+    function delcliente(id, ultimo) {
+      fetch("http://localhost:8000/clientes/eliminar/" + id, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }).then((res) => {
+        if (res.ok) {
+          //custom alert
+          document.getElementById("Addmodal").close();
+          window.showAlert("Cliente eliminado correctamente", "success");
+          if (ultimo) {
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
+          }
+        } else {
+          window.showAlert("Error al eliminar el cliente", "error");
+        }
+      });
+    }
+    function editcliente(id) {
+      const formeditar = document.getElementsByName("editar")[0];
+      const nombre = formeditar.nombre.value;
+      const tipo = formeditar.tipo.value;
+      const direccion = formeditar.Direccion.value;
+      const telefono = formeditar.Telefono.value;
+      const dui = formeditar.Dui.value;
+      const nit = formeditar.Nit.value;
+      const nrc = formeditar.Ncr.value;
+      const giro = formeditar.Giro.value;
+      //get token from cookie
 
-    // Envía los datos al servidor
-    fetch("http://localhost:8000/clientes/actualizar/" + id, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nombre: nombre,
-        tipo_cliente: tipo,
-        direccion: direccion,
-        telefono: telefono,
-        dui: dui,
-        nit: nit,
-        nrc: nrc,
-        giro: giro,
-      }),
-    }).then((res) => {
-      if (res.ok) {
-        //custom alert
-        document.getElementById("Editmodal").close();
-        window.showAlert("Cliente editado correctamente", "success");
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
-      } else {
-        window.showAlert("Error al editar el cliente", "error");
-      }
-    });
-  }
-</script>
+      // Envía los datos al servidor
+      fetch("http://localhost:8000/clientes/actualizar/" + id, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombre: nombre,
+          tipo_cliente: tipo,
+          direccion: direccion,
+          telefono: telefono,
+          dui: dui,
+          nit: nit,
+          nrc: nrc,
+          giro: giro,
+        }),
+      }).then((res) => {
+        if (res.ok) {
+          //custom alert
+          document.getElementById("Editmodal").close();
+          window.showAlert("Cliente editado correctamente", "success");
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        } else {
+          window.showAlert("Error al editar el cliente", "error");
+        }
+      });
+    }
+  </script>
+</Layout>
