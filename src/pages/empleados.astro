@@ -168,40 +168,7 @@ const tipoClienteMap = {
         >
           <h2 class="text-xl font-semibold">Empleados</h2>
           <Tabla>
-            <slot>
-              <!--foreach cliente fill a column -->
-                    <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
-                      <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                        <input
-                          type="checkbox"
-                          name="cliente"
-                        />
-                      </td>
-                      <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                        01
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        Enrique Alexander Hernandez Romero
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        Ghoster
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        Administrador
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis text-green-400 dark:text-green-200">
-                        Si
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center">
-                        <img
-                            src={user.imagen ||
-                            "https://avatars.githubusercontent.com/u/178928214?v=4"}
-                            alt="Foto de perfil"
-                            class="w-12 h-12 object-cover"
-                         />
-                      </td>
-                    </tr>
-            </slot>
+         
           </Tabla>
         </div>
 
