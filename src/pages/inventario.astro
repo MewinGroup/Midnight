@@ -16,7 +16,7 @@ if ((await verify(data.token?.value)) == false) {
 }
 const token = data.token?.value;
 const res = await userinfo(token);
-const user = res[0];
+const user = res;
 ---
 
 <Layout title="Panel de Control">
@@ -66,7 +66,7 @@ const user = res[0];
                   </div>
                 </Card>
               </div>
-            <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/facturas';">
+            <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/cajas';">
               <Card title="" description="">
                 <div class="flex flex-col items-center">
                   <i class="fa-solid fa-cash-register text-6xl mb-2"></i>
@@ -76,7 +76,7 @@ const user = res[0];
                 </div>
               </Card>
             </div>
-            <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/reporte';">
+            <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/categorias';">
               <Card title="" description="">
                 <div class="flex flex-col items-center">
                   <i class="fa-solid fa-bookmark text-6xl mb-2"></i>
@@ -86,7 +86,7 @@ const user = res[0];
                 </div>
               </Card>
             </div>
-            <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/movimientos_caja';">
+            <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/documentos';">
               <Card title="" description="">
                 <div class="flex flex-col items-center">
                   <i class="fa-solid fa-address-card text-6xl mb-2"></i>
@@ -96,7 +96,7 @@ const user = res[0];
                 </div>
               </Card>
             </div>
-            <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/movimientos';">
+            <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/marcas';">
                 <Card title="" description="">
                   <div class="flex flex-col items-center">
                     <i class="fa-solid fa-trademark text-6xl mb-2"></i>
@@ -106,7 +106,7 @@ const user = res[0];
                   </div>
                 </Card>
               </div>
-              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/movimientos';">
+              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/presentaciones';">
                 <Card title="" description="">
                   <div class="flex flex-col items-center">
                     <i class="fa-solid fa-wine-bottle text-6xl mb-2"></i>
@@ -116,7 +116,7 @@ const user = res[0];
                   </div>
                 </Card>
               </div>
-              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/movimientos';">
+              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/servicios';">
                 <Card title="" description="">
                   <div class="flex flex-col items-center">
                     <i class="fa-solid fa-list-check text-6xl mb-2"></i>
@@ -126,7 +126,7 @@ const user = res[0];
                   </div>
                 </Card>
               </div>
-              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/movimientos';">
+              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/ubicaciones';">
                 <Card title="" description="">
                   <div class="flex flex-col items-center">
                     <i class="fa-solid fa-map-location-dot text-6xl mb-2"></i>
@@ -136,7 +136,7 @@ const user = res[0];
                   </div>
                 </Card>
               </div>
-              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/movimientos';">
+              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/unidades';">
                 <Card title="" description="">
                   <div class="flex flex-col items-center">
                     <i class="fa-solid fa-ruler text-6xl mb-2"></i>
@@ -146,7 +146,7 @@ const user = res[0];
                   </div>
                 </Card>
               </div>
-              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/movimientos';">
+              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/metodos';">
                 <Card title="" description="">
                   <div class="flex flex-col items-center">
                     <i class="fa-solid fa-credit-card text-6xl mb-2"></i>
