@@ -244,10 +244,10 @@ const tipoClienteMap = {
           <div class="flex justify-between items-center">
             <h2 class="text-xl font-semibold">Clientes</h2>
             <button
-              class="btn text-white px-2 py-1 rounded-md hover:text-gray-500"
-              id="acciones"
+              class="btn text-indigo-900 dark:text-slate-200 px-2 py-1 rounded-md hover:text-gray-500 dark:hover:text-gray-50"
+              id="acciones" 
             >
-              Seleccion
+            <i class="fa-solid fa-clipboard-check" id="Activar"></i> Seleccionar
             </button>
           </div>
 
@@ -749,14 +749,16 @@ const tipoClienteMap = {
         return;
       }
       addcliente();
-    });
-    const actions = document.getElementById("acciones");
-    actions.addEventListener("click", () => {
-      const acciones = document.getElementsByClassName("acciones");
-      for (let i = 0; i < acciones.length; i++) {
-        acciones[i].classList.toggle("hidden");
-      }
-    });
+    });const actions = document.getElementById("acciones");
+
+actions.addEventListener("click", () => {
+  const acciones = document.getElementsByClassName("acciones");
+  const activar = document.getElementById("Activar")
+
+  for (let i = 0; i < acciones.length; i++) {
+    acciones[i].classList.toggle("hidden");
+  }
+});
     const eliminar = document.getElementById("eliminar");
     eliminar.addEventListener("click", async () => {
       let seleccionado = false;

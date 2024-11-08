@@ -157,7 +157,7 @@ const tipoClienteMap = {
         <div
           class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
         >
-          <h2 class="text-xl font-semibold">Clientes</h2>
+          <h2 class="text-xl font-semibold">Ventas</h2>
           <Tabla>
             <slot>
               <!--foreach cliente fill a column -->
@@ -267,7 +267,7 @@ const tipoClienteMap = {
             <label
               for="Cliente"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Cliente</label
+              >Venta</label
             >
             <input
               type="text"
@@ -391,7 +391,7 @@ const tipoClienteMap = {
           class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
         >
           <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Editar Cliente
+            Editar Venta
           </h2>
 
           <form name="editar" method="POST" class="space-b-4">
@@ -572,7 +572,7 @@ const tipoClienteMap = {
           class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
         >
           <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Eliminar Cliente
+            Eliminar Venta
           </h2>
 
           <!-- Formulario -->
@@ -756,22 +756,12 @@ const tipoClienteMap = {
           class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
         >
           <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Detalle Cliente
+            Detalle Venta
           </h2>
 
           <!-- Formulario -->
           <form name="agregar" method="POST" class="space-b-4">
-            <label for="buscar" class="text-x1 text-gray-700 dark:text-gray-300"
-              ><i class="bi bi-search"></i> Buscar Cliente</label
-            >
-            <input
-              type="text"
-              id="buscar"
-              name="buscar"
-              placeholder="Buscar Cliente"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
+          
             <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
               >Nombre</label
             >
