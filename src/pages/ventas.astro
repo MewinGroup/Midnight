@@ -7,7 +7,7 @@ import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
 //Aqui va para conseguir el total de ventas
 import Tabla from "@components/ventas/Tabla.astro";
-import Modal from "@componentS/dialog.astro";
+import Modal from "@components/dialog.astro";
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -31,7 +31,7 @@ try {
   });
 }
 //Hay que cambiar esto
-const user = res;
+const user = res[0];
 /*
 const clients = (await clientes(token)) || [];
 const total = (await totalclientes(token)) || { total: 0 };
