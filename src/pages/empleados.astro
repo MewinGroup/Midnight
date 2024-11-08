@@ -10,6 +10,9 @@ import Tabla from "@components/empleados/Tabla.astro";
 import Modal from "@components/dialog.astro";
 import Alertas from "@components/alertas.astro";
 
+
+console.log(import.meta.env.APIKEY); 
+
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
     status: 302,
@@ -32,7 +35,7 @@ try {
   });
 }
 
-const user = res[0];
+const user = res;
 
 const tipoClienteMap = {
   1: "Natural",

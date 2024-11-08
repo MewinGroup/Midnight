@@ -32,7 +32,7 @@ try {
   });
 }
 
-const user = res[0];
+const user = res;
 const clients = Array.isArray(await clientes(token)) ? await clientes(token) : [];
 const total = (await totalclientes(token)) || { total: 0 };
 

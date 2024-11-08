@@ -11,33 +11,23 @@ async function totalclientes(
   };
 
   try {
-    const [totalResponse, lastMonthResponse] = await Promise.all([
-      fetch("http://localhost:8000/clientes/total", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${authcode}`,
-        },
-      }),
-      fetch("http://localhost:8000/clientes/lastmonth", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${authcode}`,
-        },
-      }),
-    ]);
+//fech /clientes/estadisticas{total, lastmonth}
+    const response = await fetch("http://localhost:8000/clientes/estadisticas", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${authcode}`,
+      },
+    });
 
-    if (totalResponse.ok) {
-      const totalData = await totalResponse.json();
-      valores.total = totalData.total;
-    }
-
-    if (lastMonthResponse.ok) {
-      const lastMonthData = await lastMonthResponse.json();
-      valores.lastmonth = lastMonthData.total;
+    if (response.status === 200) {
+      const data = await response.json();
+      valores.total = data.total;
+      valores.lastmonth = data.lastmonth;
+    } else {
+      console.error(response);
     }
   } catch (error) {
     console.error(error);
-    return;
   }
 
   return valores;

@@ -1,6 +1,6 @@
 ---
 export const prerender = false;
-const data = Astro.locals;
+const data = Astro.locals as { token?: { value: string } };
 import Layout from "@Layouts/layout.astro";
 import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
@@ -16,7 +16,8 @@ if ((await verify(data.token?.value)) == false) {
 }
 const token = data.token?.value;
 const res = await userinfo(token);
-const user = res[0];
+const user = res;
+
 ---
 
 <Layout title="Panel de Control">

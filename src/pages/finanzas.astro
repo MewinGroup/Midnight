@@ -16,7 +16,7 @@ if ((await verify(data.token?.value)) == false) {
 }
 const token = data.token?.value;
 const res = await userinfo(token);
-const user = res[0];
+const user = res;
 ---
 
 <Layout title="Panel de Control">
