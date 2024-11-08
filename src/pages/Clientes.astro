@@ -7,7 +7,7 @@ import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
 import { totalclientes, clientes } from "@Lib/clientes";
 import Tabla from "@components/clientes/Tabla.astro";
-import Modal from "@components/clientes/dialog.astro";
+import Modal from "@components/dialog.astro";
 import Alertas from "@components/alertas.astro";
 
 if ((await verify(data.token?.value)) == false) {
@@ -275,21 +275,6 @@ const tipoClienteMap = {
                     </td>
                     <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
                       {tipoCliente}
-                    </td>
-                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
-                      {cliente.direccion}
-                    </td>
-                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
-                      {cliente.telefono}
-                    </td>
-                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
-                      {cliente.dui}
-                    </td>
-                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
-                      {cliente.nit}
-                    </td>
-                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
-                      {cliente.nrc}
                     </td>
                     <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
                       {cliente.giro}
