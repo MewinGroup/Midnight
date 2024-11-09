@@ -25,5 +25,20 @@ async function ventastop(token: string): Promise<any> {
         throw error;
     }
 }
+async function obtenerempleados(token: string): Promise<any> {
+    try {
+        const response = await fetch('http://localhost:8000/usuarios/listar', {
+            method: 'GET',
+            headers: {
+                'accept': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching:', error);
+        throw error;
+    }
+}
 
-export {uploadimage , ventastop}
+export {uploadimage , ventastop, obtenerempleados}
