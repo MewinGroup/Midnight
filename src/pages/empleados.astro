@@ -6,12 +6,12 @@ import Layout from "@Layouts/layout.astro";
 import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
 //Aqui la lib empleados
+import { ventastop } from "@Lib/users";
 import Tabla from "@components/empleados/Tabla.astro";
 import Modal from "@components/dialog.astro";
 import Alertas from "@components/alertas.astro";
 
-
-console.log(import.meta.env.APIKEY); 
+console.log(import.meta.env.APIKEY);
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -36,7 +36,30 @@ try {
 }
 
 const user = res;
-
+let empleados = [];
+try {
+  const response = await ventastop(token);
+  empleados = response; // Remove second json() call since ventastop already returns parsed data
+} catch (error) {
+  console.error("Error fetching empleados:", error);
+  // Handle error appropriately - could throw or return empty array/error state
+  throw error;
+}
+console.log(empleados);
+// Response body
+// Download
+// [
+//   {
+//     "vendedor": "Juan",
+//     "posicion": 1,
+//     "total_ventas": 1
+//   },
+//   {
+//     "vendedor": "Brenda",
+//     "posicion": 2,
+//     "total_ventas": 8
+//   },
+// ]
 const tipoClienteMap = {
   1: "Natural",
   2: "Jurídico",
@@ -81,7 +104,7 @@ const tipoClienteMap = {
     <Sidebar tipo={user.tipo_perfil}>
       <div class="flex-1 p-4 md:p-6 dark:bg-gray-800">
         <h1 class="text-3xl font-bold mb-6">
-            <i class="fa-solid fa-user-tie"></i> Listado de Empleados
+          <i class="fa-solid fa-user-tie"></i> Listado de Empleados
         </h1>
 
         <div class="flex items-center justify-end mb-6">
@@ -157,541 +180,636 @@ const tipoClienteMap = {
           </Card>
 
           <Card title="Total de Empleados" description="Total"
-            ><i class="fa-solid fa-id-card-clip"></i> 1</Card
+            ><i class="fa-solid fa-id-card-clip"></i> {0}</Card
           >
-          <Card title="Empleado del Mes" description="El ultimo Mes"
-            ><i class="fa-solid fa-trophy"></i> Alex <br> <i class="fa-solid fa-file-invoice-dollar"></i> 10 ventas en total
+          <Card title="Empleado del Mes" description="El ultimo Mes">
+            {empleados && empleados.length > 0 ? (
+              <>
+                <i class="fa-solid fa-trophy"></i>
+                {" " + empleados[0].vendedor}
+                <br />
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                {" " + empleados[0].total_ventas} ventas en total
+              </>
+            ) : (
+              <p>No hay empleados registrados este mes</p>
+            )}
           </Card>
-
         </div>
-
-        <!-- Tabla de órdenes recientes -->
         <div
           class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
         >
           <h2 class="text-xl font-semibold">Empleados</h2>
-          <Tabla>
-         
-          </Tabla>
+          <Tabla />
         </div>
 
         <!-- Actualizaciones recientes -->
-        <div class="mt-6 bg-white p-6 rounded-lg shadow-md dark:bg-gray-700 dark:text-white">
-            <h2 class="text-xl font-semibold dark:text-white">
-              Empleados con mas ventas
-            </h2>
-            <ul class="mt-4 space-y-4">
-              <!-- Empleado 1 -->
-              <li class="flex items-center justify-between p-4 bg-gray-100 rounded-lg dark:bg-gray-800">
-                <div class="flex items-center space-x-4">
-                  <i class="fas fa-crown text-yellow-500 text-2xl"></i>
-                  <div>
-                    <p class="text-lg font-medium">Alex</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-300">10 ventas</p>
-                  </div>
-                </div>
-                <span class="text-indigo-950 font-semibold dark:text-slate-200">1° Lugar</span>
-              </li>
-          
-              <!-- Empleado 2 -->
-              <li class="flex items-center justify-between p-4 bg-gray-100 rounded-lg dark:bg-gray-800">
-                <div class="flex items-center space-x-4">
-                  <i class="fas fa-medal text-gray-400 text-2xl"></i>
-                  <div>
-                    <p class="text-lg font-medium">Brenda</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-300">8 ventas</p>
-                  </div>
-                </div>
-                <span class="text-slate-500 font-semibold dark:text-indigo-200">2° Lugar</span>
-              </li>
-          
-              <!-- Empleado 3 -->
-              <li class="flex items-center justify-between p-4 bg-gray-100 rounded-lg dark:bg-gray-800">
-                <div class="flex items-center space-x-4">
-                  <i class="fas fa-award text-orange-400 text-2xl"></i>
-                  <div>
-                    <p class="text-lg font-medium">Carlos</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-300">7 ventas</p>
-                  </div>
-                </div>
-                <span class="text-amber-600 font-semibold dark:text-amber-400">3° Lugar</span>
-              </li>
-            </ul>
-          </div>          
-
-      <!-- Addmodal Content -->
-      <!-- Modal hidden as defaul -->
-      <!--AGREGAR -->
-      <Modal id="Addmodal">
         <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          class="mt-6 bg-white p-6 rounded-lg shadow-md dark:bg-gray-700 dark:text-white"
         >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Agregar Empleado
+          <h2 class="text-xl font-semibold dark:text-white">
+            Empleados con mas ventas
           </h2>
+          <ul class="mt-4 space-y-4">
+            {
+              empleados.map((empleado, index) => (
+                <li class="flex items-center justify-between p-4 bg-gray-100 rounded-lg dark:bg-gray-800">
+                  <div class="flex items-center space-x-4">
+                    <i
+                      class={`fas ${
+                        index === 0
+                          ? "fa-crown text-yellow-500"
+                          : index === 1
+                            ? "fa-medal text-gray-400"
+                            : "fa-award text-orange-400"
+                      } text-2xl`}
+                    />
+                    <div>
+                      <p class="text-lg font-medium">{empleado.vendedor}</p>
+                      <p class="text-sm text-gray-500 dark:text-gray-300">
+                        {empleado.total_ventas} ventas
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    class={`font-semibold ${
+                      index === 0
+                        ? "text-indigo-950 dark:text-slate-200"
+                        : index === 1
+                          ? "text-slate-500 dark:text-indigo-200"
+                          : "text-amber-600 dark:text-amber-400"
+                    }`}
+                  >
+                    {empleado.posicion}° Lugar
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
 
-          <!-- Formulario -->
-          <form name="agregar" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
+        <!-- Addmodal Content -->
+        <!-- Modal hidden as defaul -->
+        <!--AGREGAR -->
+        <Modal id="Addmodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
             >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
+              Agregar Empleado
+            </h2>
 
-            <label
-              for="Usuario"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Usuario</label
-            >
-            <input
-              id="Usuario"
-              name="Usuario"
-              type="text"
-              required
-              placeholder="Nombre de Usuario"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
+            <!-- Formulario -->
+            <form name="agregar" method="POST" class="space-b-4">
+              <label
+                for="nombre"
+                class="text-x1 text-gray-700 dark:text-gray-300">Nombre</label
+              >
+              <input
+                type="text"
+                id="nombre"
+                name="Nombre"
+                placeholder="Nombre"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
 
-            <label
-              for="Tipo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Tipo Empleado</label
-            >
-            <select
-              id="Tipo"
-              name="Tipo"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-            <option value="">Seleccione el tipo de empleado</option>
+              <label
+                for="Usuario"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Usuario</label
+              >
+              <input
+                id="Usuario"
+                name="Usuario"
+                type="text"
+                required
+                placeholder="Nombre de Usuario"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Tipo"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Tipo Empleado</label
+              >
+              <select
+                id="Tipo"
+                name="Tipo"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="">Seleccione el tipo de empleado</option>
                 <option value="1">Administrador</option>
                 <option value="2">Vendedor</option>
-            </select>
+              </select>
 
-            <label
-              for="Estado"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Estado</label
-            >
-            <select
-              id="Estado"
-              name="Estado"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
+              <label
+                for="Estado"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Estado</label
+              >
+              <select
+                id="Estado"
+                name="Estado"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
                 <option value="1">Activo</option>
                 <option value="2">Inactivo</option>
-            </select>
-            <!-- Campo oculto para enviar el link de la imagen en el formulario -->
-            <input type="hidden" id="imagenUrl" name="imagenUrl">
+              </select>
+              <!-- Campo oculto para enviar el link de la imagen en el formulario -->
+              <input type="hidden" id="imagenUrl" name="imagenUrl" />
 
-            <!-- Contenedor para la imagen dinámica -->
-            <label for="empleadoImagen" class="text-sm text-gray-700 dark:text-gray-300 mt-2">Imagen</label>
-            <div class="mt-4">
-             <img id="empleadoImagen" src="" alt="Imagen del Empleado" class="w-16 h-16 rounded-md border border-gray-300 dark:border-gray-600">
-            </div>
-
-            <!-- JavaScript para actualizar la imagen y el valor del campo oculto -->
-            <script>
-             document.getElementById('Tipo').addEventListener('change', function() {
-             const imagen = document.getElementById('empleadoImagen');
-             const imagenUrlInput = document.getElementById('imagenUrl');
-
-   
-             if (this.value === '1') {  // Administrador
-             imagen.src = 'https://icons.veryicon.com/png/o/commerce-shopping/wangdianbao-icon-monochrome/administrators-6.png';
-             imagenUrlInput.value = 'https://icons.veryicon.com/png/o/commerce-shopping/wangdianbao-icon-monochrome/administrators-6.png';
-             } else if (this.value === '2') {  // Vendedor
-             imagen.src = 'https://cdn-icons-png.flaticon.com/512/9187/9187604.png';
-             imagenUrlInput.value = 'https://cdn-icons-png.flaticon.com/512/9187/9187604.png';
-             } else {
-             imagen.src = 'https://i0.wp.com/estudionada.com/wp-content/uploads/2022/09/Nada_F.png?fit=512%2C512&ssl=1'; 
-             imagenUrlInput.value = ''; 
-             }
-             });
-             </script>
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Addmodal').close()"
+              <!-- Contenedor para la imagen dinámica -->
+              <label
+                for="empleadoImagen"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Imagen</label
               >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                id="addcl"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+              <div class="mt-4">
+                <img
+                  id="empleadoImagen"
+                  src=""
+                  alt="Imagen del Empleado"
+                  class="w-16 h-16 rounded-md border border-gray-300 dark:border-gray-600"
+                />
+              </div>
+
+              <!-- JavaScript para actualizar la imagen y el valor del campo oculto -->
+              <script>
+                document
+                  .getElementById("Tipo")
+                  .addEventListener("change", function () {
+                    const imagen = document.getElementById("empleadoImagen");
+                    const imagenUrlInput = document.getElementById("imagenUrl");
+
+                    if (this.value === "1") {
+                      // Administrador
+                      imagen.src =
+                        "https://icons.veryicon.com/png/o/commerce-shopping/wangdianbao-icon-monochrome/administrators-6.png";
+                      imagenUrlInput.value =
+                        "https://icons.veryicon.com/png/o/commerce-shopping/wangdianbao-icon-monochrome/administrators-6.png";
+                    } else if (this.value === "2") {
+                      // Vendedor
+                      imagen.src =
+                        "https://cdn-icons-png.flaticon.com/512/9187/9187604.png";
+                      imagenUrlInput.value =
+                        "https://cdn-icons-png.flaticon.com/512/9187/9187604.png";
+                    } else {
+                      imagen.src =
+                        "https://i0.wp.com/estudionada.com/wp-content/uploads/2022/09/Nada_F.png?fit=512%2C512&ssl=1";
+                      imagenUrlInput.value = "";
+                    }
+                  });
+              </script>
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Addmodal').close()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  id="addcl"
+                  class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  Enviar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+        <!--EDITAR -->
+        <Modal id="Editmodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+            >
+              Editar Empleado
+            </h2>
+
+            <!-- Formulario -->
+            <form name="editar" method="POST" class="space-b-4">
+              <label
+                for="buscar"
+                class="text-x1 text-gray-700 dark:text-gray-300"
               >
-                Enviar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <!--EDITAR -->
-      <Modal id="Editmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Editar Empleado
-          </h2>
+                <i class="bi bi-search"></i> Buscar Empleado
+              </label>
+              <input
+                type="text"
+                id="buscar"
+                name="buscar"
+                placeholder="Buscar Empleado"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
 
-          <!-- Formulario -->
-          <form name="editar" method="POST" class="space-b-4">
-            <label for="buscar" class="text-x1 text-gray-700 dark:text-gray-300">
-              <i class="bi bi-search"></i> Buscar Empleado
-            </label>
-            <input
-              type="text"
-              id="buscar"
-              name="buscar"
-              placeholder="Buscar Empleado"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-          
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-          
-            <label for="Usuario" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
-              Usuario
-            </label>
-            <input
-              id="Usuario"
-              name="Usuario"
-              type="text"
-              required
-              placeholder="Nombre de Usuario"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-          
-            <label for="Tipo" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
-              Tipo Empleado
-            </label>
-            <select
-              id="Tipo"
-              name="Tipo"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="">Seleccione el tipo de empleado</option>
-              <option value="1">Administrador</option>
-              <option value="2">Vendedor</option>
-            </select>
-          
-            <label for="Estado" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
-              Estado
-            </label>
-            <select
-              id="Estado"
-              name="Estado"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="1">Activo</option>
-              <option value="2">Inactivo</option>
-            </select>
-          
-            <!-- Campo oculto para enviar el link de la imagen en el formulario -->
-            <input type="hidden" id="imagenUrl" name="imagenUrl">
-          
-            <!-- Contenedor para la imagen dinámica -->
-            <label for="empleadoImagen" class="text-sm text-gray-700 dark:text-gray-300 mt-2">Imagen</label>
-            <div class="mt-4 dark:bg-slate-50">
-              <img id="empleadoImagen" src="https://i0.wp.com/estudionada.com/wp-content/uploads/2022/09/Nada_F.png?fit=512%2C512&ssl=1" alt="Imagen del Empleado" class="w-16 h-16 rounded-md border border-gray-300 dark:border-gray-600">
-            </div>
-          
-           <!--Aqui hay que hacer una funcion para recuperar la img y hacerle src -->
-          
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Editmodal').close()"
+              <input
+                type="text"
+                id="nombre"
+                name="Nombre"
+                placeholder="Nombre"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Usuario"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
               >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onclick="editempleado()"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+                Usuario
+              </label>
+              <input
+                id="Usuario"
+                name="Usuario"
+                type="text"
+                required
+                placeholder="Nombre de Usuario"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Tipo"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
               >
-                Enviar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <!--Eliminar -->
-      <Modal id="Deletemodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Eliminar Empleado
-          </h2>
-
-          <!-- Formulario -->
-          <form name="editar" method="POST" class="space-b-4">
-            <label for="buscar" class="text-x1 text-gray-700 dark:text-gray-300">
-              <i class="bi bi-search"></i> Buscar Empleado
-            </label>
-            <input
-              type="text"
-              id="buscar"
-              name="buscar"
-              placeholder="Buscar Empleado"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />          
-            <input
-            type="text"
-            id="nombre"
-            name="Nombre"
-            placeholder="Nombre"
-            required
-            disabled
-            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label for="Usuario" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
-            Usuario
-            </label>
-            <input
-            id="Usuario"
-            name="Usuario"
-            type="text"
-            required
-            placeholder="Nombre de Usuario"
-            disabled
-            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label for="Tipo" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
-            Tipo Empleado
-            </label>
-            <select
-            id="Tipo"
-            name="Tipo"
-            required
-            disabled
-            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-            <option value="">Seleccione el tipo de empleado</option>
-            <option value="1">Administrador</option>
-            <option value="2">Vendedor</option>
-            </select>
-
-            <label for="Estado" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
-            Estado
-            </label>
-            <select
-            id="Estado"
-            name="Estado"
-            required
-            disabled
-            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-            <option value="1">Activo</option>
-            <option value="2">Inactivo</option>
-            </select>
- 
-            <!-- Campo oculto para enviar el link de la imagen en el formulario -->
-            <input type="hidden" id="imagenUrl" name="imagenUrl">
-          
-            <!-- Contenedor para la imagen dinámica -->
-            <label for="empleadoImagen" class="text-sm text-gray-700 dark:text-gray-300 mt-2">Imagen</label>
-            <div class="mt-4">
-              <img id="empleadoImagen" src="https://i0.wp.com/estudionada.com/wp-content/uploads/2022/09/Nada_F.png?fit=512%2C512&ssl=1" alt="Imagen del Empleado" class="w-16 h-16 rounded-md border border-gray-300 dark:border-gray-600">
-            </div>
-          
-           <!--Aqui hay que hacer una funcion para recuperar la img y hacerle src -->
-          
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Deletemodal').close()"
+                Tipo Empleado
+              </label>
+              <select
+                id="Tipo"
+                name="Tipo"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
               >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onclick="delteempleado()"
-                class="btn btn-submit bg-red-500 text-white px-4 py-2 rounded-md"
+                <option value="">Seleccione el tipo de empleado</option>
+                <option value="1">Administrador</option>
+                <option value="2">Vendedor</option>
+              </select>
+
+              <label
+                for="Estado"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
               >
-                Eliminar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <!--Detalles-->
-      <Modal id="Detailmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Detalle Empleado
-          </h2>
-
-          <!-- Formulario -->
-          <form name="detalle" method="POST" class="space-b-4">
-            <label for="buscar" class="text-x1 text-gray-700 dark:text-gray-300"
-              ><i class="bi bi-search"></i> Buscar Empleado</label
-            >
-            <input
-              type="text"
-              id="buscar"
-              name="buscar"
-              placeholder="Buscar Empleado"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
-            >
-            <input
-            type="text"
-            id="nombre"
-            name="Nombre"
-            placeholder="Nombre"
-            required
-            disabled
-            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label for="Usuario" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
-            Usuario
-            </label>
-            <input
-            id="Usuario"
-            name="Usuario"
-            type="text"
-            required
-            placeholder="Nombre de Usuario"
-            disabled
-            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label for="Tipo" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
-            Tipo Empleado
-            </label>
-            <select
-            id="Tipo"
-            name="Tipo"
-            required
-            disabled
-            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-            <option value="">Seleccione el tipo de empleado</option>
-            <option value="1">Administrador</option>
-            <option value="2">Vendedor</option>
-            </select>
-
-            <label for="Estado" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
-            Estado
-            </label>
-            <select
-            id="Estado"
-            name="Estado"
-            required
-            disabled
-            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-            <option value="1">Activo</option>
-            <option value="2">Inactivo</option>
-            </select>
- 
-            <!-- Campo oculto para enviar el link de la imagen en el formulario -->
-            <input type="hidden" id="imagenUrl" name="imagenUrl">
-          
-            <!-- Contenedor para la imagen dinámica -->
-            <label for="empleadoImagen" class="text-sm text-gray-700 dark:text-gray-300 mt-2">Imagen</label>
-            <div class="mt-4">
-              <img id="empleadoImagen" src="https://i0.wp.com/estudionada.com/wp-content/uploads/2022/09/Nada_F.png?fit=512%2C512&ssl=1" alt="Imagen del Empleado" class="w-16 h-16 rounded-md border border-gray-300 dark:border-gray-600">
-            </div>
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Detailmodal').close()"
+                Estado
+              </label>
+              <select
+                id="Estado"
+                name="Estado"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
               >
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
+                <option value="1">Activo</option>
+                <option value="2">Inactivo</option>
+              </select>
+
+              <!-- Campo oculto para enviar el link de la imagen en el formulario -->
+              <input type="hidden" id="imagenUrl" name="imagenUrl" />
+
+              <!-- Contenedor para la imagen dinámica -->
+              <label
+                for="empleadoImagen"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Imagen</label
+              >
+              <div class="mt-4 dark:bg-slate-50">
+                <img
+                  id="empleadoImagen"
+                  src="https://i0.wp.com/estudionada.com/wp-content/uploads/2022/09/Nada_F.png?fit=512%2C512&ssl=1"
+                  alt="Imagen del Empleado"
+                  class="w-16 h-16 rounded-md border border-gray-300 dark:border-gray-600"
+                />
+              </div>
+
+              <!--Aqui hay que hacer una funcion para recuperar la img y hacerle src -->
+
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Editmodal').close()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onclick="editempleado()"
+                  class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  Enviar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+        <!--Eliminar -->
+        <Modal id="Deletemodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+            >
+              Eliminar Empleado
+            </h2>
+
+            <!-- Formulario -->
+            <form name="editar" method="POST" class="space-b-4">
+              <label
+                for="buscar"
+                class="text-x1 text-gray-700 dark:text-gray-300"
+              >
+                <i class="bi bi-search"></i> Buscar Empleado
+              </label>
+              <input
+                type="text"
+                id="buscar"
+                name="buscar"
+                placeholder="Buscar Empleado"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <input
+                type="text"
+                id="nombre"
+                name="Nombre"
+                placeholder="Nombre"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Usuario"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >
+                Usuario
+              </label>
+              <input
+                id="Usuario"
+                name="Usuario"
+                type="text"
+                required
+                placeholder="Nombre de Usuario"
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Tipo"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >
+                Tipo Empleado
+              </label>
+              <select
+                id="Tipo"
+                name="Tipo"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="">Seleccione el tipo de empleado</option>
+                <option value="1">Administrador</option>
+                <option value="2">Vendedor</option>
+              </select>
+
+              <label
+                for="Estado"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >
+                Estado
+              </label>
+              <select
+                id="Estado"
+                name="Estado"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="1">Activo</option>
+                <option value="2">Inactivo</option>
+              </select>
+
+              <!-- Campo oculto para enviar el link de la imagen en el formulario -->
+              <input type="hidden" id="imagenUrl" name="imagenUrl" />
+
+              <!-- Contenedor para la imagen dinámica -->
+              <label
+                for="empleadoImagen"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Imagen</label
+              >
+              <div class="mt-4">
+                <img
+                  id="empleadoImagen"
+                  src="https://i0.wp.com/estudionada.com/wp-content/uploads/2022/09/Nada_F.png?fit=512%2C512&ssl=1"
+                  alt="Imagen del Empleado"
+                  class="w-16 h-16 rounded-md border border-gray-300 dark:border-gray-600"
+                />
+              </div>
+
+              <!--Aqui hay que hacer una funcion para recuperar la img y hacerle src -->
+
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Deletemodal').close()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onclick="delteempleado()"
+                  class="btn btn-submit bg-red-500 text-white px-4 py-2 rounded-md"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+        <!--Detalles-->
+        <Modal id="Detailmodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+            >
+              Detalle Empleado
+            </h2>
+
+            <!-- Formulario -->
+            <form name="detalle" method="POST" class="space-b-4">
+              <label
+                for="buscar"
+                class="text-x1 text-gray-700 dark:text-gray-300"
+                ><i class="bi bi-search"></i> Buscar Empleado</label
+              >
+              <input
+                type="text"
+                id="buscar"
+                name="buscar"
+                placeholder="Buscar Empleado"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <label
+                for="nombre"
+                class="text-x1 text-gray-700 dark:text-gray-300">Nombre</label
+              >
+              <input
+                type="text"
+                id="nombre"
+                name="Nombre"
+                placeholder="Nombre"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Usuario"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >
+                Usuario
+              </label>
+              <input
+                id="Usuario"
+                name="Usuario"
+                type="text"
+                required
+                placeholder="Nombre de Usuario"
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Tipo"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >
+                Tipo Empleado
+              </label>
+              <select
+                id="Tipo"
+                name="Tipo"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="">Seleccione el tipo de empleado</option>
+                <option value="1">Administrador</option>
+                <option value="2">Vendedor</option>
+              </select>
+
+              <label
+                for="Estado"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >
+                Estado
+              </label>
+              <select
+                id="Estado"
+                name="Estado"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="1">Activo</option>
+                <option value="2">Inactivo</option>
+              </select>
+
+              <!-- Campo oculto para enviar el link de la imagen en el formulario -->
+              <input type="hidden" id="imagenUrl" name="imagenUrl" />
+
+              <!-- Contenedor para la imagen dinámica -->
+              <label
+                for="empleadoImagen"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Imagen</label
+              >
+              <div class="mt-4">
+                <img
+                  id="empleadoImagen"
+                  src="https://i0.wp.com/estudionada.com/wp-content/uploads/2022/09/Nada_F.png?fit=512%2C512&ssl=1"
+                  alt="Imagen del Empleado"
+                  class="w-16 h-16 rounded-md border border-gray-300 dark:border-gray-600"
+                />
+              </div>
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Detailmodal').close()"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+      </div>
     </Sidebar>
   </div>
-</Layout>
-<script type="module">
-  const addcl = document.getElementById("addcl");
-  addcl.addEventListener("click", addcliente);
+  <script type="module">
+    const addcl = document.getElementById("addcl");
+    addcl.addEventListener("click", addcliente);
 
-  function addcliente() {
-    const formcliente = document.getElementsByName("agregar")[0];
-    // Verifica que todo esté correcto
-    console.log(formcliente);
-    const nombre = formcliente.Nombre.value;
-    const tipo = formcliente.tipo.value;
-    const direccion = formcliente.Direccion.value;
-    const telefono = formcliente.Telefono.value;
-    const dui = formcliente.Dui.value;
-    const nit = formcliente.Nit.value;
-    const nrc = formcliente.Nrc.value;
-    const giro = formcliente.Giro.value;
-    //get token from cookie
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token"))
-      .split("=")[1];
-    // Envía los datos al servidor
-    fetch("http://localhost:8000/clientes/agregar", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nombre: nombre,
-        tipo_cliente: tipo,
-        direccion: direccion,
-        telefono: telefono,
-        dui: dui,
-        nit: nit,
-        nrc: nrc,
-        giro: giro,
-        fecha_registro: new Date().toISOString(),
-      }),
-    })
-      .then((res) => {
+    function addcliente() {
+      const formcliente = document.getElementsByName("agregar")[0];
+      // Verifica que todo esté correcto
+      console.log(formcliente);
+      const nombre = formcliente.Nombre.value;
+      const tipo = formcliente.tipo.value;
+      const direccion = formcliente.Direccion.value;
+      const telefono = formcliente.Telefono.value;
+      const dui = formcliente.Dui.value;
+      const nit = formcliente.Nit.value;
+      const nrc = formcliente.Nrc.value;
+      const giro = formcliente.Giro.value;
+      //get token from cookie
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token"))
+        .split("=")[1];
+      // Envía los datos al servidor
+      fetch("http://localhost:8000/clientes/agregar", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombre: nombre,
+          tipo_cliente: tipo,
+          direccion: direccion,
+          telefono: telefono,
+          dui: dui,
+          nit: nit,
+          nrc: nrc,
+          giro: giro,
+          fecha_registro: new Date().toISOString(),
+        }),
+      }).then((res) => {
         if (res.ok) {
           //custom alert
-         //showAlert("Cliente agregado correctamente", "success");
+          //showAlert("Cliente agregado correctamente", "success");
           location.reload();
         } else {
           alert("Error al agregar el cliente");
         }
-      })
-  }
-</script>
+      });
+    }
+  </script>
+</Layout>
