@@ -498,33 +498,40 @@ try {
 
               <!-- Formulario -->
               <form name="editarEmpleado" method="POST" class="space-b-4">
-
-                
-                <label for="nombreEdit" class="text-x1 text-gray-700 dark:text-gray-300">
+                <label
+                  for="nombreEdit"
+                  class="text-x1 text-gray-700 dark:text-gray-300"
+                >
                   Nombre
                 </label>
                 <input
                   type="text"
-                  id="nombreEdit" 
+                  id="nombreEdit"
                   name="nombre"
                   placeholder="Nombre"
                   required
                   class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
                 />
 
-                <label for="usuarioEdit" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
+                <label
+                  for="usuarioEdit"
+                  class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >
                   Usuario
                 </label>
                 <input
                   id="usuarioEdit"
-                  name="usuario" 
+                  name="usuario"
                   type="text"
                   required
                   placeholder="Nombre de Usuario"
                   class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
                 />
 
-                <label for="passwordEdit" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
+                <label
+                  for="passwordEdit"
+                  class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >
                   Contraseña
                 </label>
                 <input
@@ -535,7 +542,10 @@ try {
                   class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
                 />
 
-                <label for="tipoPerfilEdit" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
+                <label
+                  for="tipoPerfilEdit"
+                  class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >
                   Tipo de Perfil
                 </label>
                 <select
@@ -549,7 +559,10 @@ try {
                   <option value="3">Usuario</option>
                 </select>
 
-                <label for="activoEdit" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
+                <label
+                  for="activoEdit"
+                  class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >
                   Estado
                 </label>
                 <select
@@ -562,7 +575,10 @@ try {
                   <option value="0">Inactivo</option>
                 </select>
 
-                <label for="empleadoImagenEdit" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
+                <label
+                  for="empleadoImagenEdit"
+                  class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >
                   Imagen
                 </label>
                 <div class="mt-4">
@@ -751,107 +767,110 @@ try {
 
   // Add this to your existing script section:
 
-const editarEmpleado = document.getElementById("editButton");
-editarEmpleado.addEventListener("click", () => {
-  let empleadoSeleccionado;
-  const formEditar = document.getElementsByName("editarEmpleado")[0];
+  const editarEmpleado = document.getElementById("editButton");
+  editarEmpleado.addEventListener("click", () => {
+    let empleadoSeleccionado;
+    const formEditar = document.getElementsByName("editarEmpleado")[0];
 
-  // Find selected employee
-  const empleados = document.getElementsByName("empleado");
-  for (let i = 0; i < empleados.length; i++) {
-    if (empleados[i].checked) {
-      empleadoSeleccionado = empleados[i].value;
-      break;
+    // Find selected employee
+    const empleados = document.getElementsByName("empleado");
+    for (let i = 0; i < empleados.length; i++) {
+      if (empleados[i].checked) {
+        empleadoSeleccionado = empleados[i].value;
+        break;
+      }
     }
-  }
 
-  if (!empleadoSeleccionado) {
-    window.showAlert("No hay empleado seleccionado", "error");
-    return;
-  }
+    if (!empleadoSeleccionado) {
+      window.showAlert("No hay empleado seleccionado", "error");
+      return;
+    }
 
-  document.getElementById("Editmodal").showModal();
+    document.getElementById("Editmodal").showModal();
 
-  // Fetch employee details
-  fetch(`http://localhost:8000/usuarios/detalles/${empleadoSeleccionado}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      formEditar.nombre.value = data.nombre;
-      formEditar.usuario.value = data.usuario;
-      formEditar.tipoPerfil.value = data.tipo_perfil;
-      formEditar.activo.value = data.activo;
-      
-      // Update image preview if exists
-      if (data.imagen) {
-        document.getElementById("empleadoImagenEdit").src = data.imagen;
+    // Fetch employee details
+    fetch(`http://localhost:8000/usuarios/detalles/${empleadoSeleccionado}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        formEditar.nombre.value = data.nombre;
+        formEditar.usuario.value = data.usuario;
+        formEditar.tipoPerfil.value = data.tipo_perfil;
+        formEditar.activo.value = data.activo;
+
+        // Update image preview if exists
+        if (data.imagen) {
+          document.getElementById("empleadoImagenEdit").src = data.imagen;
+        }
+      });
+
+    // Handle image upload preview
+    const inputImg = document.getElementById("empimgEdit");
+    const imgPreview = document.getElementById("empleadoImagenEdit");
+
+    inputImg.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          imgPreview.src = reader.result;
+          document.getElementById("imagenUrlEdit").value = reader.result;
+        };
+        reader.readAsDataURL(file);
       }
     });
 
-  // Handle image upload preview
-  const inputImg = document.getElementById("empimgEdit");
-  const imgPreview = document.getElementById("empleadoImagenEdit");
-
-  inputImg.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        imgPreview.src = reader.result;
-        document.getElementById("imagenUrlEdit").value = reader.result;
-      };
-      reader.readAsDataURL(file);
-    }
+    // Handle form submission
+    document
+      .getElementById("editarEmpleadoBtn")
+      .addEventListener("click", () => {
+        if (!formEditar.nombre.value || !formEditar.usuario.value) {
+          window.showAlert("Nombre y usuario son requeridos", "error");
+          return;
+        }
+        updateEmpleado(empleadoSeleccionado);
+      });
   });
 
-  // Handle form submission
-  document.getElementById("editarEmpleadoBtn").addEventListener("click", () => {
-    if (!formEditar.nombre.value || !formEditar.usuario.value) {
-      window.showAlert("Nombre y usuario son requeridos", "error");
-      return;
+  function updateEmpleado(id) {
+    const formEditar = document.getElementsByName("editarEmpleado")[0];
+    const data = {
+      nombre: formEditar.nombre.value,
+      usuario: formEditar.usuario.value,
+      tipo_perfil: formEditar.tipoPerfil.value,
+      activo: formEditar.activo.value,
+      imagen:
+        document.getElementById("imagenUrlEdit").value ||
+        document.getElementById("empleadoImagenEdit").src,
+    };
+
+    // Add password only if provided
+    if (formEditar.password.value) {
+      data.password = formEditar.password.value;
     }
-    updateEmpleado(empleadoSeleccionado);
-  });
-});
 
-function updateEmpleado(id) {
-  const formEditar = document.getElementsByName("editarEmpleado")[0];
-  const data = {
-    nombre: formEditar.nombre.value,
-    usuario: formEditar.usuario.value,
-    tipo_perfil: formEditar.tipoPerfil.value,
-    activo: formEditar.activo.value,
-    imagen: document.getElementById("imagenUrlEdit").value || document.getElementById("empleadoImagenEdit").src
-  };
-
-  // Add password only if provided
-  if (formEditar.password.value) {
-    data.password = formEditar.password.value;
+    fetch(`http://localhost:8000/usuarios/actualizar/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      if (res.ok) {
+        document.getElementById("Editmodal").close();
+        window.showAlert("Empleado actualizado correctamente", "success");
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      } else {
+        window.showAlert("Error al actualizar el empleado", "error");
+      }
+    });
   }
-
-  fetch(`http://localhost:8000/usuarios/actualizar/${id}`, {
-    method: "PUT", 
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data)
-  })
-  .then((res) => {
-    if (res.ok) {
-      document.getElementById("Editmodal").close();
-      window.showAlert("Empleado actualizado correctamente", "success");
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
-    } else {
-      window.showAlert("Error al actualizar el empleado", "error");
-    }
-  });
-}
 </script>
