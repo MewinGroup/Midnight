@@ -9,7 +9,7 @@ import Card from "@components/menu/Card.astro";
 import Tabla from "@components/marcas/Tabla.astro";
 import Modal from "@components/dialog.astro";
 import Alertas from "@components/alertas.astro";
-import {Fetcher} from "@Lib/fetcher";
+import { Fetcher } from "@Lib/fetcher";
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -36,7 +36,7 @@ try {
 const user = res;
 let marcas = [];
 try {
-  const res = await Fetcher("marcas","listar", token);
+  const res = await Fetcher("marcas", "listar", token);
   if (res.status !== 200) {
     throw new Error("Error al obtener las marcas");
   }
@@ -221,19 +221,16 @@ try {
                   <span class="text-xs md:text-sm font-bold">Eliminar</span>
                 </div>
               </div>
-              
             </div>
           </Card>
 
           <Card title="Total de marcas" description="Total"
             ><i class="fa-solid fa-list"></i> {" " + marcas.length || 0}</Card
           >
-          <Card
-            title="Marcas recientes"
-            description="Último marca agregada"
-          >
-        <!-- undefined == no hay -->
-            <i class="fa-solid fa-circle-check"></i> {(" "+ marcas[0]?.nombre) || "No hay marcas"}
+          <Card title="Marcas recientes" description="Último marca agregada">
+            <!-- undefined == no hay -->
+            <i class="fa-solid fa-circle-check"></i>
+            {" " + marcas[0]?.nombre || "No hay marcas"}
           </Card>
         </div>
 
@@ -241,21 +238,21 @@ try {
         <div
           class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
         >
-        <div class="flex justify-between items-center">
-          <h2 class="text-xl font-semibold">Marcas</h2>
-          <button
-            class="btn text-indigo-900 dark:text-slate-200 px-2 py-1 rounded-md hover:text-gray-500 dark:hover:text-gray-50"
-            id="acciones" 
-          >
-          <i class="fa-solid fa-clipboard-check" id="Activar"></i> Seleccionar
-          </button>
-        </div>
+          <div class="flex justify-between items-center">
+            <h2 class="text-xl font-semibold">Marcas</h2>
+            <button
+              class="btn text-indigo-900 dark:text-slate-200 px-2 py-1 rounded-md hover:text-gray-500 dark:hover:text-gray-50"
+              id="acciones"
+            >
+              <i class="fa-solid fa-clipboard-check" id="Activar"></i> Seleccionar
+            </button>
+          </div>
           <Tabla>
             <slot>
               <!--foreach cliente fill a column -->
               {
                 marcas.map((marca) => (
-                <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
                     <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center hidden acciones">
                       <label class="container relative block cursor-pointer text-lg select-none">
                         <input
@@ -268,7 +265,8 @@ try {
                       </label>
                     </td>
                     <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center">
-                      {marca.nombre}</td>
+                      {marca.nombre}
+                    </td>
                   </tr>
                 ))
               }
@@ -362,102 +360,45 @@ try {
           </form>
         </div>
       </Modal>
-      <!--Eliminar -->
-      <Modal id="Deletemodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Eliminar marca
-          </h2>
-
-          <!-- Formulario -->
-          <form name="editar" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre de marca</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Deletemodal').close()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onclick="deleteproveedor()"
-                class="btn btn-submit bg-red-500 text-white px-4 py-2 rounded-md"
-              >
-                Eliminar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <!--Detalles-->
-      <Modal id="Detailmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Detalle de marca
-          </h2>
-
-          <!-- Formulario -->
-          <form name="detalle" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre de marca</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Detailmodal').close()"
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
     </Sidebar>
   </div>
 </Layout>
 
 <script>
-   const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token"))
-      .split("=")[1];
-      const actions = document.getElementById("acciones");
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token"))
+    .split("=")[1];
+  const actions = document.getElementById("acciones");
 
-actions.addEventListener("click", () => {
-  const acciones = document.getElementsByClassName("acciones");
+  actions.addEventListener("click", () => {
+    const acciones = document.getElementsByClassName("acciones");
 
-  for (let i = 0; i < acciones.length; i++) {
-    acciones[i].classList.toggle("hidden");
-  }
-});
-      </script>
+    for (let i = 0; i < acciones.length; i++) {
+      acciones[i].classList.toggle("hidden");
+    }
+  });
+
+  const addcl = document.getElementById("addcl");
+  addcl.addEventListener("click", async () => {
+    const form = document.forms.agregar;
+    const nombre = form.Nombre.value;
+    const data = {
+      nombre: nombre,
+    };
+    const res = await fetch("http://localhost:8000/marcas/agregar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (res.status === 200) {
+      document.getElementById("Addmodal").close();
+      location.reload();
+    } else {
+      console.error("Error al agregar la marca");
+    }
+  });
+</script>

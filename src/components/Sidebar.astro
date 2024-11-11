@@ -38,6 +38,7 @@ const { tipo } = Astro.props;
     <button
       id="hamburger"
       class="md:hidden p-2 focus:outline-none"
+      transition:persist
       onclick="toggleSidebar()"
     >
       <i class="fas fa-bars fa-lg"></i>
@@ -183,7 +184,7 @@ const { tipo } = Astro.props;
   <slot />
 
   <!-- Scripts -->
-  <script>
+  <script transition:persist>
     document.addEventListener("DOMContentLoaded", function () {
       const menuItems = document.querySelectorAll("nav ul li a");
       const sidebar = document.getElementById("sidebar");
