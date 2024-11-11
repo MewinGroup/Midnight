@@ -169,91 +169,103 @@ const tipoClienteMap = {
           class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
         >
           <h2 class="text-xl font-semibold">Productos</h2>
-          <Tabla>
-            <slot>
-              <!--foreach cliente fill a column -->
-              <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
-              </tr>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                1
-              </td>
-              <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                Huevos Cuscatlan
-              </td>
-              <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                Paquete de 30 huevos blancos cuscatlan
-              </td>
-              <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                Cuscatlecos
-              </td>
-              <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                Consumibles
-              </td>
-              <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                Pasillo 2
-              </td>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                Caja
-              </td>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                8kg
-              </td>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                12
-              </td>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                $5.99
-              </td>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                $6.99
-              </td>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                $7.99
-              </td>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                9823
-              </td>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                98732312
-              </td>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                <img
-                  src="https://scontent.fsal2-2.fna.fbcdn.net/v/t39.30808-6/419880754_17973959174644483_8379436326859805262_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_ohc=wyxhBNkINwAQ7kNvgE90DZi&_nc_zt=23&_nc_ht=scontent.fsal2-2.fna&_nc_gid=ACoqWzQnWAtfd1BhIH85DG7&oh=00_AYDIlTzQpqsF-rRxRWrh-4oUKCf8BgQc8yCkLngoVbgfbw&oe=673417C0"
-                  style="width: 100px;"
-                />
-              </td>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                08/11/2024
-              </td>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center text-green-500 dark:text-green-400"
-              >
-                Si
-              </td>
-            </slot>
-          </Tabla>
+           <!-- Contenedor de tarjetas -->
+    <div class="container mx-auto p-6 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        
+      <!-- Tarjeta 1 -->
+      <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-slate-700 overflow-hidden transition-colors duration-300">
+        
+        <!-- Nombre en el Top -->
+        <div class="p-4 dark:bg-gray-800 bg-slate-100 text-center">
+            <h2 class="text-xl font-semibold text-slate-700 dark:text-white">Huevos Cuscatlecos</h2>
+        </div>
+
+        <!-- Imagen centrada -->
+        <div class="flex justify-center py-6">
+            <img src="https://scontent.fsal11-1.fna.fbcdn.net/v/t39.30808-6/419906798_17973959147644483_694098254593511857_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=SR6WHhW-DuoQ7kNvgFFuNOO&_nc_zt=23&_nc_ht=scontent.fsal11-1.fna&_nc_gid=AxY4XM2mAiPjYu5wNzypocx&oh=00_AYBe4V3e1_pdXjOhTI9XIVbviHOVMA3fdJF8sR_J8GdRlw&oe=6737D941" alt="Imagen de la tarjeta" class="w-32 h-32 rounded-full border-4 border-gray-300 dark:border-gray-500 object-cover">
+        </div>
+
+        <!-- Nombre en el Bottom -->
+        <div class="p-4 text-center">
+            <h3 class="text-xs font-semibold text-gray-800 dark:text-gray-200">Paquete de 12 huevos Cuscatlecos</h3>
+        </div>
+
+        <!-- Código de barras en el Bottom -->
+        <div class="p-4 bg-gray-100 dark:bg-gray-800 flex justify-center items-center">
+            <img src="data:image/svg+xml;base64,77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPgo8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNjgzcHgiIGhlaWdodD0iMzI3cHgiIHZpZXdCb3g9IjAgMCA2ODMgMzI3IiBjbGFzcz0iYmFyY29kZS1jYW52YXMiIHZlcnNpb249IjEuMSIgc3R5bGU9InNoYXBlLXJlbmRlcmluZzpjcmlzcEVkZ2VzOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZyB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBmaWxsPSIjMDAwMDAwIj4KICAgIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSI2ODMiIGhlaWdodD0iMzI3IiBmaWxsPSIjZmZmZmZmIiAvPgogICAgPHJlY3QgeD0iNyIgeT0iNyIgd2lkdGg9IjEwIiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjIyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIzNyIgeT0iNyIgd2lkdGg9IjE1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjYyIiB5PSI3IiB3aWR0aD0iMjAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iODciIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9Ijk3IiB5PSI3IiB3aWR0aD0iMTUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTE3IiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTM3IiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTUyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTcyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTkyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIyMDIiIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjIyNyIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMjQyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIyNTciIHk9IjciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIyODIiIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjI5MiIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMzA3IiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMzM3IiB5PSI3IiB3aWR0aD0iMjAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMzYyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIzODIiIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjM5MiIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNDAyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0MTIiIHk9IjciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0NDciIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0NjIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0ODIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1MDIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1MjIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1NDIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1NTciIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjU2NyIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNTkyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNjEyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNjM3IiB5PSI3IiB3aWR0aD0iMTUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNjU3IiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI2NjciIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMDksIDI5NykiPgogICAgICA8dGV4dCBmb250LXNpemU9IjMzLjc1cHQiIGZvbnQtZmFtaWx5PSJPcGVuIFNhbnMsIEhlbHZldGljYSwgc2Fucy1zZXJpZiI+KDAxKTc2ODI2Mzk4OTIwMDAyPC90ZXh0PgogICAgPC9nPgogIDwvZz4KPC9zdmc+" alt="Código de barras" class="h-20">
+        </div>
+    </div>
+    <!-- Tarjeta 1 -->
+    <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-slate-700 overflow-hidden transition-colors duration-300">
+        
+      <!-- Nombre en el Top -->
+      <div class="p-4 dark:bg-gray-800 bg-slate-100 text-center">
+          <h2 class="text-xl font-semibold text-slate-700 dark:text-white">Corona Extra</h2>
+      </div>
+
+      <!-- Imagen centrada -->
+      <div class="flex justify-center py-6">
+          <img src="https://bitworks-multimedia.superselectos.com/api/selectos/multimedia/493b631c-8c38-46d9-b6c2-863862b44b8b/content" alt="Imagen de la tarjeta" class="w-32 h-32 rounded-full border-4 border-gray-300 dark:border-gray-500 object-cover">
+      </div>
+
+      <!-- Nombre en el Bottom -->
+      <div class="p-4 text-center">
+          <h3 class="text-xs font-semibold text-gray-800 dark:text-gray-200">Cerveza Corona Extra 330 mL 12 Pack</h3>
+      </div>
+
+      <!-- Código de barras en el Bottom -->
+      <div class="p-4 bg-gray-100 dark:bg-gray-800 flex justify-center items-center">
+          <img src="data:image/svg+xml;base64,77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPgo8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNjgzcHgiIGhlaWdodD0iMzI3cHgiIHZpZXdCb3g9IjAgMCA2ODMgMzI3IiBjbGFzcz0iYmFyY29kZS1jYW52YXMiIHZlcnNpb249IjEuMSIgc3R5bGU9InNoYXBlLXJlbmRlcmluZzpjcmlzcEVkZ2VzOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZyB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBmaWxsPSIjMDAwMDAwIj4KICAgIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSI2ODMiIGhlaWdodD0iMzI3IiBmaWxsPSIjZmZmZmZmIiAvPgogICAgPHJlY3QgeD0iNyIgeT0iNyIgd2lkdGg9IjEwIiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjIyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIzNyIgeT0iNyIgd2lkdGg9IjE1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjYyIiB5PSI3IiB3aWR0aD0iMjAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iODciIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9Ijk3IiB5PSI3IiB3aWR0aD0iMTUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTE3IiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTM3IiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTUyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTcyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTkyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIyMDIiIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjIyNyIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMjQyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIyNTciIHk9IjciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIyODIiIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjI5MiIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMzA3IiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMzM3IiB5PSI3IiB3aWR0aD0iMjAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMzYyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIzODIiIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjM5MiIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNDAyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0MTIiIHk9IjciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0NDciIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0NjIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0ODIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1MDIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1MjIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1NDIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1NTciIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjU2NyIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNTkyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNjEyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNjM3IiB5PSI3IiB3aWR0aD0iMTUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNjU3IiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI2NjciIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMDksIDI5NykiPgogICAgICA8dGV4dCBmb250LXNpemU9IjMzLjc1cHQiIGZvbnQtZmFtaWx5PSJPcGVuIFNhbnMsIEhlbHZldGljYSwgc2Fucy1zZXJpZiI+KDAxKTc2ODI2Mzk4OTIwMDAyPC90ZXh0PgogICAgPC9nPgogIDwvZz4KPC9zdmc+" alt="Código de barras" class="h-20">
+      </div>
+  </div>
+      <!-- Tarjeta 1 -->
+      <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-slate-700 overflow-hidden transition-colors duration-300">
+        
+        <!-- Nombre en el Top -->
+        <div class="p-4 dark:bg-gray-800 bg-slate-100 text-center">
+            <h2 class="text-xl font-semibold text-slate-700 dark:text-white">Café Instantaneo Nescafe Listo</h2>
+        </div>
+
+        <!-- Imagen centrada -->
+        <div class="flex justify-center py-6">
+            <img src="https://bitworks-multimedia.superselectos.com/api/selectos/multimedia/f2e8c9e2-d1b5-4cd4-b61e-2497d6ff86a9/content" alt="Imagen de la tarjeta" class="w-32 h-32 rounded-full border-4 border-gray-300 dark:border-gray-500 object-cover">
+        </div>
+
+        <!-- Nombre en el Bottom -->
+        <div class="p-4 text-center">
+            <h3 class="text-xs font-semibold text-gray-800 dark:text-gray-200">Café Instantaneo Nescafe Listo 200 g Frasco</h3>
+        </div>
+
+        <!-- Código de barras en el Bottom -->
+        <div class="p-4 bg-gray-100 dark:bg-gray-800 flex justify-center items-center">
+            <img src="data:image/svg+xml;base64,77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPgo8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNjgzcHgiIGhlaWdodD0iMzI3cHgiIHZpZXdCb3g9IjAgMCA2ODMgMzI3IiBjbGFzcz0iYmFyY29kZS1jYW52YXMiIHZlcnNpb249IjEuMSIgc3R5bGU9InNoYXBlLXJlbmRlcmluZzpjcmlzcEVkZ2VzOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZyB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBmaWxsPSIjMDAwMDAwIj4KICAgIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSI2ODMiIGhlaWdodD0iMzI3IiBmaWxsPSIjZmZmZmZmIiAvPgogICAgPHJlY3QgeD0iNyIgeT0iNyIgd2lkdGg9IjEwIiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjIyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIzNyIgeT0iNyIgd2lkdGg9IjE1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjYyIiB5PSI3IiB3aWR0aD0iMjAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iODciIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9Ijk3IiB5PSI3IiB3aWR0aD0iMTUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTE3IiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTM3IiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTUyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTcyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTkyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIyMDIiIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjIyNyIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMjQyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIyNTciIHk9IjciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIyODIiIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjI5MiIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMzA3IiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMzM3IiB5PSI3IiB3aWR0aD0iMjAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMzYyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIzODIiIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjM5MiIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNDAyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0MTIiIHk9IjciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0NDciIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0NjIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0ODIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1MDIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1MjIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1NDIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1NTciIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjU2NyIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNTkyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNjEyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNjM3IiB5PSI3IiB3aWR0aD0iMTUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNjU3IiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI2NjciIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMDksIDI5NykiPgogICAgICA8dGV4dCBmb250LXNpemU9IjMzLjc1cHQiIGZvbnQtZmFtaWx5PSJPcGVuIFNhbnMsIEhlbHZldGljYSwgc2Fucy1zZXJpZiI+KDAxKTc2ODI2Mzk4OTIwMDAyPC90ZXh0PgogICAgPC9nPgogIDwvZz4KPC9zdmc+" alt="Código de barras" class="h-20">
+        </div>
+    </div>
+        <!-- Tarjeta 1 -->
+        <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-slate-700 overflow-hidden transition-colors duration-300">
+        
+          <!-- Nombre en el Top -->
+          <div class="p-4 dark:bg-gray-800 bg-slate-100 text-center">
+              <h2 class="text-xl font-semibold text-slate-700 dark:text-white">Chocolatina Salud</h2>
+          </div>
+  
+          <!-- Imagen centrada -->
+          <div class="flex justify-center py-6">
+              <img src="https://bitworks-multimedia.superselectos.com/api/selectos/multimedia/e1ffaabd-e6d7-47db-bb4c-a72ef8beda23/content" alt="Imagen de la tarjeta" class="w-32 h-32 rounded-full border-4 border-gray-300 dark:border-gray-500 object-cover">
+          </div>
+  
+          <!-- Nombre en el Bottom -->
+          <div class="p-4 text-center">
+              <h3 class="text-xs font-semibold text-gray-800 dark:text-gray-200">Chocolatina Salud 175 mL Bolsa</h3>
+          </div>
+  
+          <!-- Código de barras en el Bottom -->
+          <div class="p-4 bg-gray-100 dark:bg-gray-800 flex justify-center items-center">
+              <img src="data:image/svg+xml;base64,77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPgo8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNjgzcHgiIGhlaWdodD0iMzI3cHgiIHZpZXdCb3g9IjAgMCA2ODMgMzI3IiBjbGFzcz0iYmFyY29kZS1jYW52YXMiIHZlcnNpb249IjEuMSIgc3R5bGU9InNoYXBlLXJlbmRlcmluZzpjcmlzcEVkZ2VzOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZyB0ZXh0LXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIiBmaWxsPSIjMDAwMDAwIj4KICAgIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSI2ODMiIGhlaWdodD0iMzI3IiBmaWxsPSIjZmZmZmZmIiAvPgogICAgPHJlY3QgeD0iNyIgeT0iNyIgd2lkdGg9IjEwIiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjIyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIzNyIgeT0iNyIgd2lkdGg9IjE1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjYyIiB5PSI3IiB3aWR0aD0iMjAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iODciIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9Ijk3IiB5PSI3IiB3aWR0aD0iMTUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTE3IiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTM3IiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTUyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTcyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMTkyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIyMDIiIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjIyNyIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMjQyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIyNTciIHk9IjciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIyODIiIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjI5MiIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMzA3IiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMzM3IiB5PSI3IiB3aWR0aD0iMjAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iMzYyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSIzODIiIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjM5MiIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNDAyIiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0MTIiIHk9IjciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0NDciIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0NjIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI0ODIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1MDIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1MjIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1NDIiIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI1NTciIHk9IjciIHdpZHRoPSI1IiBoZWlnaHQ9IjI0MiIgLz4KICAgIDxyZWN0IHg9IjU2NyIgeT0iNyIgd2lkdGg9IjUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNTkyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNjEyIiB5PSI3IiB3aWR0aD0iMTAiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNjM3IiB5PSI3IiB3aWR0aD0iMTUiIGhlaWdodD0iMjQyIiAvPgogICAgPHJlY3QgeD0iNjU3IiB5PSI3IiB3aWR0aD0iNSIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8cmVjdCB4PSI2NjciIHk9IjciIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNDIiIC8+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMDksIDI5NykiPgogICAgICA8dGV4dCBmb250LXNpemU9IjMzLjc1cHQiIGZvbnQtZmFtaWx5PSJPcGVuIFNhbnMsIEhlbHZldGljYSwgc2Fucy1zZXJpZiI+KDAxKTc2ODI2Mzk4OTIwMDAyPC90ZXh0PgogICAgPC9nPgogIDwvZz4KPC9zdmc+" alt="Código de barras" class="h-20">
+          </div>
+      </div>
+
+  </div>
         </div>
       </div>
       <!-- Addmodal Content -->
@@ -987,15 +999,9 @@ const tipoClienteMap = {
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
               >Imagen del Producto</label
             >
-            <input
-              id="imagen"
-              name="imagen"
-              type="file"
-              accept="image/*"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
+            <div style="width: 200px; height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 8px;">
+              <img src="https://bitworks-multimedia.superselectos.com/api/selectos/multimedia/493b631c-8c38-46d9-b6c2-863862b44b8b/content" alt="Descripción de la imagen" style="max-width: 100%; max-height: 100%;">
+          </div>
 
             <label
               for="Fecha"
@@ -1258,16 +1264,9 @@ const tipoClienteMap = {
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
               >Imagen del Producto</label
             >
-            <input
-              id="imagen"
-              name="imagen"
-              type="file"
-              accept="image/*"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
+            <div style="width: 200px; height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 8px;">
+              <img src="https://bitworks-multimedia.superselectos.com/api/selectos/multimedia/493b631c-8c38-46d9-b6c2-863862b44b8b/content" alt="Descripción de la imagen" style="max-width: 100%; max-height: 100%;">
+          </div>
             <label
               for="Fecha"
               class="text-sm text-gray-700 dark:text-gray-300 mt-2"
