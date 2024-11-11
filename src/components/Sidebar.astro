@@ -39,7 +39,6 @@ const { tipo } = Astro.props;
       id="hamburger"
       class="md:hidden p-2 focus:outline-none"
       transition:persist
-      onclick="toggleSidebar()"
     >
       <i class="fas fa-bars fa-lg"></i>
     </button>
@@ -170,11 +169,7 @@ const { tipo } = Astro.props;
   class="md:hidden sm:hidden lg:hidden xl:hidden bg-gray-800 text-white flex items-center justify-between p-4 fixed top-0 left-0 right-0 z-50"
 >
   <h1 class="text-2xl font-bold">MIDNIGHT</h1>
-  <button
-    id="hamburger-header"
-    class="p-2 focus:outline-none"
-    onclick="toggleSidebar()"
-  >
+  <button id="hamburger-header" class="p-2 focus:outline-none">
     <i class="fas fa-bars fa-lg"></i>
   </button>
 </div>
@@ -184,91 +179,94 @@ const { tipo } = Astro.props;
   <slot />
 
   <!-- Scripts -->
-  <script transition:persist>
-    document.addEventListener("DOMContentLoaded", function () {
-      const menuItems = document.querySelectorAll("nav ul li a");
-      const sidebar = document.getElementById("sidebar");
-      const hamburger = document.getElementById("hamburger");
-      const hamburgerHeader = document.getElementById("hamburger-header");
-      const themeToggle = document.getElementById("theme-toggle");
-      const sunIcon = document.getElementById("sun-icon");
-      const moonIcon = document.getElementById("moon-icon");
-      const logout = document.getElementById("logout");
-      const prefersDarkScheme = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      );
-      const currentTheme = localStorage.getItem("theme");
+</div>
+<script>
+  function initializeSidebar() {
+    console.log("Initializing sidebar");
+    const menuItems = document.querySelectorAll("nav ul li a");
+    const sidebar = document.getElementById("sidebar");
+    const hamburger = document.getElementById("hamburger"); 
+    const hamburgerHeader = document.getElementById("hamburger-header");
+    const themeToggle = document.getElementById("theme-toggle");
+    const sunIcon = document.getElementById("sun-icon");
+    const moonIcon = document.getElementById("moon-icon");
+    const logout = document.getElementById("logout");
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+    const currentTheme = localStorage.getItem("theme");
 
-      function toggleSidebar() {
-        sidebar.classList.toggle("-translate-x-full");
-      }
-
-      function setActive(selectedItem) {
-        document.querySelectorAll("li").forEach((item) => {
-          item.classList.remove(
-            "bg-white",
-            "text-gray-900",
-            "border-l-2",
-            "border-gray-500",
-            "p-2",
-            "rounded-md"
-          );
-        });
-        selectedItem.classList.add(
+    function setActive(selectedItem) {
+      if (!selectedItem) return;
+      document.querySelectorAll("li").forEach((item) => {
+        item.classList.remove(
           "bg-white",
-          "text-gray-900",
+          "text-gray-900", 
           "border-l-2",
           "border-gray-500",
           "p-2",
           "rounded-md"
         );
-      }
-
-      function applyTheme(theme) {
-        document.documentElement.classList.toggle("dark", theme === "dark");
-        themeToggle.checked = theme === "dark";
-        sunIcon.classList.toggle("hidden", theme === "dark");
-        moonIcon.classList.toggle("hidden", theme !== "dark");
-      }
-
-      if (currentTheme) {
-        applyTheme(currentTheme);
-      } else {
-        applyTheme(prefersDarkScheme.matches ? "dark" : "light");
-      }
-
-      themeToggle?.addEventListener("change", function () {
-        const theme = themeToggle.checked ? "dark" : "light";
-        applyTheme(theme);
-        localStorage.setItem("theme", theme);
       });
+      selectedItem.classList.add(
+        "bg-white",
+        "text-gray-900",
+        "border-l-2", 
+        "border-gray-500",
+        "p-2",
+        "rounded-md"
+      );
+    }
 
-      prefersDarkScheme.addEventListener("change", (e) => {
-        if (!localStorage.getItem("theme")) {
-          applyTheme(e.matches ? "dark" : "light");
-        }
-      });
-      document.addEventListener("astro:page-load", () => {
-        setActive(document.querySelector(`a[href="${location.pathname}"]`));
-        applyTheme(localStorage.getItem("theme"));
-      });
+    function applyTheme(theme) {
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      if (themeToggle) themeToggle.checked = theme === "dark";
+      if (sunIcon) sunIcon.classList.toggle("hidden", theme === "dark");
+      if (moonIcon) moonIcon.classList.toggle("hidden", theme !== "dark");
+    }
 
-      hamburger?.addEventListener("click", toggleSidebar);
-      hamburgerHeader?.addEventListener("click", toggleSidebar);
+    if (currentTheme) {
+      applyTheme(currentTheme);
+    } else {
+      applyTheme(prefersDarkScheme.matches ? "dark" : "light");
+    }
 
-      logout.addEventListener("click", () => {
-        //remove the cookie "token"
-        const token = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("token"))
-          .split("=")[1];
-        //rem
-        document.cookie = `token=${token}; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-
-        window.location.href = "/";
-      });
+    themeToggle?.addEventListener("change", function () {
+      const theme = themeToggle.checked ? "dark" : "light";
+      applyTheme(theme);
+      localStorage.setItem("theme", theme);
     });
-  </script>
-</div>
 
+    prefersDarkScheme.addEventListener("change", (e) => {
+      if (!localStorage.getItem("theme")) {
+        applyTheme(e.matches ? "dark" : "light");
+      }
+    });
+
+    hamburger?.addEventListener("click", () => {
+      sidebar?.classList.toggle("-translate-x-full");
+    });
+
+    hamburgerHeader?.addEventListener("click", () => {
+      sidebar?.classList.toggle("-translate-x-full");
+    });
+
+    logout?.addEventListener("click", () => {
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token"))
+        ?.split("=")[1];
+      if (token) {
+        document.cookie = `token=${token}; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      }
+      window.location.href = "/";
+    });
+
+    setActive(document.querySelector(`a[href="${location.pathname}"]`));
+  }
+
+  // Inicializar en carga de página
+  document.addEventListener("DOMContentLoaded", initializeSidebar);
+  
+  // Reinicializar después de transiciones de vista
+  document.addEventListener("astro:page-load", initializeSidebar);
+</script>
 <ViewTransitions />
