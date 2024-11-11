@@ -717,27 +717,38 @@ try {
       }
     });
 
+    // Modificar la función read para que devuelva una promesa
+    function read(img) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+        
+        reader.onerror = (error) => {
+          reject(error);
+        };
+
+        reader.readAsDataURL(img);
+      });
+    }
+
+    // Modificar el event listener del botón de agregar
     const empsendbtn = document.getElementById("addel");
     empsendbtn.addEventListener("click", async () => {
       const nombre = document.getElementById("nombre").value;
       const usuario = document.getElementById("Usuario").value;
       const password = document.getElementById("password").value;
       const img = document.getElementById("empimg").files[0];
-      let baseimg = "/user.png";
-      //convert to base64
+      let baseimg = "";
+
       if (img) {
         try {
-          // Convert to async/await for better readability
-          const result = await read(img);
-          if (result) {
-            baseimg = result;
-          } else {
-            console.error("Failed to read image data");
-          }
+          baseimg = await read(img);
         } catch (error) {
-          console.error("Error reading image:", error);
-          // Handle error case appropriately
-          // Or set default fallback
+          console.error("Error al leer la imagen:", error);
+          baseimg = "";
         }
       }
 
@@ -747,36 +758,30 @@ try {
         password,
         imagen: baseimg,
       };
-      const response = await fetch("http://localhost:8000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
 
-      if (response.ok) {
-        window.showAlert("Empleado agregado correctamente", "success");
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } else {
+      try {
+        const response = await fetch("http://localhost:8000/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          window.showAlert("Empleado agregado correctamente", "success");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        } else {
+          window.showAlert("Error al agregar el empleado", "error");
+        }
+      } catch (error) {
+        console.error("Error en la petición:", error);
         window.showAlert("Error al agregar el empleado", "error");
       }
     });
-
-    function read(img) {
-      const reader = new FileReader();
-
-      reader.readAsDataURL(img);
-      reader.onload = async function () {
-        return reader.result;
-      };
-      reader.onerror = function (error) {
-        return "";
-      };
-    }
 
     const eliminar = document.getElementById("eliminar");
     eliminar.addEventListener("click", async () => {
