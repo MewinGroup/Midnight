@@ -80,7 +80,7 @@ const tipoClienteMap = {
     <Sidebar tipo={user.tipo_perfil}>
       <div class="flex-1 p-4 md:p-6 dark:bg-gray-800">
         <h1 class="text-3xl font-bold mb-6">
-            <i class="fa-solid fa-cash-register"></i> Listado de Ventas
+          <i class="fa-solid fa-cash-register"></i> Listado de Ventas
         </h1>
 
         <div class="flex items-center justify-end mb-6">
@@ -157,117 +157,179 @@ const tipoClienteMap = {
         <div
           class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
         >
-          <h2 class="text-xl font-semibold">Ventas</h2>
-          <Tabla>
-            <slot>
-              <!--foreach cliente fill a column -->
-              {
-                    <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
-                      <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                        <input
-                          type="checkbox"
-                          name="cliente"
-                        />
-                      </td>
-                      <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                        0001
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        Factura
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        CCF
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        04/11/2024
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        John Jarrison
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        Orden de compra
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        Efectivo
-                      </td>
-                      <td class=" text-red-500 px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        Finalizado
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        $1007.99
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        $131.04 (13%)
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        $1,139.03
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        Juan
-                      </td>
-                    </tr>
-                }
-            </slot>
-          </Tabla>
+          <h2 class="text-xl font-semibold">Ventas</h2><br />
+        <!-- Contenedor principal para las tarjetas -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+  
+  <!-- Tarjeta 1 -->
+  <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
+    <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
+      <h2 class="text-xl font-semibold text-white dark:text-slate-900">Venta No: 1</h2>
+    </div>
+    <div class="p-4 text-gray-800 dark:text-gray-300">
+      <p><strong>Número:</strong> 0001</p>
+      <p><strong>Documento Fiscal:</strong> Factura</p>
+      <p><strong>Correlativo:</strong> CCF</p>
+      <p><strong>Fecha de Venta:</strong> 04/11/2024</p>
+      <p><strong>Cliente:</strong> John Jarrison</p>
+      <p><strong>Condición de Venta:</strong> Orden de compra</p>
+      <p><strong>Método de Pago:</strong> Efectivo</p>
+      <p><strong>Estado:</strong> Finalizado</p>
+      <p><strong>Sumas:</strong> $1007.99</p>
+      <p><strong>IVA:</strong> $131.04 (13%)</p>
+      <p><strong>Total:</strong> $1,139.03</p>
+      <p><strong>Vendedor:</strong> Juan</p>
+    </div>
+  </div>
+
+  <!-- Tarjeta 2 -->
+  <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
+    <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
+      <h2 class="text-xl font-semibold text-white dark:text-gray-900">Venta No: 2</h2>
+    </div>
+    <div class="p-4 text-gray-800 dark:text-gray-300">
+      <p><strong>Número:</strong> 0002</p>
+      <p><strong>Documento Fiscal:</strong> Factura</p>
+      <p><strong>Correlativo:</strong> CCF</p>
+      <p><strong>Fecha de Venta:</strong> 05/11/2024</p>
+      <p><strong>Cliente:</strong> Alice Cooper</p>
+      <p><strong>Condición de Venta:</strong> Crédito</p>
+      <p><strong>Método de Pago:</strong> Transferencia</p>
+      <p><strong>Estado:</strong> Pendiente</p>
+      <p><strong>Sumas:</strong> $500.00</p>
+      <p><strong>IVA:</strong> $65.00 (13%)</p>
+      <p><strong>Total:</strong> $565.00</p>
+      <p><strong>Vendedor:</strong> Marta</p>
+    </div>
+  </div>
+
+  <!-- Tarjeta 3 -->
+  <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
+    <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
+      <h2 class="text-xl font-semibold text-white dark:text-gray-900">Venta No: 3</h2>
+    </div>
+    <div class="p-4 text-gray-800 dark:text-gray-300">
+      <p><strong>Número:</strong> 0003</p>
+      <p><strong>Documento Fiscal:</strong> Factura</p>
+      <p><strong>Correlativo:</strong> CCF</p>
+      <p><strong>Fecha de Venta:</strong> 06/11/2024</p>
+      <p><strong>Cliente:</strong> Bob Marley</p>
+      <p><strong>Condición de Venta:</strong> Pago al contado</p>
+      <p><strong>Método de Pago:</strong> Efectivo</p>
+      <p><strong>Estado:</strong> Finalizado</p>
+      <p><strong>Sumas:</strong> $700.00</p>
+      <p><strong>IVA:</strong> $91.00 (13%)</p>
+      <p><strong>Total:</strong> $791.00</p>
+      <p><strong>Vendedor:</strong> Luis</p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const estados = document.querySelectorAll('p');
+  
+      estados.forEach(function (estado) {
+        if (estado.innerHTML.includes("Estado:")) {
+          const estadoTexto = estado.textContent.trim().split(":")[1].trim();
+  
+          if (estadoTexto.toLowerCase() === "finalizado") {
+            estado.classList.add("text-green-500");
+            estado.classList.remove("text-red-200");
+          } else if (estadoTexto.toLowerCase() === "pendiente") {
+            estado.classList.add("text-red-300");
+            estado.classList.remove("text-green-300");
+          }
+        }
+      });
+    });
+  </script>
+  
+
+  <!-- Tarjeta 4 -->
+  <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
+    <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
+      <h2 class="text-xl font-semibold text-white dark:text-gray-900">Venta No: 4</h2>
+    </div>
+    <div class="p-4 text-gray-800 dark:text-gray-300">
+      <p><strong>Número:</strong> 0004</p>
+      <p><strong>Documento Fiscal:</strong> Factura</p>
+      <p><strong>Correlativo:</strong> CCF</p>
+      <p><strong>Fecha de Venta:</strong> 07/11/2024</p>
+      <p><strong>Cliente:</strong> Jane Doe </p>
+      <p><strong>Condición de Venta:</strong> Crédito</p>
+      <p><strong>Método de Pago:</strong> Cheque</p>
+      <p><strong>Estado:</strong> Pendiente</p>
+      <p><strong>Sumas:</strong> $850.00</p>
+      <p><strong>IVA:</strong> $110.50 (13%)</p>
+      <p><strong>Total:</strong> $960.50</p>
+      <p><strong>Vendedor:</strong> Ana</p>
+    </div>
+  </div>
+
+</div>
         </div>
 
-      <!-- Addmodal Content -->
-      <!-- Modal hidden as defaul -->
-      <!--AGREGAR -->
-      <Modal id="Addmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Agregar Venta
-          </h2>
+        <!-- Addmodal Content -->
+        <!-- Modal hidden as defaul -->
+        <!--AGREGAR -->
+        <Modal id="Addmodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+            >
+              Agregar Venta
+            </h2>
 
-          <!-- Formulario -->
-          <form name="agregar" method="POST" class="space-b-4">
-            <label for="Documento" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Documento Fiscal</label
-            >
-            <input
-              type="text"
-              id="Documento"
-              name="Documento"
-              placeholder="Documento Fiscal"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
+            <!-- Formulario -->
+            <form name="agregar" method="POST" class="space-b-4">
+              <label
+                for="Documento"
+                class="text-x1 text-gray-700 dark:text-gray-300"
+                >Documento Fiscal</label
+              >
+              <input
+                type="text"
+                id="Documento"
+                name="Documento"
+                placeholder="Documento Fiscal"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
 
-            <label
-              for="Correlativo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Correlativo Documento Fiscal</label
-            >
-            <select
-              id="Correlativo"
-              name="Correlativo"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="1">Natural</option>
-              <option value="2">Jurídico</option>
-            </select>
+              <label
+                for="Correlativo"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Correlativo Documento Fiscal</label
+              >
+              <select
+                id="Correlativo"
+                name="Correlativo"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="1">Natural</option>
+                <option value="2">Jurídico</option>
+              </select>
 
-            <label
-              for="FechaVenta"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Fecha de Venta</label
-            >
-            <input
-              id="FechaVenta"
-              type="date"
-              name="FechaVenta"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></input>
+              <label
+                for="FechaVenta"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Fecha de Venta</label
+              >
+              <input
+                id="FechaVenta"
+                type="date"
+                name="FechaVenta"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+            </form>
 
             <label
               for="Cliente"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Venta</label
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Venta</label
             >
             <input
               type="text"
@@ -280,7 +342,8 @@ const tipoClienteMap = {
 
             <label
               for="CondicionVenta"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Condicion de venta</label
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >Condicion de venta</label
             >
             <input
               type="text"
@@ -293,7 +356,8 @@ const tipoClienteMap = {
 
             <label
               for="MetodoPago"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Metodo de Pago</label
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >Metodo de Pago</label
             >
             <input
               type="text"
@@ -306,7 +370,8 @@ const tipoClienteMap = {
 
             <label
               for="Estado"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Estado</label
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >Estado</label
             >
             <input
               type="text"
@@ -355,7 +420,8 @@ const tipoClienteMap = {
             />
             <label
               for="Vendedor"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Vendedor</label
+              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >Vendedor</label
             >
             <input
               type="text"
@@ -382,9 +448,9 @@ const tipoClienteMap = {
                 Enviar
               </button>
             </div>
-          </form>
-        </div>
-      </Modal>
+          </div>
+        </Modal>
+      </div>
       <!--EDITAR -->
       <Modal id="Editmodal">
         <div
@@ -395,7 +461,9 @@ const tipoClienteMap = {
           </h2>
 
           <form name="editar" method="POST" class="space-b-4">
-            <label for="Documento" class="text-x1 text-gray-700 dark:text-gray-300"
+            <label
+              for="Documento"
+              class="text-x1 text-gray-700 dark:text-gray-300"
               >Documento Fiscal</label
             >
             <input
@@ -436,469 +504,462 @@ const tipoClienteMap = {
               required
               disabled
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></input>
-
-            <label
-              for="Cliente"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Cliente</label
-            >
-            <input
-              type="text"
-              id="Cliente"
-              name="Cliente"
-              placeholder="Nombre del Cliente"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
-
-            <label
-              for="CondicionVenta"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Condicion de venta</label
-            >
-            <input
-              type="text"
-              id="CondicionVenta"
-              name="CondicionVenta"
-              placeholder="Condicion de venta"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="MetodoPago"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Metodo de Pago</label
-            >
-            <input
-              type="text"
-              id="MetodoPago"
-              name="MetodoPago"
-              placeholder="Metodo de pago"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Estado"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Estado</label
-            >
-            <input
-              type="text"
-              id="Estado"
-              name="Estado"
-              placeholder="Estado de la venta"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Sumas"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Sumas</label
-            >
-            <input
-              type="text"
-              id="Sumas"
-              name="Sumas"
-              placeholder="Sumas"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label
-              for="IVA"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">IVA</label
-            >
-            <input
-              type="text"
-              id="IVA"
-              name="IVA"
-              placeholder="Iva 13%"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label
-              for="Total"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Total</label
-            >
-            <input
-              type="text"
-              id="Total"
-              name="Total"
-              placeholder="Total de la venta"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label
-              for="Vendedor"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Vendedor</label
-            >
-            <input
-              type="text"
-              id="Vendedor"
-              name="Vendedor"
-              placeholder="Vendedor"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Editmodal').close()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onclick="editcliente()"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Enviar
-              </button>
-            </div>
           </form>
-        </div>
-      </Modal>
-      <!--Eliminar -->
-      <Modal id="Deletemodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Eliminar Venta
-          </h2>
 
-          <!-- Formulario -->
-         
-          <form name="detalles" method="POST" class="space-b-4">
-            <label for="Documento" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Documento Fiscal</label
-            >
-            <input
-              type="text"
-              id="Documento"
-              name="Documento"
-              placeholder="Documento Fiscal"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
+          <label
+            for="Cliente"
+            class="text-sm text-gray-700 dark:text-gray-300 mt-2">Cliente</label
+          >
+          <input
+            type="text"
+            id="Cliente"
+            name="Cliente"
+            placeholder="Nombre del Cliente"
+            required
+            disabled
+            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+          />
 
-            <label
-              for="Correlativo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Correlativo Documento Fiscal</label
-            >
-            <select
-              id="Correlativo"
-              name="Correlativo"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="1">Natural</option>
-              <option value="2">Jurídico</option>
-            </select>
+          <label
+            for="CondicionVenta"
+            class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+            >Condicion de venta</label
+          >
+          <input
+            type="text"
+            id="CondicionVenta"
+            name="CondicionVenta"
+            placeholder="Condicion de venta"
+            required
+            disabled
+            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+          />
 
-            <label
-              for="FechaVenta"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Fecha de Venta</label
-            >
-            <input
-              id="FechaVenta"
-              type="date"
-              name="FechaVenta"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></input>
+          <label
+            for="MetodoPago"
+            class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+            >Metodo de Pago</label
+          >
+          <input
+            type="text"
+            id="MetodoPago"
+            name="MetodoPago"
+            placeholder="Metodo de pago"
+            required
+            disabled
+            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+          />
 
-            <label
-              for="Cliente"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Cliente</label
-            >
-            <input
-              type="text"
-              id="Cliente"
-              name="Cliente"
-              placeholder="Nombre del Cliente"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
+          <label
+            for="Estado"
+            class="text-sm text-gray-700 dark:text-gray-300 mt-2">Estado</label
+          >
+          <input
+            type="text"
+            id="Estado"
+            name="Estado"
+            placeholder="Estado de la venta"
+            required
+            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+          />
 
-            <label
-              for="CondicionVenta"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Condicion de venta</label
+          <label
+            for="Sumas"
+            class="text-sm text-gray-700 dark:text-gray-300 mt-2">Sumas</label
+          >
+          <input
+            type="text"
+            id="Sumas"
+            name="Sumas"
+            placeholder="Sumas"
+            required
+            disabled
+            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+          />
+          <label for="IVA" class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+            >IVA</label
+          >
+          <input
+            type="text"
+            id="IVA"
+            name="IVA"
+            placeholder="Iva 13%"
+            required
+            disabled
+            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+          />
+          <label
+            for="Total"
+            class="text-sm text-gray-700 dark:text-gray-300 mt-2">Total</label
+          >
+          <input
+            type="text"
+            id="Total"
+            name="Total"
+            placeholder="Total de la venta"
+            required
+            disabled
+            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+          />
+          <label
+            for="Vendedor"
+            class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+            >Vendedor</label
+          >
+          <input
+            type="text"
+            id="Vendedor"
+            name="Vendedor"
+            placeholder="Vendedor"
+            required
+            disabled
+            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+          />
+          <!-- Botones -->
+          <div class="flex justify-end space-x-4">
+            <button
+              type="button"
+              class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+              onclick="document.getElementById('Editmodal').close()"
             >
-            <input
-              type="text"
-              id="CondicionVenta"
-              name="CondicionVenta"
-              placeholder="Condicion de venta"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="MetodoPago"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Metodo de Pago</label
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onclick="editcliente()"
+              class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
             >
-            <input
-              type="text"
-              id="MetodoPago"
-              name="MetodoPago"
-              placeholder="Metodo de pago"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Estado"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Estado</label
-            >
-            <input
-              type="text"
-              id="Estado"
-              name="Estado"
-              placeholder="Estado de la venta"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Sumas"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Sumas</label
-            >
-            <input
-              type="text"
-              id="Sumas"
-              name="Sumas"
-              placeholder="Sumas"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label
-              for="IVA"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">IVA</label
-            >
-            <input
-              type="text"
-              id="IVA"
-              name="IVA"
-              placeholder="Iva 13%"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label
-              for="Total"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Total</label
-            >
-            <input
-              type="text"
-              id="Total"
-              name="Total"
-              placeholder="Total de la venta"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label
-              for="Vendedor"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Vendedor</label
-            >
-            <input
-              type="text"
-              id="Vendedor"
-              name="Vendedor"
-              placeholder="Vendedor"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Deletemodal').close()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onclick="deletecliente()"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Enviar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <!--Detalles-->
-      <Modal id="Detailmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Detalle Venta
-          </h2>
-
-          <!-- Formulario -->
-          <form name="agregar" method="POST" class="space-b-4">
-          
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              placeholder="Nombre"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="tipo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Tipo Cliente</label
-            >
-            <select
-              id="tipo"
-              name="tipo"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="1">Natural</option>
-              <option value="2">Jurídico</option>
-            </select>
-
-            <label
-              for="Direccion"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Dirección</label
-            >
-            <textarea
-              id="Direccion"
-              name="Direccion"
-              placeholder="Dirección"
-              required
-              disabled
-              rows="2"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></textarea>
-
-            <label
-              for="Telefono"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Teléfono</label
-            >
-            <input
-              type="text"
-              id="Telefono"
-              name="Telefono"
-              placeholder="Teléfono"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Dui"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
-            >
-            <input
-              type="text"
-              id="Dui"
-              name="Dui"
-              placeholder="DUI"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Nit"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
-            >
-            <input
-              type="text"
-              id="Nit"
-              name="Nit"
-              placeholder="NIT"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Ncr"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">NCR</label
-            >
-            <input
-              type="text"
-              id="Ncr"
-              name="Ncr"
-              placeholder="NCR"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Giro"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Giro</label
-            >
-            <input
-              type="text"
-              id="Giro"
-              name="Giro"
-              placeholder="Giro"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Detailmodal').close()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onclick="detailcliente()"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Enviar
-              </button>
-            </div>
-          </form>
+              Enviar
+            </button>
+          </div>
         </div>
       </Modal>
     </Sidebar>
+    <!--Eliminar -->
+    <Modal id="Deletemodal">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+      >
+        <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+          Eliminar Venta
+        </h2>
+
+        <!-- Formulario -->
+
+        <form name="detalles" method="POST" class="space-b-4">
+          <label
+            for="Documento"
+            class="text-x1 text-gray-700 dark:text-gray-300"
+            >Documento Fiscal</label
+          >
+          <input
+            type="text"
+            id="Documento"
+            name="Documento"
+            placeholder="Documento Fiscal"
+            required
+            disabled
+            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+          />
+
+          <label
+            for="Correlativo"
+            class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+            >Correlativo Documento Fiscal</label
+          >
+          <select
+            id="Correlativo"
+            name="Correlativo"
+            required
+            disabled
+            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+          >
+            <option value="1">Natural</option>
+            <option value="2">Jurídico</option>
+          </select>
+
+          <label
+            for="FechaVenta"
+            class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+            >Fecha de Venta</label
+          >
+          <input
+            id="FechaVenta"
+            type="date"
+            name="FechaVenta"
+            required
+            disabled
+            class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+          />
+        </form>
+
+        <label
+          for="Cliente"
+          class="text-sm text-gray-700 dark:text-gray-300 mt-2">Cliente</label
+        >
+        <input
+          type="text"
+          id="Cliente"
+          name="Cliente"
+          placeholder="Nombre del Cliente"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+
+        <label
+          for="CondicionVenta"
+          class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+          >Condicion de venta</label
+        >
+        <input
+          type="text"
+          id="CondicionVenta"
+          name="CondicionVenta"
+          placeholder="Condicion de venta"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+
+        <label
+          for="MetodoPago"
+          class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+          >Metodo de Pago</label
+        >
+        <input
+          type="text"
+          id="MetodoPago"
+          name="MetodoPago"
+          placeholder="Metodo de pago"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+
+        <label
+          for="Estado"
+          class="text-sm text-gray-700 dark:text-gray-300 mt-2">Estado</label
+        >
+        <input
+          type="text"
+          id="Estado"
+          name="Estado"
+          placeholder="Estado de la venta"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+
+        <label for="Sumas" class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+          >Sumas</label
+        >
+        <input
+          type="text"
+          id="Sumas"
+          name="Sumas"
+          placeholder="Sumas"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+        <label for="IVA" class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+          >IVA</label
+        >
+        <input
+          type="text"
+          id="IVA"
+          name="IVA"
+          placeholder="Iva 13%"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+        <label for="Total" class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+          >Total</label
+        >
+        <input
+          type="text"
+          id="Total"
+          name="Total"
+          placeholder="Total de la venta"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+        <label
+          for="Vendedor"
+          class="text-sm text-gray-700 dark:text-gray-300 mt-2">Vendedor</label
+        >
+        <input
+          type="text"
+          id="Vendedor"
+          name="Vendedor"
+          placeholder="Vendedor"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+        <!-- Botones -->
+        <div class="flex justify-end space-x-4">
+          <button
+            type="button"
+            class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+            onclick="document.getElementById('Deletemodal').close()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            onclick="deletecliente()"
+            class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+          >
+            Enviar
+          </button>
+        </div>
+      </div>
+    </Modal>
   </div>
+  <!--Detalles-->
+  <Modal id="Detailmodal">
+    <div
+      class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+    >
+      <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+        Detalle Venta
+      </h2>
+
+      <!-- Formulario -->
+      <form name="agregar" method="POST" class="space-b-4">
+        <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
+          >Nombre</label
+        >
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          placeholder="Nombre"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+
+        <label for="tipo" class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+          >Tipo Cliente</label
+        >
+        <select
+          id="tipo"
+          name="tipo"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        >
+          <option value="1">Natural</option>
+          <option value="2">Jurídico</option>
+        </select>
+
+        <label
+          for="Direccion"
+          class="text-sm text-gray-700 dark:text-gray-300 mt-2">Dirección</label
+        >
+        <textarea
+          id="Direccion"
+          name="Direccion"
+          placeholder="Dirección"
+          required
+          disabled
+          rows="2"
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        ></textarea>
+
+        <label
+          for="Telefono"
+          class="text-sm text-gray-700 dark:text-gray-300 mt-2">Teléfono</label
+        >
+        <input
+          type="text"
+          id="Telefono"
+          name="Telefono"
+          placeholder="Teléfono"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+
+        <label for="Dui" class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+          >DUI</label
+        >
+        <input
+          type="text"
+          id="Dui"
+          name="Dui"
+          placeholder="DUI"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+
+        <label for="Nit" class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+          >NIT</label
+        >
+        <input
+          type="text"
+          id="Nit"
+          name="Nit"
+          placeholder="NIT"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+
+        <label for="Ncr" class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+          >NCR</label
+        >
+        <input
+          type="text"
+          id="Ncr"
+          name="Ncr"
+          placeholder="NCR"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+
+        <label for="Giro" class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+          >Giro</label
+        >
+        <input
+          type="text"
+          id="Giro"
+          name="Giro"
+          placeholder="Giro"
+          required
+          disabled
+          class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+        />
+        <!-- Botones -->
+        <div class="flex justify-end space-x-4">
+          <button
+            type="button"
+            class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+            onclick="document.getElementById('Detailmodal').close()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            onclick="detailcliente()"
+            class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+          >
+            Enviar
+          </button>
+        </div>
+      </form>
+    </div>
+  </Modal>
 </Layout>
+
 <script type="module">
   const addcl = document.getElementById("addcl");
   addcl.addEventListener("click", addcliente);
@@ -938,14 +999,13 @@ const tipoClienteMap = {
         giro: giro,
         fecha_registro: new Date().toISOString(),
       }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          alert("Cliente agregado correctamente");
-          location.reload();
-        } else {
-          alert("Error al agregar el cliente");
-        }
-      })
+    }).then((res) => {
+      if (res.ok) {
+        alert("Cliente agregado correctamente");
+        location.reload();
+      } else {
+        alert("Error al agregar el cliente");
+      }
+    });
   }
 </script>
