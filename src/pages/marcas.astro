@@ -41,7 +41,6 @@ try {
     throw new Error("Error al obtener las marcas");
   }
   marcas = await res.data;
-  console.log(data);
 } catch (error) {
   console.error("Error al obtener las marcas:", error);
 }
@@ -148,6 +147,7 @@ try {
     }
   }
 </style>
+<Alertas />
 <Layout title="Panel de Control">
   <!-- height: max-content; -->
   <div
@@ -206,7 +206,6 @@ try {
                 <div
                   id="editButton"
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-emerald-500 bg-lime-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Editmodal').showModal()"
                 >
                   <i class="fa-solid fa-pen text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Editar</span>
@@ -215,7 +214,7 @@ try {
               <div class="flex justify-center">
                 <div
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-rose-500 bg-pink-600 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Deletemodal').showModal()"
+                  id="delete"
                 >
                   <i class="fa-solid fa-trash text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Eliminar</span>
@@ -227,10 +226,10 @@ try {
           <Card title="Total de marcas" description="Total"
             ><i class="fa-solid fa-list"></i> {" " + marcas.length || 0}</Card
           >
-          <Card title="Marcas recientes" description="Último marca agregada">
+          <Card title="Marcas recientes" description="Última marca agregada">
             <!-- undefined == no hay -->
             <i class="fa-solid fa-circle-check"></i>
-            {" " + marcas[0]?.nombre || "No hay marcas"}
+            {" " + marcas[marcas.length - 1]?.nombre || "No hay marcas"}
           </Card>
         </div>
 
@@ -258,7 +257,7 @@ try {
                         <input
                           type="checkbox"
                           name="marca"
-                          value={marca.idmarca}
+                          value={marca.Idmarca}
                           class="absolute opacity-0 cursor-pointer h-0 w-0"
                         />
                         <div class="checkmark relative top-0 left-0 h-5 w-5 bg-gray-300 rounded-full transition duration-300 mx-auto" />
@@ -286,7 +285,12 @@ try {
           </h2>
 
           <!-- Formulario -->
-          <form name="agregar" method="POST" class="space-b-4">
+          <form
+            name="agregar"
+            method="POST"
+            class="space-b-4"
+            autocomplete="off"
+          >
             <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
               >Nombre de marca</label
             >
@@ -328,7 +332,12 @@ try {
           </h2>
 
           <!-- Formulario -->
-          <form name="editar" method="POST" class="space-b-4">
+          <form
+            name="editar"
+            method="POST"
+            class="space-b-4"
+            autocomplete="off"
+          >
             <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
               >Nombre de marca</label
             >
@@ -351,7 +360,7 @@ try {
               </button>
               <button
                 type="button"
-                onclick="editempleado()"
+                id="edit"
                 class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
               >
                 Editar
@@ -380,6 +389,7 @@ try {
   });
 
   const addcl = document.getElementById("addcl");
+  const editButton = document.getElementById("editButton");
   addcl.addEventListener("click", async () => {
     const form = document.forms.agregar;
     const nombre = form.Nombre.value;
@@ -394,11 +404,130 @@ try {
       },
       body: JSON.stringify(data),
     });
-    if (res.status === 200) {
+    if (res.ok) {
       document.getElementById("Addmodal").close();
-      location.reload();
+      window.showAlert("Marca agregada correctamente", "success");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } else {
-      console.error("Error al agregar la marca");
+      window.showAlert("Error al agregar la marca", "error");
     }
   });
+  editButton.addEventListener("click", async () => {
+    const form = document.forms.editar;
+    const marca = document.querySelector('input[name="marca"]:checked');
+    const editar = document.getElementById("edit");
+
+    async function edit() {
+      const form = document.forms.editar;
+      const nombre = form.Nombre.value;
+      const idmarca = form.idmarca;
+
+      const data = {
+        nombre: nombre,
+      };
+      const res = await fetch(
+        "http://localhost:8000/marcas/actualizar/" + idmarca,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      if (res.ok) {
+        document.getElementById("Editmodal").close();
+        window.showAlert("Marca editada correctamente", "success");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        window.showAlert("Error al editar la marca", "error");
+      }
+    }
+    if (marca) {
+      const idmarca = marca.value;
+      const res = await fetch(
+        `http://localhost:8000/marcas/detalles/${idmarca}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        form.Nombre.value = data.nombre;
+        form.idmarca = idmarca;
+        document.getElementById("Editmodal").showModal();
+        editar.addEventListener("click", edit);
+      } else {
+        window.showAlert("Error al obtener la marca", "error");
+      }
+    } else {
+      window.showAlert("Seleccione una marca", "error");
+    }
+  });
+
+  const deleteButton = document.getElementById("delete");
+  deleteButton.addEventListener("click", async () => {
+    let seleccionado = false;
+    const marcas = document.getElementsByName("marca");
+    for (let i = 0; i < marcas.length; i++) {
+      if (marcas[i].checked) {
+        seleccionado = true;
+        const marcaNombre =
+          marcas[i].parentElement.parentElement.parentElement.children[1]
+            .innerHTML;
+        const confirmacion = await new Promise((resolve) => {
+          window.showAlert(
+            `¿Estás seguro que deseas eliminar la marca \ncon nombre: ${marcaNombre}?`,
+            "confirm",
+            {
+              onCancel: () => {
+                console.log("Operación cancelada");
+                resolve(false);
+              },
+              onAccept: () => {
+                resolve(true);
+              },
+            }
+          );
+        });
+        if (confirmacion) {
+          delmarca(marcas[i].value, i === marcas.length - 1);
+        }
+      }
+    }
+  });
+
+  function delmarca(id, ultimo) {
+    fetch("http://localhost:8000/marcas/eliminar/" + id, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          window.showAlert("Marca eliminada correctamente", "success");
+          if (ultimo) {
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
+          }
+        } else {
+          window.showAlert("Error al eliminar la marca", "error");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
 </script>

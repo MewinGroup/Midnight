@@ -19,6 +19,7 @@ const res = await userinfo(token);
 const user = res;
 ---
 
+
 <Layout title="Panel de Control">
   <div
     class="flex flex-col md:flex-row bg-gray-100 h-screen dark:bg-gray-800 dark:text-white"
@@ -26,7 +27,9 @@ const user = res;
     <!-- Sidebar -->
     <Sidebar tipo={user.tipo_perfil}>
       <div class="flex-1 p-4 md:p-6 dark:bg-gray-800">
-        <h1 class="text-3xl font-bold mb-6 text-center">Inventario y Tablas de datos</h1>
+        <h1 class="text-3xl font-bold mb-6 text-center">
+          Inventario y Tablas de datos
+        </h1>
 
         <div class="flex items-center justify-end mb-6">
           <div class="flex items-center space-x-2">
@@ -56,110 +59,140 @@ const user = res;
         </div>
         <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-5 md:grid-cols-5 mx-auto">
-              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/productos';">
-                <Card title="" description="">
-                  <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-box-open text-6xl mb-2"></i>
-                    <p class="text-xl dark:text-white font-semibold text-slate-900">
-                      Productos
-                    </p>
-                  </div>
-                </Card>
+          <div
+            class="hover:scale-105 transition cursor-pointer"
+            onclick="window.location.href='/productos';"
+          >
+            <Card title="" description="">
+              <div class="flex flex-col items-center">
+                <i class="fa-solid fa-box-open text-6xl mb-2"></i>
+                <p class="text-xl dark:text-white font-semibold text-slate-900">
+                  Productos
+                </p>
               </div>
-            <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/cajas';">
-              <Card title="" description="">
-                <div class="flex flex-col items-center">
-                  <i class="fa-solid fa-cash-register text-6xl mb-2"></i>
-                  <p class="text-xl dark:text-white font-semibold text-slate-900">
-                    Cajas
-                  </p>
-                </div>
-              </Card>
-            </div>
-            <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/categorias';">
-              <Card title="" description="">
-                <div class="flex flex-col items-center">
-                  <i class="fa-solid fa-bookmark text-6xl mb-2"></i>
-                  <p class="text-xl dark:text-white font-semibold text-slate-900">
-                    Categorias
-                  </p>
-                </div>
-              </Card>
-            </div>
-            <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/documentos';">
-              <Card title="" description="">
-                <div class="flex flex-col items-center">
-                  <i class="fa-solid fa-address-card text-6xl mb-2"></i>
-                  <p class="text-xl dark:text-white font-semibold text-slate-900">
-                    Documentos Fiscales
-                  </p>
-                </div>
-              </Card>
-            </div>
-            <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/marcas';">
-                <Card title="" description="">
-                  <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-trademark text-6xl mb-2"></i>
-                    <p class="text-xl dark:text-white font-semibold text-slate-900">
-                      Marcas
-                    </p>
-                  </div>
-                </Card>
-              </div>
-              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/presentaciones';">
-                <Card title="" description="">
-                  <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-wine-bottle text-6xl mb-2"></i>
-                    <p class="text-xl dark:text-white font-semibold text-slate-900">
-                      Presentaciones
-                    </p>
-                  </div>
-                </Card>
-              </div>
-              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/servicios';">
-                <Card title="" description="">
-                  <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-list-check text-6xl mb-2"></i>
-                    <p class="text-xl dark:text-white font-semibold text-slate-900">
-                      Servicios
-                    </p>
-                  </div>
-                </Card>
-              </div>
-              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/ubicaciones';">
-                <Card title="" description="">
-                  <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-map-location-dot text-6xl mb-2"></i>
-                    <p class="text-xl dark:text-white font-semibold text-slate-900">
-                      Ubicaciones Fisicas
-                    </p>
-                  </div>
-                </Card>
-              </div>
-              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/unidades';">
-                <Card title="" description="">
-                  <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-ruler text-6xl mb-2"></i>
-                    <p class="text-xl dark:text-white font-semibold text-slate-900">
-                      Unidades de medida
-                    </p>
-                  </div>
-                </Card>
-              </div>
-              <div class="hover:scale-105 transition cursor-pointer" onclick="window.location.href='/metodos';">
-                <Card title="" description="">
-                  <div class="flex flex-col items-center">
-                    <i class="fa-solid fa-credit-card text-6xl mb-2"></i>
-                    <p class="text-xl dark:text-white font-semibold text-slate-900">
-                     Metodos de pago
-                    </p>
-                  </div>
-                </Card>
-              </div>
+            </Card>
           </div>
-          
+          <div
+            class="hover:scale-105 transition cursor-pointer"
+            onclick="window.location.href='/cajas';"
+          >
+            <Card title="" description="">
+              <div class="flex flex-col items-center">
+                <i class="fa-solid fa-cash-register text-6xl mb-2"></i>
+                <p class="text-xl dark:text-white font-semibold text-slate-900">
+                  Cajas
+                </p>
+              </div>
+            </Card>
+          </div>
+          <div
+            class="hover:scale-105 transition cursor-pointer"
+            onclick="window.location.href='/categorias';"
+          >
+            <Card title="" description="">
+              <div class="flex flex-col items-center">
+                <i class="fa-solid fa-bookmark text-6xl mb-2"></i>
+                <p class="text-xl dark:text-white font-semibold text-slate-900">
+                  Categorias
+                </p>
+              </div>
+            </Card>
+          </div>
+          <div
+            class="hover:scale-105 transition cursor-pointer"
+            onclick="window.location.href='/documentos';"
+          >
+            <Card title="" description="">
+              <div class="flex flex-col items-center">
+                <i class="fa-solid fa-address-card text-6xl mb-2"></i>
+                <p class="text-xl dark:text-white font-semibold text-slate-900">
+                  Documentos Fiscales
+                </p>
+              </div>
+            </Card>
+          </div>
+          <div
+            class="hover:scale-105 transition cursor-pointer"
+            onclick="window.location.href='/marcas';"
+          >
+            <Card title="" description="">
+              <div class="flex flex-col items-center">
+                <i class="fa-solid fa-trademark text-6xl mb-2"></i>
+                <p class="text-xl dark:text-white font-semibold text-slate-900">
+                  Marcas
+                </p>
+              </div>
+            </Card>
+          </div>
+          <div
+            class="hover:scale-105 transition cursor-pointer"
+            onclick="window.location.href='/presentaciones';"
+          >
+            <Card title="" description="">
+              <div class="flex flex-col items-center">
+                <i class="fa-solid fa-can-food text-6xl mb-2"></i>
+                <p class="text-xl dark:text-white font-semibold text-slate-900">
+                  Presentaciones
+                </p>
+              </div>
+            </Card>
+          </div>
+          <div
+            class="hover:scale-105 transition cursor-pointer"
+            onclick="window.location.href='/servicios';"
+          >
+            <Card title="" description="">
+              <div class="flex flex-col items-center">
+                <i class="fa-solid fa-list-check text-6xl mb-2"></i>
+                <p class="text-xl dark:text-white font-semibold text-slate-900">
+                  Servicios
+                </p>
+              </div>
+            </Card>
+          </div>
+          <div
+            class="hover:scale-105 transition cursor-pointer"
+            onclick="window.location.href='/ubicaciones';"
+          >
+            <Card title="" description="">
+              <div class="flex flex-col items-center">
+                <i class="fa-solid fa-map-location-dot text-6xl mb-2"></i>
+                <p class="text-xl dark:text-white font-semibold text-slate-900">
+                  Ubicaciones Fisicas
+                </p>
+              </div>
+            </Card>
+          </div>
+          <div
+            class="hover:scale-105 transition cursor-pointer"
+            onclick="window.location.href='/unidades';"
+          >
+            <Card title="" description="">
+              <div class="flex flex-col items-center">
+                <i class="fa-solid fa-ruler text-6xl mb-2"></i>
+                <p class="text-xl dark:text-white font-semibold text-slate-900">
+                  Unidades de medida
+                </p>
+              </div>
+            </Card>
+          </div>
+          <div
+            class="hover:scale-105 transition cursor-pointer"
+            onclick="window.location.href='/metodos';"
+          >
+            <Card title="" description="">
+              <div class="flex flex-col items-center">
+                <i class="fa-solid fa-credit-card text-6xl mb-2"></i>
+                <p class="text-xl dark:text-white font-semibold text-slate-900">
+                  Metodos de pago
+                </p>
+              </div>
+            </Card>
+          </div>
+        </div>
 
-      <!-- Main Content -->
+        <!-- Main Content -->
+      </div>
     </Sidebar>
   </div>
 </Layout>

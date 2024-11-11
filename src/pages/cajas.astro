@@ -6,9 +6,10 @@ import Layout from "@Layouts/layout.astro";
 import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
 //Aqui la lib empleados
-import Tabla from "@components/cajas/Tabla.astro";
+import Tabla from "@components/marcas/Tabla.astro";
 import Modal from "@components/dialog.astro";
 import Alertas from "@components/alertas.astro";
+import { Fetcher } from "@Lib/fetcher";
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -33,12 +34,16 @@ try {
 }
 
 const user = res;
-
-const tipoClienteMap = {
-  1: "Natural",
-  2: "Jurídico",
-  // Agrega más tipos según sea necesario
-};
+let cajas = [];
+try {
+  const res = await Fetcher("cajas", "listar", token);
+  if (res.status !== 200) {
+    throw new Error("Error al obtener las cajas");
+  }
+  cajas = await res.data;
+} catch (error) {
+  console.error("Error al obtener las cajas:", error);
+}
 ---
 
 <style>
@@ -67,7 +72,82 @@ const tipoClienteMap = {
     scrollbar-width: thin;
     scrollbar-color: #6c757d transparent;
   }
+
+  .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .container {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    font-size: 1.5rem;
+    user-select: none;
+  }
+
+  .checkmark {
+    --clr: #0b6e4f;
+    position: relative;
+    top: 0;
+    left: 0;
+    height: 1.3em;
+    width: 1.3em;
+    background-color: #ccc;
+    border-radius: 50%;
+    transition: 300ms;
+  }
+
+  .container input:checked ~ .checkmark {
+    background-color: var(--clr);
+    border-radius: 0.5rem;
+    animation: pulse 500ms ease-in-out;
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  .container input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  .container .checkmark:after {
+    left: 0.45em;
+    top: 0.25em;
+    width: 0.25em;
+    height: 0.5em;
+    border: solid #e0e0e2;
+    border-width: 0 0.15em 0.15em 0;
+    transform: rotate(45deg);
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 #0b6e4f90;
+      rotate: 20deg;
+    }
+
+    50% {
+      rotate: -20deg;
+    }
+
+    75% {
+      box-shadow: 0 0 0 10px #0b6e4f60;
+    }
+
+    100% {
+      box-shadow: 0 0 0 13px #0b6e4f30;
+      rotate: 0;
+    }
+  }
 </style>
+<Alertas />
 <Layout title="Panel de Control">
   <!-- height: max-content; -->
   <div
@@ -81,277 +161,378 @@ const tipoClienteMap = {
           <i class="fa-solid fa-cash-register"></i> Listado de cajas
         </h1>
 
-        <div class="flex items-center justify-end mb-6">
-          <div class="flex items-center space-x-2">
-            <div
-              class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-500"
-            >
-              <img
-                src={user.imagen ||
-                  "https://avatars.githubusercontent.com/u/178928214?v=4"}
-                alt="Foto de perfil"
-                class="w-full h-full object-cover"
-              />
-            </div>
-            <div class="text-right">
-              <h1 class="text-xl font-bold">Hola, {user.nombre}</h1>
-              <p class="text-gray-600 dark:text-gray-400 text-sm">
-                {
-                  user.tipo_perfil == 1
-                    ? "Administrador"
-                    : user.tipo_perfil == 2
-                      ? "Vendedor"
-                      : "Usuario"
-                }
-              </p>
+          <div class="flex items-center justify-end mb-6">
+            <div class="flex items-center space-x-2">
+              <div
+                class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-500"
+              >
+                <img
+                  src={user.imagen ||
+                    "https://avatars.githubusercontent.com/u/178928214?v=4"}
+                  alt="Foto de perfil"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="text-right">
+                <h1 class="text-xl font-bold">Hola, {user.nombre}</h1>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">
+                  {
+                    user.tipo_perfil == 1
+                      ? "Administrador"
+                      : user.tipo_perfil == 2
+                        ? "Vendedor"
+                        : "Usuario"
+                  }
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Contenido de tarjetas -->
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Alertas />
-          <Card title="Herramientas" description="Manejo de datos de cajas">
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              <div class="flex justify-center">
-                <a
-                  id="add"
-                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-indigo-500 bg-sky-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Addmodal').showModal()"
-                >
-                  <i class="fa-solid fa-plus text-xl md:text-3xl"></i>
-                  <span class="text-xs md:text-sm font-bold">Agregar</span>
-                </a>
-              </div>
-              <div class="flex justify-center">
-                <div
-                  id="editButton"
-                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-emerald-500 bg-lime-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Editmodal').showModal()"
-                >
-                  <i class="fa-solid fa-pen text-xl md:text-3xl"></i>
-                  <span class="text-xs md:text-sm font-bold">Editar</span>
+          <!-- Contenido de tarjetas -->
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <Alertas />
+            <Card title="Herramientas" description="Manejo de datos de cajas">
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                <div class="flex justify-center">
+                  <a
+                    id="add"
+                    class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-indigo-500 bg-sky-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                    onclick="document.getElementById('Addmodal').showModal()"
+                  >
+                    <i class="fa-solid fa-plus text-xl md:text-3xl"></i>
+                    <span class="text-xs md:text-sm font-bold">Agregar</span>
+                  </a>
+                </div>
+                <div class="flex justify-center">
+                  <div
+                    id="editButton"
+                    class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-emerald-500 bg-lime-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                  >
+                    <i class="fa-solid fa-pen text-xl md:text-3xl"></i>
+                    <span class="text-xs md:text-sm font-bold">Editar</span>
+                  </div>
+                </div>
+                <div class="flex justify-center">
+                  <div
+                    class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-rose-500 bg-pink-600 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                    id="delete"
+                  >
+                    <i class="fa-solid fa-trash text-xl md:text-3xl"></i>
+                    <span class="text-xs md:text-sm font-bold">Eliminar</span>
+                  </div>
                 </div>
               </div>
-              <div class="flex justify-center">
-                <div
-                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-rose-500 bg-pink-600 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Deletemodal').showModal()"
-                >
-                  <i class="fa-solid fa-trash text-xl md:text-3xl"></i>
-                  <span class="text-xs md:text-sm font-bold">Eliminar</span>
-                </div>
-              </div>
-              <div class="flex justify-center">
-                <div
-                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-amber-500 bg-orange-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Detailmodal').showModal()"
-                >
-                  <i class="fa-solid fa-chart-pie text-xl md:text-3xl"></i>
-                  <span class="text-xs md:text-sm font-bold">Detalles</span>
-                </div>
-              </div>
-            </div>
-          </Card>
+            </Card>
 
-          <Card title="Total de Cajas" description="Total"
-            ><i class="fa-solid fa-list"></i> 6</Card
-          >
-          <Card
-            title="Caja abierta recientemente"
-            description="Última caja abierta"
-          >
-            <i class="fa-solid fa-hashtag"></i> Caja 6
-          </Card>
-        </div>
+            <Card title="Total de cajas" description="Total"
+              ><i class="fa-solid fa-list"></i>
+              {" " + cajas.length || 0}</Card
+            >
+          </div>
 
-        <!-- Tabla de órdenes recientes -->
-        <div
-          class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
-        >
-          <h2 class="text-xl font-semibold">Cajas</h2>
-          <Tabla>
-            <slot>
-              <!--foreach cliente fill a column -->
-              <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
-              </tr>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
+          <!-- Tabla de órdenes recientes -->
+          <div
+            class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
+          >
+            <div class="flex justify-between items-center">
+              <h2 class="text-xl font-semibold">Cajas</h2>
+              <button
+                class="btn text-indigo-900 dark:text-slate-200 px-2 py-1 rounded-md hover:text-gray-500 dark:hover:text-gray-50"
+                id="acciones"
               >
-                1
-              </td>
-              <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                Caja 1
-              </td>
-            </slot>
-          </Tabla>
-        </div>
+                <i class="fa-solid fa-clipboard-check" id="Activar"></i> Seleccionar
+              </button>
+            </div>
+            <Tabla>
+              <slot>
+                <!--foreach cliente fill a column -->
+                {
+                  cajas.map((caja) => (
+                    <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
+                      <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center hidden acciones">
+                        <label class="container relative block cursor-pointer text-lg select-none">
+                          <input
+                            type="checkbox"
+                            name="caja"
+                            value={caja.Idcaja}
+                            class="absolute opacity-0 cursor-pointer h-0 w-0"
+                          />
+                          <div class="checkmark relative top-0 left-0 h-5 w-5 bg-gray-300 rounded-full transition duration-300 mx-auto" />
+                        </label>
+                      </td>
+                      <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center">
+                        {caja.nombre}
+                      </td>
+                    </tr>
+                  ))
+                }
+              </slot>
+            </Tabla>
+          </div>
+        </h1>
+        <!-- Addmodal Content -->
+        <!-- Modal hidden as defaul -->
+        <!--AGREGAR -->
+        <Modal id="Addmodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+            >
+              Agregar caja
+            </h2>
+
+            <!-- Formulario -->
+            <form
+              name="agregar"
+              method="POST"
+              class="space-b-4"
+              autocomplete="off"
+            >
+              <label
+                for="nombre"
+                class="text-x1 text-gray-700 dark:text-gray-300"
+                >Nombre de caja</label
+              >
+              <input
+                type="text"
+                id="nombre"
+                name="Nombre"
+                placeholder="Nombre"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Addmodal').close()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  id="addcl"
+                  class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  Enviar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+        <!--EDITAR -->
+        <Modal id="Editmodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+            >
+              Editar caja
+            </h2>
+
+            <!-- Formulario -->
+            <form
+              name="editar"
+              method="POST"
+              class="space-b-4"
+              autocomplete="off"
+            >
+              <label
+                for="nombre"
+                class="text-x1 text-gray-700 dark:text-gray-300"
+                >Nombre de caja</label
+              >
+              <input
+                type="text"
+                id="nombre"
+                name="Nombre"
+                placeholder="Nombre"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Editmodal').close()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  id="edit"
+                  class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  Editar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
       </div>
-      <!-- Addmodal Content -->
-      <!-- Modal hidden as defaul -->
-      <!--AGREGAR -->
-      <Modal id="Addmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Agregar Caja
-          </h2>
-
-          <!-- Formulario -->
-          <form name="agregar" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre Caja</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre Caja"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Addmodal').close()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                id="addcl"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Enviar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <!--EDITAR -->
-      <Modal id="Editmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Editar Caja
-          </h2>
-
-          <!-- Formulario -->
-          <form name="editar" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre de Caja</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Editmodal').close()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onclick="editempleado()"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Editar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <!--Eliminar -->
-      <Modal id="Deletemodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Eliminar Caja
-          </h2>
-
-          <!-- Formulario -->
-          <form name="editar" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre de Caja</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Deletemodal').close()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onclick="deleteproveedor()"
-                class="btn btn-submit bg-red-500 text-white px-4 py-2 rounded-md"
-              >
-                Eliminar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <!--Detalles-->
-      <Modal id="Detailmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Detalle de Caja
-          </h2>
-
-          <!-- Formulario -->
-          <form name="detalle" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre de Caja</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Detailmodal').close()"
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
     </Sidebar>
   </div>
+
+  <script>
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token"))
+      .split("=")[1];
+    const actions = document.getElementById("acciones");
+
+    actions.addEventListener("click", () => {
+      const acciones = document.getElementsByClassName("acciones");
+
+      for (let i = 0; i < acciones.length; i++) {
+        acciones[i].classList.toggle("hidden");
+      }
+    });
+
+    const addcl = document.getElementById("addcl");
+    const editButton = document.getElementById("editButton");
+    addcl.addEventListener("click", async () => {
+      const form = document.forms.agregar;
+      const nombre = form.Nombre.value;
+      const data = {
+        nombre: nombre,
+      };
+      const res = await fetch("http://localhost:8000/cajas/agregar", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        document.getElementById("Addmodal").close();
+        window.showAlert("caja agregada correctamente", "success");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        window.showAlert("Error al agregar la caja", "error");
+      }
+    });
+    editButton.addEventListener("click", async () => {
+      const form = document.forms.editar;
+      const caja = document.querySelector('input[name="caja"]:checked');
+      const editar = document.getElementById("edit");
+
+      async function edit() {
+        const form = document.forms.editar;
+        const nombre = form.Nombre.value;
+        const idcaja = form.idcaja;
+
+        const data = {
+          nombre: nombre,
+        };
+        const res = await fetch(
+          "http://localhost:8000/cajas/actualizar/" + idcaja,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+          }
+        );
+        if (res.ok) {
+          document.getElementById("Editmodal").close();
+          window.showAlert("caja editada correctamente", "success");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        } else {
+          window.showAlert("Error al editar la caja", "error");
+        }
+      }
+      if (caja) {
+        const idcaja = caja.value;
+        const res = await fetch(
+          `http://localhost:8000/cajas/detalles/${idcaja}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (res.ok) {
+          const data = await res.json();
+          form.Nombre.value = data.nombre;
+          form.idcaja = idcaja;
+          document.getElementById("Editmodal").showModal();
+          editar.addEventListener("click", edit);
+        } else {
+          window.showAlert("Error al obtener la caja", "error");
+        }
+      } else {
+        window.showAlert("Seleccione una caja", "error");
+      }
+    });
+
+    const deleteButton = document.getElementById("delete");
+    deleteButton.addEventListener("click", async () => {
+      let seleccionado = false;
+      const cajas = document.getElementsByName("caja");
+      for (let i = 0; i < cajas.length; i++) {
+        if (cajas[i].checked) {
+          seleccionado = true;
+          const cajaNombre =
+            cajas[i].parentElement.parentElement.parentElement.children[1]
+              .innerHTML;
+          const confirmacion = await new Promise((resolve) => {
+            window.showAlert(
+              `¿Estás seguro que deseas eliminar la caja \ncon nombre: ${cajaNombre}?`,
+              "confirm",
+              {
+                onCancel: () => {
+                  console.log("Operación cancelada");
+                  resolve(false);
+                },
+                onAccept: () => {
+                  resolve(true);
+                },
+              }
+            );
+          });
+          if (confirmacion) {
+            delcaja(cajas[i].value, i === cajas.length - 1);
+          }
+        }
+      }
+    });
+
+    function delcaja(id, ultimo) {
+      fetch("http://localhost:8000/cajas/eliminar/" + id, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          if (res.ok) {
+            window.showAlert("caja eliminada correctamente", "success");
+            if (ultimo) {
+              setTimeout(() => {
+                window.location.reload();
+              }, 500);
+            }
+          } else {
+            window.showAlert("Error al eliminar la caja", "error");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  </script>
 </Layout>
