@@ -9,6 +9,7 @@ import Card from "@components/menu/Card.astro";
 import Tabla from "@components/marcas/Tabla.astro";
 import Modal from "@components/dialog.astro";
 import Alertas from "@components/alertas.astro";
+import {Fetcher} from "@Lib/fetcher";
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -33,12 +34,17 @@ try {
 }
 
 const user = res;
-
-const tipoClienteMap = {
-  1: "Natural",
-  2: "Jurídico",
-  // Agrega más tipos según sea necesario
-};
+let marcas = [];
+try {
+  const res = await Fetcher("marcas","listar", token);
+  if (res.status !== 200) {
+    throw new Error("Error al obtener las marcas");
+  }
+  marcas = await res.data;
+  console.log(data);
+} catch (error) {
+  console.error("Error al obtener las marcas:", error);
+}
 ---
 
 <style>
@@ -66,6 +72,80 @@ const tipoClienteMap = {
   .scrollbar-custom {
     scrollbar-width: thin;
     scrollbar-color: #6c757d transparent;
+  }
+
+  .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .container {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    font-size: 1.5rem;
+    user-select: none;
+  }
+
+  .checkmark {
+    --clr: #0b6e4f;
+    position: relative;
+    top: 0;
+    left: 0;
+    height: 1.3em;
+    width: 1.3em;
+    background-color: #ccc;
+    border-radius: 50%;
+    transition: 300ms;
+  }
+
+  .container input:checked ~ .checkmark {
+    background-color: var(--clr);
+    border-radius: 0.5rem;
+    animation: pulse 500ms ease-in-out;
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  .container input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  .container .checkmark:after {
+    left: 0.45em;
+    top: 0.25em;
+    width: 0.25em;
+    height: 0.5em;
+    border: solid #e0e0e2;
+    border-width: 0 0.15em 0.15em 0;
+    transform: rotate(45deg);
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 #0b6e4f90;
+      rotate: 20deg;
+    }
+
+    50% {
+      rotate: -20deg;
+    }
+
+    75% {
+      box-shadow: 0 0 0 10px #0b6e4f60;
+    }
+
+    100% {
+      box-shadow: 0 0 0 13px #0b6e4f30;
+      rotate: 0;
+    }
   }
 </style>
 <Layout title="Panel de Control">
@@ -141,26 +221,19 @@ const tipoClienteMap = {
                   <span class="text-xs md:text-sm font-bold">Eliminar</span>
                 </div>
               </div>
-              <div class="flex justify-center">
-                <div
-                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-amber-500 bg-orange-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Detailmodal').showModal()"
-                >
-                  <i class="fa-solid fa-chart-pie text-xl md:text-3xl"></i>
-                  <span class="text-xs md:text-sm font-bold">Detalles</span>
-                </div>
-              </div>
+              
             </div>
           </Card>
 
           <Card title="Total de marcas" description="Total"
-            ><i class="fa-solid fa-list"></i> 1</Card
+            ><i class="fa-solid fa-list"></i> {" " + marcas.length || 0}</Card
           >
           <Card
             title="Marcas recientes"
             description="Último marca agregada"
           >
-            <i class="fa-solid fa-circle-check"></i> Huevos
+        <!-- undefined == no hay -->
+            <i class="fa-solid fa-circle-check"></i> {(" "+ marcas[0]?.nombre) || "No hay marcas"}
           </Card>
         </div>
 
@@ -168,20 +241,37 @@ const tipoClienteMap = {
         <div
           class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
         >
+        <div class="flex justify-between items-center">
           <h2 class="text-xl font-semibold">Marcas</h2>
+          <button
+            class="btn text-indigo-900 dark:text-slate-200 px-2 py-1 rounded-md hover:text-gray-500 dark:hover:text-gray-50"
+            id="acciones" 
+          >
+          <i class="fa-solid fa-clipboard-check" id="Activar"></i> Seleccionar
+          </button>
+        </div>
           <Tabla>
             <slot>
               <!--foreach cliente fill a column -->
-              <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
-              </tr>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                1
-              </td>
-              <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                Dui
-              </td>
+              {
+                marcas.map((marca) => (
+                <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center hidden acciones">
+                      <label class="container relative block cursor-pointer text-lg select-none">
+                        <input
+                          type="checkbox"
+                          name="marca"
+                          value={marca.idmarca}
+                          class="absolute opacity-0 cursor-pointer h-0 w-0"
+                        />
+                        <div class="checkmark relative top-0 left-0 h-5 w-5 bg-gray-300 rounded-full transition duration-300 mx-auto" />
+                      </label>
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center">
+                      {marca.nombre}</td>
+                  </tr>
+                ))
+              }
             </slot>
           </Tabla>
         </div>
@@ -355,3 +445,19 @@ const tipoClienteMap = {
     </Sidebar>
   </div>
 </Layout>
+
+<script>
+   const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token"))
+      .split("=")[1];
+      const actions = document.getElementById("acciones");
+
+actions.addEventListener("click", () => {
+  const acciones = document.getElementsByClassName("acciones");
+
+  for (let i = 0; i < acciones.length; i++) {
+    acciones[i].classList.toggle("hidden");
+  }
+});
+      </script>

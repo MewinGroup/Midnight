@@ -217,7 +217,7 @@ try {
                 <div
                   id="editButton"
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-emerald-500 bg-lime-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Editmodal').showModal()"
+                
                 >
                   <i class="fa-solid fa-pen text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Editar</span>
@@ -862,10 +862,10 @@ try {
       if (!empleadoSeleccionado) {
         window.showAlert("No hay empleado seleccionado", "error");
         return;
+        
       }
 
-      document.getElementById("Editmodal").showModal();
-
+  
       fetch(`http://localhost:8000/usuarios/detalles/${empleadoSeleccionado}`, {
         method: "GET",
         headers: {
@@ -885,6 +885,7 @@ try {
             document.getElementById("empleadoImagenEdit").src = data.imagen;
           }
         });
+    document.getElementById("Editmodal").showModal();
 
       // Handle image upload preview
       const inputImg = document.getElementById("empimgEdit");
