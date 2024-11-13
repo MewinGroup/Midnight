@@ -9,6 +9,8 @@ import Card from "@components/menu/Card.astro";
 import Tabla from "@components/servicios/Tabla.astro";
 import Modal from "@components/dialog.astro";
 import Alertas from "@components/alertas.astro";
+import { Fetcher } from "@Lib/fetcher";
+import Documentos from "./documentos.astro";
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -34,11 +36,16 @@ try {
 
 const user = res;
 
-const tipoClienteMap = {
-  1: "Natural",
-  2: "Jurídico",
-  // Agrega más tipos según sea necesario
-};
+let servicios = []
+try{
+  const res = await Fetcher ("servicios","listar",token);
+  if (res.status!==200){
+    throw new Error("Error al obtener los servicios");
+  }
+  servicios = await res.data;
+} catch (error){
+  console.error("Error al obtener los servicios", error);
+}
 ---
 
 <style>
@@ -154,13 +161,16 @@ const tipoClienteMap = {
           </Card>
 
           <Card title="Total de Servicios" description="Total"
-            ><i class="fa-solid fa-list"></i> 1</Card
+            ><i class="fa-solid fa-list"></i> {" " + servicios.length || 0}</Card
           >
           <Card
             title="Servicio agregado recientemente"
             description="Último servicio agregado"
           >
-            <i class="fa-solid fa-circle-check"></i> Juan
+            <i class="fa-solid fa-circle-check"></i> {
+              " " + servicios [servicios.length - 1]?.nombre ||
+                "No hay servicios"
+            }
           </Card>
         </div>
 
@@ -168,29 +178,48 @@ const tipoClienteMap = {
         <div
           class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
         >
+        <div class="flex justify-between items-center">
           <h2 class="text-xl font-semibold">Servicios</h2>
+          <button
+            class="btn text-indigo-900 dark:text-slate-200 px-2 py-1 rounded-md hover:text-gray-500 dark:hover:text-gray-50"
+            id="acciones"
+          >
+            <i class="fa-solid fa-clipboard-check" id="Activar"></i> Seleccionar
+          </button>
+        </div>
+          
           <Tabla>
             <slot>
-              <!--foreach cliente fill a column -->
-              <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
-              </tr>
-              <td
-                class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center"
-              >
-                1
-              </td>
-              <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                Juan
-              </td>
-              <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                $2.33
-              </td>
-              <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                $3.33
-              </td>
-              <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                $4.33
-              </td>
+             <!--foreach cliente fill a column -->
+              {
+                servicios.map((servicio) => (
+                  <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center hidden acciones">
+                      <label class="container relative block cursor-pointer text-lg select-none">
+                        <input
+                          type="checkbox"
+                          name="servicio"
+                          value={servicio.Idservicio}
+                          class="absolute opacity-0 cursor-pointer h-0 w-0"
+                        />
+                        <div class="checkmark relative top-0 left-0 h-5 w-5 bg-gray-300 rounded-full transition duration-300 mx-auto" />
+                      </label>
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center">
+                      {servicio.nombre}
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center">
+                      ${servicio.precio_venta1}
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center">
+                      ${servicio.precio_venta2}
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center">
+                      ${servicio.precio_venta3}
+                    </td>
+                  </tr>
+                ))
+              }
             </slot>
           </Tabla>
         </div>
@@ -364,3 +393,18 @@ const tipoClienteMap = {
     </Sidebar>
   </div>
 </Layout>
+<script>
+   const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token"))
+    .split("=")[1];
+  const actions = document.getElementById("acciones");
+
+  actions.addEventListener("click", () => {
+    const acciones = document.getElementsByClassName("acciones");
+
+    for (let i = 0; i < acciones.length; i++) {
+      acciones[i].classList.toggle("hidden");
+    }
+  });
+</script>
