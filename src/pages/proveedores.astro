@@ -80,6 +80,80 @@ try {
     scrollbar-width: thin;
     scrollbar-color: #6c757d transparent;
   }
+
+  .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .container {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    font-size: 1.5rem;
+    user-select: none;
+  }
+
+  .checkmark {
+    --clr: #0b6e4f;
+    position: relative;
+    top: 0;
+    left: 0;
+    height: 1.3em;
+    width: 1.3em;
+    background-color: #ccc;
+    border-radius: 50%;
+    transition: 300ms;
+  }
+
+  .container input:checked ~ .checkmark {
+    background-color: var(--clr);
+    border-radius: 0.5rem;
+    animation: pulse 500ms ease-in-out;
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  .container input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  .container .checkmark:after {
+    left: 0.45em;
+    top: 0.25em;
+    width: 0.25em;
+    height: 0.5em;
+    border: solid #e0e0e2;
+    border-width: 0 0.15em 0.15em 0;
+    transform: rotate(45deg);
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 #0b6e4f90;
+      rotate: 20deg;
+    }
+
+    50% {
+      rotate: -20deg;
+    }
+
+    75% {
+      box-shadow: 0 0 0 10px #0b6e4f60;
+    }
+
+    100% {
+      box-shadow: 0 0 0 13px #0b6e4f30;
+      rotate: 0;
+    }
+  }
 </style>
 <Layout title="Panel de Control">
   <!-- height: max-content; -->
@@ -139,7 +213,6 @@ try {
                 <div
                   id="editButton"
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-emerald-500 bg-lime-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Editmodal').showModal()"
                 >
                   <i class="fa-solid fa-pen text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Editar</span>
@@ -148,7 +221,7 @@ try {
               <div class="flex justify-center">
                 <div
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-rose-500 bg-pink-600 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Deletemodal').showModal()"
+                  id="delete"
                 >
                   <i class="fa-solid fa-trash text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Eliminar</span>
@@ -157,7 +230,7 @@ try {
               <div class="flex justify-center">
                 <div
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-amber-500 bg-orange-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Detailmodal').showModal()"
+                  id="detailButton"
                 >
                   <i class="fa-solid fa-chart-pie text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Detalles</span>
@@ -168,14 +241,14 @@ try {
 
           <Card title="Total de Proveedores" description="Total"
             ><i class="fa-solid fa-truck-fast"></i>
-            {"" + listaproveedores.length}</Card
+            {" " + listaproveedores.length}</Card
           >
           <Card
             title="Proveedor Reciente"
             description="Último Proveedor Añadido"
           >
             <i class="fa-solid fa-warehouse"></i>
-            {" " + listaproveedores[listaproveedores.length - 1].nombre}
+            {(" " + listaproveedores[listaproveedores.length - 1].nombre) || "0"}
             <br />
             <i class="fa-solid fa-clipboard-list"></i>
             {
@@ -442,6 +515,314 @@ try {
           </div>
         </Modal>
 
+        <Modal id="Editmodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+            >
+              Editar Proveedor
+            </h2>
+
+            <!-- Formulario -->
+            <form
+              name="editar"
+              method="POST"
+              class="space-b-4"
+              autocomplete="off"
+            >
+              <label
+                for="nombre"
+                class="text-x1 text-gray-700 dark:text-gray-300">Nombre</label
+              >
+              <input
+                type="text"
+                id="nombre"
+                name="Nombre"
+                placeholder="Nombre"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Tipo"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Tipo Proveedor</label
+              >
+              <select
+                name="Tipo"
+                id="Tipo"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="1">Proveedor de Consumibles</option>
+                <option value="2">Proveedor de Servicios</option>
+                <option value="3">Proveedor de Productos</option>
+              </select>
+
+              <label
+                for="Direccion"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Direccion</label
+              >
+              <textarea
+                id="Direccion"
+                name="Direccion"
+                rows="2"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              ></textarea>
+
+              <label
+                for="Telefono"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Telefono</label
+              >
+              <input
+                id="Telefono"
+                name="Telefono"
+                type="text"
+                placeholder="Telefono"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Dui"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
+              >
+              <input
+                id="Dui"
+                name="Dui"
+                type="text"
+                placeholder="Dui"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Nit"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
+              >
+              <input
+                id="Nit"
+                name="Nit"
+                type="text"
+                placeholder="Nit"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Nrc"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">NRC</label
+              >
+              <input
+                id="Nrc"
+                name="Nrc"
+                type="text"
+                required
+                placeholder="Nrc"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Giro"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Giro</label
+              >
+              <input
+                id="Giro"
+                name="Giro"
+                type="text"
+                required
+                placeholder="Giro"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="Percepcion"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Percepcion</label
+              >
+              <select
+                name="Percepcion"
+                id="Percepcion"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="1">Si</option>
+                <option value="0">No</option>
+              </select>
+
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Editmodal').close()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  id="edit"
+                  class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  Editar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+        <!--Detalles-->
+        <Modal id="Detailmodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+            >
+              Detalle del Proveedor
+            </h2>
+            <!-- Formulario -->
+            <form name="detalle" method="POST" class="space-b-4">
+              <label
+                for="nombre"
+                class="text-x1 text-gray-700 dark:text-gray-300">Nombre</label
+              >
+              <input
+                type="text"
+                id="nombre"
+                name="Nombre"
+                placeholder="Nombre"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <label
+                for="Tipo"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Tipo Proveedor</label
+              >
+              <select
+                name="Tipo"
+                id="Tipo"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="1">Proveedor de Consumibles</option>
+                <option value="2">Proveedor de Servicios</option>
+                <option value="3">Proveedor de Productos</option>
+              </select>
+              <label
+                for="Direccion"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Dirección</label
+              >
+              <input
+                type="text"
+                id="Direccion"
+                name="Direccion"
+                placeholder="Dirección"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <label
+                for="Telefono"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Teléfono</label
+              >
+              <input
+                type="text"
+                id="Telefono"
+                name="Telefono"
+                placeholder="Teléfono"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <label
+                for="Dui"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
+              >
+              <input
+                type="text"
+                id="Dui"
+                name="Dui"
+                placeholder="DUI"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <label
+                for="Nit"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">NIT</label
+              >
+              <input
+                type="text"
+                id="Nit"
+                name="Nit"
+                placeholder="NIT"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <label
+                for="Nrc"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2">NRC</label
+              >
+              <input
+                type="text"
+                id="Nrc"
+                name="Nrc"
+                placeholder="NRC"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <label
+                for="Giro"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Giro</label
+              >
+              <input
+                type="text"
+                id="Giro"
+                name="Giro"
+                placeholder="Giro"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <label
+                for="Percepcion"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Percepción</label
+              >
+              <select
+                name="Percepcion"
+                id="Percepcion"
+                required
+                disabled
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="1">Si</option>
+                <option value="0">No</option>
+              </select> 
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Detailmodal').close()"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+
         <script>
           const token = document.cookie
             .split("; ")
@@ -457,6 +838,7 @@ try {
             }
           });
           const addcl = document.getElementById("addcl");
+          const editButton = document.getElementById("editButton");
           addcl.addEventListener("click", async () => {
             const form = document.forms.agregar;
             const nombre = form.Nombre.value;
@@ -503,6 +885,194 @@ try {
               }, 1000);
             } else {
               window.showAlert("Error al agregar el proveedor", "error");
+            }
+          });
+
+          editButton.addEventListener("click", async () => {
+            const form = document.forms.editar;
+            const proveedor = document.querySelector(
+              'input[name="proveedor"]:checked'
+            );
+            const editar = document.getElementById("edit");
+
+            async function edit() {
+              const form = document.forms.editar;
+              const nombre = form.Nombre.value;
+              const tipo = form.Tipo.value;
+              const direccion = form.Direccion.value;
+              const telefono = form.Telefono.value;
+              const dui = form.Dui.value;
+              const nit = form.Nit.value;
+              const nrc = form.Nrc.value;
+              const giro = form.Giro.value;
+              const percepcion = form.Percepcion.value;
+              const idproveedor = form.idproveedor;
+
+              const data = {
+                nombre: nombre,
+                tipo_proveedor: tipo,
+                direccion: direccion,
+                telefono: telefono,
+                dui: dui,
+                nit: nit,
+                nrc: nrc,
+                giro: giro,
+                tiene_percepcion: percepcion,
+              };
+
+              const res = await fetch(
+                "http://localhost:8000/proveedores/actualizar/" + idproveedor,
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify(data),
+                }
+              );
+              if (res.ok) {
+                document.getElementById("Editmodal").close();
+                window.showAlert("Proveedor editado correctamente", "success");
+                setTimeout(() => {
+                  window.location.reload();
+                }, 1000);
+              } else {
+                window.showAlert("Error al editar el proveedor", "error");
+              }
+            }
+            if (proveedor) {
+              const idproveedor = proveedor.value;
+              const res = await fetch(
+                `http://localhost:8000/proveedores/detalles/${idproveedor}`,
+                {
+                  method: "GET",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
+              if (res.ok) {
+                const data = await res.json();
+                form.Nombre.value = data.nombre;
+                form.Tipo.value = data.tipo_proveedor;
+                form.Direccion.value = data.direccion;
+                form.Telefono.value = data.telefono;
+                form.Dui.value = data.dui;
+                form.Nit.value = data.nit;
+                form.Nrc.value = data.nrc;
+                form.Giro.value = data.giro;
+                form.Percepcion.value = data.tiene_percepcion;
+                form.idproveedor = idproveedor;
+                document.getElementById("Editmodal").showModal();
+                editar.addEventListener("click", edit);
+              } else {
+                window.showAlert("Error al obtener el proveedor", "error");
+              }
+            } else {
+              window.showAlert("Seleccione un proveedor", "error");
+            }
+          });
+
+          const deleteButton = document.getElementById("delete");
+          deleteButton.addEventListener("click", async () => {
+            let seleccionado = false;
+            const proveedores = document.getElementsByName("proveedor");
+            for (let i = 0; i < proveedores.length; i++) {
+              if (proveedores[i].checked) {
+                seleccionado = true;
+                const proveedorNombre =
+                  proveedores[i].parentElement.parentElement.parentElement
+                    .children[1].innerHTML;
+                const confirmacion = await new Promise((resolve) => {
+                  window.showAlert(
+                    `¿Estás seguro que deseas eliminar el proveedor \ncon nombre: ${proveedorNombre}?`,
+                    "confirm",
+                    {
+                      onCancel: () => {
+                        console.log("Operación cancelada");
+                        resolve(false);
+                      },
+                      onAccept: () => {
+                        resolve(true);
+                      },
+                    }
+                  );
+                });
+                if (confirmacion) {
+                  delproveedor(
+                    proveedores[i].value,
+                    i === proveedores.length - 1
+                  );
+                }
+              }
+            }
+          });
+
+          function delproveedor(id, ultimo) {
+            fetch("http://localhost:8000/proveedores/eliminar/" + id, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            })
+              .then((res) => {
+                if (res.ok) {
+                  window.showAlert(
+                    "Proveedor eliminado correctamente",
+                    "success"
+                  );
+                  if (ultimo) {
+                    setTimeout(() => {
+                      window.location.reload();
+                    }, 500);
+                  }
+                } else {
+                  window.showAlert("Error al eliminar el proveedor", "error");
+                }
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
+          }
+
+          const detailButton = document.getElementById("detailButton");
+          detailButton.addEventListener("click", async () => {
+            const proveedor = document.querySelector(
+              'input[name="proveedor"]:checked'
+            );
+            if (proveedor) {
+              const idproveedor = proveedor.value;
+              const res = await fetch(
+                `http://localhost:8000/proveedores/detalles/${idproveedor}`,
+                {
+                  method: "GET",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
+              if (res.ok) {
+                const data = await res.json();
+                const form = document.forms.detalle;
+                form.Nombre.value = data.nombre;
+                form.Tipo.value = data.tipo_proveedor;
+                form.Direccion.value = data.direccion;
+                form.Telefono.value = data.telefono;
+                form.Dui.value = data.dui;
+                form.Nit.value = data.nit;
+                form.Nrc.value = data.nrc;
+                form.Giro.value = data.giro;
+                form.Percepcion.value = data.tiene_percepcion;
+                document.getElementById("Detailmodal").showModal();
+              } else {
+                window.showAlert("Error al obtener el proveedor", "error");
+              }
+            } else {
+              window.showAlert("Seleccione un proveedor", "error");
             }
           });
         </script>
