@@ -248,7 +248,7 @@ try {
             description="Último Proveedor Añadido"
           >
             <i class="fa-solid fa-warehouse"></i>
-            {(" " + listaproveedores[listaproveedores.length - 1].nombre) || "0"}
+            {" " + listaproveedores[listaproveedores.length - 1].nombre || "0"}
             <br />
             <i class="fa-solid fa-clipboard-list"></i>
             {
@@ -373,7 +373,7 @@ try {
             </h2>
 
             <!-- Formulario -->
-            <form name="agregar" method="POST" class="space-b-4">
+            <form name="agregar" method="POST" class="space-b-4" autocomplete="off">
               <label
                 for="nombre"
                 class="text-x1 text-gray-700 dark:text-gray-300">Nombre</label
@@ -683,7 +683,7 @@ try {
               Detalle del Proveedor
             </h2>
             <!-- Formulario -->
-            <form name="detalle" method="POST" class="space-b-4">
+            <form name="detalle" method="POST" class="space-b-4" autocomplete="off">
               <label
                 for="nombre"
                 class="text-x1 text-gray-700 dark:text-gray-300">Nombre</label
@@ -808,7 +808,7 @@ try {
               >
                 <option value="1">Si</option>
                 <option value="0">No</option>
-              </select> 
+              </select>
               <!-- Botones -->
               <div class="flex justify-end space-x-4">
                 <button
