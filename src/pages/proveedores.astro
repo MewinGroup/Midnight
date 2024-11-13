@@ -167,15 +167,30 @@ try {
           </Card>
 
           <Card title="Total de Proveedores" description="Total"
-            ><i class="fa-solid fa-truck-fast"></i> {"" + listaproveedores.length}</Card
+            ><i class="fa-solid fa-truck-fast"></i>
+            {"" + listaproveedores.length}</Card
           >
           <Card
             title="Proveedor Reciente"
             description="Último Proveedor Añadido"
           >
-            <i class="fa-solid fa-warehouse"></i> {" " + listaproveedores[listaproveedores.length-1].nombre}
-            <br>
-            <i class="fa-solid fa-clipboard-list"></i> {" "+(Number(listaproveedores[listaproveedores.length-1].tipo_proveedor) == 1 ? "Proveedor de Consumibles" : Number(listaproveedores[listaproveedores.length-1].tipo_proveedor) == 2 ? "Proveedor de Servicios" : "Proveedor de Productos")}
+            <i class="fa-solid fa-warehouse"></i>
+            {" " + listaproveedores[listaproveedores.length - 1].nombre}
+            <br />
+            <i class="fa-solid fa-clipboard-list"></i>
+            {
+              " " +
+                (Number(
+                  listaproveedores[listaproveedores.length - 1].tipo_proveedor
+                ) == 1
+                  ? "Proveedor de Consumibles"
+                  : Number(
+                        listaproveedores[listaproveedores.length - 1]
+                          .tipo_proveedor
+                      ) == 2
+                    ? "Proveedor de Servicios"
+                    : "Proveedor de Productos")
+            }
           </Card>
         </div>
 
@@ -183,7 +198,15 @@ try {
         <div
           class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
         >
-          <h2 class="text-xl font-semibold">Proveedores</h2>
+          <div class="flex justify-between items-center">
+            <h2 class="text-xl font-semibold">Proveedores</h2>
+            <button
+              class="btn text-indigo-900 dark:text-slate-200 px-2 py-1 rounded-md hover:text-gray-500 dark:hover:text-gray-50"
+              id="acciones"
+            >
+              <i class="fa-solid fa-clipboard-check" id="Activar"></i> Seleccionar
+            </button>
+          </div>
           <Tabla>
             <slot>
               {
@@ -204,18 +227,14 @@ try {
                       {proveedor.nombre}
                     </td>
                     <td class="px-1 py-1 max-w-full overflow-hidden text-ellipsis text-center">
-                      {
-                      proveedor.tipo_proveedor == 1
+                      {proveedor.tipo_proveedor == 1
                         ? "Proveedor de Consumibles"
                         : proveedor.tipo_proveedor == 2
                           ? "Proveedor de Servicios"
-                          : "Proveedor de Productos" 
-                      
-                      }
+                          : "Proveedor de Productos"}
                     </td>
                     <td class="px-1 py-1 max-w-full overflow-hidden text-ellipsis text-center">
                       {proveedor.direccion}
-
                     </td>
                     <td class="px-1 py-1 max-w-full overflow-hidden text-ellipsis text-center">
                       {proveedor.giro}
@@ -228,41 +247,45 @@ try {
         </div>
 
         <!-- Ranking de Proveedores Más Eficientes -->
-        <div class="mt-6 bg-white p-6 rounded-lg shadow-md dark:bg-gray-700 dark:text-white">
+        <div
+          class="mt-6 bg-white p-6 rounded-lg shadow-md dark:bg-gray-700 dark:text-white"
+        >
           <h2 class="text-xl font-semibold dark:text-white">
             Ranking de Proveedores Más Eficientes
           </h2>
           <ul class="mt-4 space-y-4">
-            {rankingProveedores.map((proveedor, index) => (
-              <li class="flex items-center justify-between p-4 bg-gray-100 rounded-lg dark:bg-gray-800">
-                <div class="flex items-center space-x-4">
-                  {index === 0 ? (
-                    <i class="fas fa-trophy text-yellow-500 text-2xl"></i>
-                  ) : index === 1 ? (
-                    <i class="fas fa-medal text-gray-400 text-2xl"></i>
-                  ) : (
-                    <i class="fas fa-award text-orange-400 text-2xl"></i>
-                  )}
-                  <div>
-                    <p class="text-lg font-medium">{proveedor.nombre}</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-300">
-                      Numero de entregas: {proveedor.total_entregas}
-                    </p>
+            {
+              rankingProveedores.map((proveedor, index) => (
+                <li class="flex items-center justify-between p-4 bg-gray-100 rounded-lg dark:bg-gray-800">
+                  <div class="flex items-center space-x-4">
+                    {index === 0 ? (
+                      <i class="fas fa-trophy text-yellow-500 text-2xl" />
+                    ) : index === 1 ? (
+                      <i class="fas fa-medal text-gray-400 text-2xl" />
+                    ) : (
+                      <i class="fas fa-award text-orange-400 text-2xl" />
+                    )}
+                    <div>
+                      <p class="text-lg font-medium">{proveedor.nombre}</p>
+                      <p class="text-sm text-gray-500 dark:text-gray-300">
+                        Numero de entregas: {proveedor.total_entregas}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <span 
-                  class={`font-semibold ${
-                    index === 0 
-                      ? "text-green-600 dark:text-green-400"
-                      : index === 1
-                        ? "text-slate-500 dark:text-indigo-200" 
-                        : "text-amber-600 dark:text-amber-400"
-                  }`}
-                >
-                  {index + 1}° Lugar
-                </span>
-              </li>
-            ))}
+                  <span
+                    class={`font-semibold ${
+                      index === 0
+                        ? "text-green-600 dark:text-green-400"
+                        : index === 1
+                          ? "text-slate-500 dark:text-indigo-200"
+                          : "text-amber-600 dark:text-amber-400"
+                    }`}
+                  >
+                    {index + 1}° Lugar
+                  </span>
+                </li>
+              ))
+            }
           </ul>
         </div>
 
@@ -296,14 +319,16 @@ try {
                 class="text-sm text-gray-700 dark:text-gray-300 mt-2"
                 >Tipo Proveedor</label
               >
-              <input
-                id="Tipo"
+              <select
                 name="Tipo"
-                type="text"
+                id="Tipo"
                 required
-                placeholder="Tipo de Proveedor"
                 class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-              />
+              >
+                <option value="1">Proveedor de Consumibles</option>
+                <option value="2">Proveedor de Servicios</option>
+                <option value="3">Proveedor de Productos</option>
+              </select>
 
               <label
                 for="Direccion"
@@ -313,25 +338,23 @@ try {
               <textarea
                 id="Direccion"
                 name="Direccion"
-                required
                 rows="2"
                 class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-              >
-              </textarea>
+              ></textarea>
 
               <label
                 for="Telefono"
                 class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-                >Estado</label
+                >Telefono</label
               >
               <input
                 id="Telefono"
                 name="Telefono"
                 type="text"
-                required
                 placeholder="Telefono"
                 class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
               />
+
               <label
                 for="Dui"
                 class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
@@ -340,7 +363,6 @@ try {
                 id="Dui"
                 name="Dui"
                 type="text"
-                required
                 placeholder="Dui"
                 class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
               />
@@ -353,7 +375,6 @@ try {
                 id="Nit"
                 name="Nit"
                 type="text"
-                required
                 placeholder="Nit"
                 class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
               />
@@ -390,26 +411,16 @@ try {
                 class="text-sm text-gray-700 dark:text-gray-300 mt-2"
                 >Percepcion</label
               >
-              <input
-                id="Percepcion"
+              <select
                 name="Percepcion"
-                type="text"
+                id="Percepcion"
                 required
-                placeholder="Percepcion"
                 class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-              />
-
-              <label
-                for="Fecha"
-                class="text-sm text-gray-700 dark:text-gray-300 mt-2">DUI</label
               >
-              <input
-                id="Fecha"
-                name="Fecha"
-                type="date"
-                required
-                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-              />
+                <option value="1">Si</option>
+                <option value="0">No</option>
+              </select>
+
               <!-- Botones -->
               <div class="flex justify-end space-x-4">
                 <button
@@ -431,6 +442,70 @@ try {
           </div>
         </Modal>
 
+        <script>
+          const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token"))
+            .split("=")[1];
+          const actions = document.getElementById("acciones");
+
+          actions.addEventListener("click", () => {
+            const acciones = document.getElementsByClassName("acciones");
+
+            for (let i = 0; i < acciones.length; i++) {
+              acciones[i].classList.toggle("hidden");
+            }
+          });
+          const addcl = document.getElementById("addcl");
+          addcl.addEventListener("click", async () => {
+            const form = document.forms.agregar;
+            const nombre = form.Nombre.value;
+            const tipo = form.Tipo.value;
+            const direccion = form.Direccion.value;
+            const telefono = form.Telefono.value;
+            const dui = form.Dui.value;
+            const nit = form.Nit.value;
+            const nrc = form.Nrc.value;
+            const giro = form.Giro.value;
+            const percepcion = form.Percepcion.value;
+            const fecha = new Date().toISOString();
+
+            const data = {
+              nombre: nombre,
+              tipo_proveedor: tipo,
+              direccion: direccion,
+              telefono: telefono,
+              dui: dui,
+              nit: nit,
+              nrc: nrc,
+              giro: giro,
+              tiene_percepcion: percepcion,
+              fecha_registro: fecha,
+            };
+
+            const res = await fetch(
+              "http://localhost:8000/proveedores/agregar",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(data),
+              }
+            );
+
+            if (res.ok) {
+              document.getElementById("Addmodal").close();
+              window.showAlert("Proveedor agregado correctamente", "success");
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            } else {
+              window.showAlert("Error al agregar el proveedor", "error");
+            }
+          });
+        </script>
       </div>
     </Sidebar>
   </div>
