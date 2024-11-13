@@ -10,7 +10,6 @@ import Tabla from "@components/servicios/Tabla.astro";
 import Modal from "@components/dialog.astro";
 import Alertas from "@components/alertas.astro";
 import { Fetcher } from "@Lib/fetcher";
-import Documentos from "./documentos.astro";
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -36,14 +35,14 @@ try {
 
 const user = res;
 
-let servicios = []
-try{
-  const res = await Fetcher ("servicios","listar",token);
-  if (res.status!==200){
+let servicios = [];
+try {
+  const res = await Fetcher("servicios", "listar", token);
+  if (res.status !== 200) {
     throw new Error("Error al obtener los servicios");
   }
   servicios = await res.data;
-} catch (error){
+} catch (error) {
   console.error("Error al obtener los servicios", error);
 }
 ---
@@ -207,7 +206,6 @@ try{
                 <div
                   id="editButton"
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-emerald-500 bg-lime-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Editmodal').showModal()"
                 >
                   <i class="fa-solid fa-pen text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Editar</span>
@@ -216,7 +214,7 @@ try{
               <div class="flex justify-center">
                 <div
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-rose-500 bg-pink-600 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Deletemodal').showModal()"
+                  id="delete"
                 >
                   <i class="fa-solid fa-trash text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Eliminar</span>
@@ -225,7 +223,7 @@ try{
               <div class="flex justify-center">
                 <div
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-amber-500 bg-orange-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Detailmodal').showModal()"
+                  id="detail"
                 >
                   <i class="fa-solid fa-chart-pie text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Detalles</span>
@@ -235,14 +233,16 @@ try{
           </Card>
 
           <Card title="Total de Servicios" description="Total"
-            ><i class="fa-solid fa-list"></i> {" " + servicios.length || 0}</Card
+            ><i class="fa-solid fa-list"></i>
+            {" " + servicios.length || 0}</Card
           >
           <Card
             title="Servicio agregado recientemente"
             description="Último servicio agregado"
           >
-            <i class="fa-solid fa-circle-check"></i> {
-              " " + servicios [servicios.length - 1]?.nombre ||
+            <i class="fa-solid fa-circle-check"></i>
+            {
+              " " + servicios[servicios.length - 1]?.nombre ||
                 "No hay servicios"
             }
           </Card>
@@ -252,19 +252,19 @@ try{
         <div
           class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
         >
-        <div class="flex justify-between items-center">
-          <h2 class="text-xl font-semibold">Servicios</h2>
-          <button
-            class="btn text-indigo-900 dark:text-slate-200 px-2 py-1 rounded-md hover:text-gray-500 dark:hover:text-gray-50"
-            id="acciones"
-          >
-            <i class="fa-solid fa-clipboard-check" id="Activar"></i> Seleccionar
-          </button>
-        </div>
-          
+          <div class="flex justify-between items-center">
+            <h2 class="text-xl font-semibold">Servicios</h2>
+            <button
+              class="btn text-indigo-900 dark:text-slate-200 px-2 py-1 rounded-md hover:text-gray-500 dark:hover:text-gray-50"
+              id="acciones"
+            >
+              <i class="fa-solid fa-clipboard-check" id="Activar"></i> Seleccionar
+            </button>
+          </div>
+
           <Tabla>
             <slot>
-             <!--foreach cliente fill a column -->
+              <!--foreach cliente fill a column -->
               {
                 servicios.map((servicio) => (
                   <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
@@ -273,7 +273,7 @@ try{
                         <input
                           type="checkbox"
                           name="servicio"
-                          value={servicio.Idservicio}
+                          value={servicio.Idservicios}
                           class="absolute opacity-0 cursor-pointer h-0 w-0"
                         />
                         <div class="checkmark relative top-0 left-0 h-5 w-5 bg-gray-300 rounded-full transition duration-300 mx-auto" />
@@ -310,7 +310,12 @@ try{
           </h2>
 
           <!-- Formulario -->
-          <form name="agregar" method="POST" class="space-b-4">
+          <form
+            name="agregar"
+            method="POST"
+            class="space-b-4"
+            autocomplete="off"
+          >
             <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
               >Nombre de servicio</label
             >
@@ -319,6 +324,45 @@ try{
               id="nombre"
               name="Nombre"
               placeholder="Nombre"
+              required
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <label
+              for="precio1"
+              class="text-x1 text-gray-700 dark:text-gray-300"
+              >Precio Venta 1</label
+            >
+            <input
+              type="number"
+              id="precio1"
+              name="PrecioVenta1"
+              placeholder="Precio Venta 1"
+              required
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <label
+              for="precio2"
+              class="text-x1 text-gray-700 dark:text-gray-300"
+              >Precio Venta 2</label
+            >
+            <input
+              type="number"
+              id="precio2"
+              name="PrecioVenta2"
+              placeholder="Precio Venta 2"
+              required
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <label
+              for="precio3"
+              class="text-x1 text-gray-700 dark:text-gray-300"
+              >Precio Venta 3</label
+            >
+            <input
+              type="number"
+              id="precio3"
+              name="PrecioVenta3"
+              placeholder="Precio Venta 3"
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
@@ -352,7 +396,12 @@ try{
           </h2>
 
           <!-- Formulario -->
-          <form name="editar" method="POST" class="space-b-4">
+          <form
+            name="editar"
+            method="POST"
+            class="space-b-4"
+            autocomplete="off"
+          >
             <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
               >Nombre de servicio</label
             >
@@ -361,6 +410,45 @@ try{
               id="nombre"
               name="Nombre"
               placeholder="Nombre"
+              required
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <label
+              for="precio1"
+              class="text-x1 text-gray-700 dark:text-gray-300"
+              >Precio Venta 1</label
+            >
+            <input
+              type="number"
+              id="precio1"
+              name="PrecioVenta1"
+              placeholder="Precio Venta 1"
+              required
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <label
+              for="precio2"
+              class="text-x1 text-gray-700 dark:text-gray-300"
+              >Precio Venta 2</label
+            >
+            <input
+              type="number"
+              id="precio2"
+              name="PrecioVenta2"
+              placeholder="Precio Venta 2"
+              required
+              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <label
+              for="precio3"
+              class="text-x1 text-gray-700 dark:text-gray-300"
+              >Precio Venta 3</label
+            >
+            <input
+              type="number"
+              id="precio3"
+              name="PrecioVenta3"
+              placeholder="Precio Venta 3"
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
@@ -375,7 +463,7 @@ try{
               </button>
               <button
                 type="button"
-                onclick="editempleado()"
+                id="edit"
                 class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
               >
                 Editar
@@ -384,51 +472,7 @@ try{
           </form>
         </div>
       </Modal>
-      <!--Eliminar -->
-      <Modal id="Deletemodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Eliminar servicio
-          </h2>
 
-          <!-- Formulario -->
-          <form name="editar" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre de servicio</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Deletemodal').close()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onclick="deleteproveedor()"
-                class="btn btn-submit bg-red-500 text-white px-4 py-2 rounded-md"
-              >
-                Eliminar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <!--Detalles-->
       <Modal id="Detailmodal">
         <div
           class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
@@ -468,7 +512,7 @@ try{
   </div>
 </Layout>
 <script>
-   const token = document.cookie
+  const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("token"))
     .split("=")[1];
@@ -479,6 +523,194 @@ try{
 
     for (let i = 0; i < acciones.length; i++) {
       acciones[i].classList.toggle("hidden");
+    }
+  });
+
+  const addcl = document.getElementById("addcl");
+  const editButton = document.getElementById("editButton");
+  const detailButton = document.getElementById("detail");
+  addcl.addEventListener("click", async () => {
+    const form = document.forms.agregar;
+    const nombre = form.Nombre.value;
+    const precio1 = form.PrecioVenta1.value;
+    const precio2 = form.PrecioVenta2.value;
+    const precio3 = form.PrecioVenta3.value;
+    const data = {
+      nombre: nombre,
+      precio_venta1: precio1,
+      precio_venta2: precio2,
+      precio_venta3: precio3,
+    };
+    const res = await fetch("http://localhost:8000/servicios/agregar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      document.getElementById("Addmodal").close();
+      window.showAlert("Servicio agregado correctamente", "success");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } else {
+      window.showAlert("Error al agregar el servicio", "error");
+    }
+  });
+
+  editButton.addEventListener("click", async () => {
+    const form = document.forms.editar;
+    const servicio = document.querySelector('input[name="servicio"]:checked');
+    const editar = document.getElementById("edit");
+
+    async function edit() {
+      const form = document.forms.editar;
+      const nombre = form.Nombre.value;
+      const precio1 = form.PrecioVenta1.value;
+      const precio2 = form.PrecioVenta2.value;
+      const precio3 = form.PrecioVenta3.value;
+      const idservicio = form.idservicio;
+
+      const data = {
+        nombre: nombre,
+        precio_venta1: precio1,
+        precio_venta2: precio2,
+        precio_venta3: precio3,
+      };
+      const res = await fetch(
+        "http://localhost:8000/servicios/actualizar/" + idservicio,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      if (res.ok) {
+        document.getElementById("Editmodal").close();
+        window.showAlert("Servicio editado correctamente", "success");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        window.showAlert("Error al editar el servicio", "error");
+      }
+    }
+    if (servicio) {
+      const idservicio = servicio.value;
+      const res = await fetch(
+        `http://localhost:8000/servicios/detalles/${idservicio}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        form.Nombre.value = data.nombre;
+        form.PrecioVenta1.value = data.precio_venta1;
+        form.PrecioVenta2.value = data.precio_venta2;
+        form.PrecioVenta3.value = data.precio_venta3;
+        form.idservicio = idservicio;
+        document.getElementById("Editmodal").showModal();
+        editar.addEventListener("click", edit);
+      } else {
+        window.showAlert("Error al obtener el servicio", "error");
+      }
+    } else {
+      window.showAlert("Seleccione un servicio", "error");
+    }
+  });
+
+  const deleteButton = document.getElementById("delete");
+  deleteButton.addEventListener("click", async () => {
+    let seleccionado = false;
+    const servicios = document.getElementsByName("servicio");
+    for (let i = 0; i < servicios.length; i++) {
+      if (servicios[i].checked) {
+        seleccionado = true;
+        const servicioNombre =
+          servicios[i].parentElement.parentElement.parentElement.children[1]
+            .innerHTML;
+        const confirmacion = await new Promise((resolve) => {
+          window.showAlert(
+            `¿Estás seguro que deseas eliminar el servicio \ncon nombre: ${servicioNombre}?`,
+            "confirm",
+            {
+              onCancel: () => {
+                console.log("Operación cancelada");
+                resolve(false);
+              },
+              onAccept: () => {
+                resolve(true);
+              },
+            }
+          );
+        });
+        if (confirmacion) {
+          delservicio(servicios[i].value, i === servicios.length - 1);
+        }
+      }
+    }
+  });
+
+  function delservicio(id, ultimo) {
+    fetch("http://localhost:8000/servicios/eliminar/" + id, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          window.showAlert("Servicio eliminado correctamente", "success");
+          if (ultimo) {
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
+          }
+        } else {
+          window.showAlert("Error al eliminar el servicio", "error");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  const detail = document.getElementById("detail");
+  detail.addEventListener("click", async () => {
+    const form = document.forms.detalle;
+    const servicio = document.querySelector('input[name="servicio"]:checked');
+    if (servicio) {
+      const idservicio = servicio.value;
+      const res = await fetch(
+        `http://localhost:8000/servicios/detalles/${idservicio}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        form.Nombre.value = data.nombre;
+        document.getElementById("Detailmodal").showModal();
+      } else {
+        window.showAlert("Error al obtener el servicio", "error");
+      }
+    } else {
+      window.showAlert("Seleccione un servicio", "error");
     }
   });
 </script>
