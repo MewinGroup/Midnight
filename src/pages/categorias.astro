@@ -6,9 +6,10 @@ import Layout from "@Layouts/layout.astro";
 import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
 //Aqui la lib empleados
-import Tabla from "@components/marcas/Tabla.astro";
+import Tabla from "@components/Tabla.astro";
 import Modal from "@components/dialog.astro";
 import Alertas from "@components/alertas.astro";
+import Userdiv from "@components/User.astro"
 import { Fetcher } from "@Lib/fetcher";
 
 if ((await verify(data.token?.value)) == false) {
@@ -46,107 +47,6 @@ try {
 }
 ---
 
-<style>
-  @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #6c757d;
-    border-radius: 4px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: #495057;
-  }
-
-  .scrollbar-custom {
-    scrollbar-width: thin;
-    scrollbar-color: #6c757d transparent;
-  }
-
-  .container input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-  }
-
-  .container {
-    display: block;
-    position: relative;
-    cursor: pointer;
-    font-size: 1.5rem;
-    user-select: none;
-  }
-
-  .checkmark {
-    --clr: #0b6e4f;
-    position: relative;
-    top: 0;
-    left: 0;
-    height: 1.3em;
-    width: 1.3em;
-    background-color: #ccc;
-    border-radius: 50%;
-    transition: 300ms;
-  }
-
-  .container input:checked ~ .checkmark {
-    background-color: var(--clr);
-    border-radius: 0.5rem;
-    animation: pulse 500ms ease-in-out;
-  }
-
-  .checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
-  }
-
-  .container input:checked ~ .checkmark:after {
-    display: block;
-  }
-
-  .container .checkmark:after {
-    left: 0.45em;
-    top: 0.25em;
-    width: 0.25em;
-    height: 0.5em;
-    border: solid #e0e0e2;
-    border-width: 0 0.15em 0.15em 0;
-    transform: rotate(45deg);
-  }
-
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 #0b6e4f90;
-      rotate: 20deg;
-    }
-
-    50% {
-      rotate: -20deg;
-    }
-
-    75% {
-      box-shadow: 0 0 0 10px #0b6e4f60;
-    }
-
-    100% {
-      box-shadow: 0 0 0 13px #0b6e4f30;
-      rotate: 0;
-    }
-  }
-</style>
 <Alertas />
 <Layout title="Panel de Control">
   <!-- height: max-content; -->
@@ -161,32 +61,7 @@ try {
           <i class="fa-solid fa-bookmark"></i> Listado de categoria
         </h1>
 
-        <div class="flex items-center justify-end mb-6">
-          <div class="flex items-center space-x-2">
-            <div
-              class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-500"
-            >
-              <img
-                src={user.imagen ||
-                  "https://avatars.githubusercontent.com/u/178928214?v=4"}
-                alt="Foto de perfil"
-                class="w-full h-full object-cover"
-              />
-            </div>
-            <div class="text-right">
-              <h1 class="text-xl font-bold">Hola, {user.nombre}</h1>
-              <p class="text-gray-600 dark:text-gray-400 text-sm">
-                {
-                  user.tipo_perfil == 1
-                    ? "Administrador"
-                    : user.tipo_perfil == 2
-                      ? "Vendedor"
-                      : "Usuario"
-                }
-              </p>
-            </div>
-          </div>
-        </div>
+      <Userdiv Userinfo={user} />
         <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <Alertas />
@@ -248,7 +123,7 @@ try {
           class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
         >
           <div class="flex justify-between items-center">
-            <h2 class="text-xl font-semibold">categorias</h2>
+            <h2 class="text-xl font-semibold">Categorias</h2>
             <button
               class="btn text-indigo-900 dark:text-slate-200 px-2 py-1 rounded-md hover:text-gray-500 dark:hover:text-gray-50"
               id="acciones"
@@ -256,7 +131,7 @@ try {
               <i class="fa-solid fa-clipboard-check" id="Activar"></i> Seleccionar
             </button>
           </div>
-          <Tabla>
+          <Tabla headers={["Nombre"]}>
             <slot>
               <!--foreach cliente fill a column -->
               {
@@ -283,9 +158,7 @@ try {
           </Tabla>
         </div>
       </div>
-      <!-- Addmodal Content -->
-      <!-- Modal hidden as defaul -->
-      <!--AGREGAR -->
+
       <Modal id="Addmodal">
         <div
           class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"

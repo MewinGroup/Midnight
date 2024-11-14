@@ -6,7 +6,7 @@ import Layout from "@Layouts/layout.astro";
 import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
 import Userdiv from "@components/User.astro";
-import Tabla from "@components/marcas/Tabla.astro";
+import Tabla from "@components/Tabla.astro";
 import Modal from "@components/dialog.astro";
 import Alertas from "@components/alertas.astro";
 import { Fetcher } from "@Lib/fetcher";
@@ -51,11 +51,7 @@ try {
 
 <Alertas />
 <Layout title="Panel de Control">
-  <!-- height: max-content; -->
-  <div
-    class="flex flex-col md:flex-row bg-gray-100 dark:bg-gray-800 dark:text-white h-full"
-  >
-    <!-- Sidebar -->
+  <div class="flex flex-col md:flex-row bg-gray-100 dark:bg-gray-800 dark:text-white h-full">
     <br /><br />
     <Sidebar tipo={user.tipo_perfil}>
       <div class="flex-1 p-4 md:p-6 dark:bg-gray-800">
@@ -64,7 +60,6 @@ try {
         </h1>
 
         <Userdiv Userinfo={user} />
-        <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <Alertas />
           <Card title="Herramientas" description="Manejo de datos de unidades">
@@ -73,7 +68,7 @@ try {
                 <a
                   id="add"
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-indigo-500 bg-sky-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Addmodal').showModal()"
+                  onclick="document.getElementById('addModal').showModal()"
                 >
                   <i class="fa-solid fa-plus text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Agregar</span>
@@ -91,7 +86,7 @@ try {
               <div class="flex justify-center">
                 <div
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-rose-500 bg-pink-600 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  id="delete"
+                  id="deleteBtn"
                 >
                   <i class="fa-solid fa-trash text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Eliminar</span>
@@ -100,21 +95,17 @@ try {
             </div>
           </Card>
 
-          <Card title="Total de unidades" description="Total"
-            ><i class="fa-solid fa-list"></i>
-            {" " + unidades.length || 0}</Card
-          >
+          <Card title="Total de unidades" description="Total">
+            <i class="fa-solid fa-list"></i>
+            {" " + unidades.length || 0}
+          </Card>
           <Card title="Unidades de medida recientes" description="Última unidad de medida agregada">
-            <!-- undefined == no hay -->
             <i class="fa-solid fa-pen-ruler"></i>
             {" " + unidades[unidades.length - 1]?.nombre || "No hay unidades"}
           </Card>
         </div>
 
-        <!-- Tabla de órdenes recientes -->
-        <div
-          class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
-        >
+        <div class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700">
           <div class="flex justify-between items-center">
             <h2 class="text-xl font-semibold">Unidades de medida</h2>
             <button
@@ -124,9 +115,8 @@ try {
               <i class="fa-solid fa-clipboard-check" id="Activar"></i> Seleccionar
             </button>
           </div>
-          <Tabla>
+          <Tabla headers={["Nombre"]}>
             <slot>
-              <!--foreach cliente fill a column -->
               {
                 unidades.map((unidade) => (
                   <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
@@ -134,7 +124,7 @@ try {
                       <label class="container relative block cursor-pointer text-lg select-none">
                         <input
                           type="checkbox"
-                          name="unidade"
+                          name="unidad"
                           value={unidade.Idunidades_medida}
                           class="absolute opacity-0 cursor-pointer h-0 w-0"
                         />
@@ -151,42 +141,37 @@ try {
           </Tabla>
         </div>
       </div>
-
     </Sidebar>
   </div>
+
+  <Modal id="addModal" title="Agregar unidad">
+    <form name="addForm" method="POST" class="space-b-4" autocomplete="off">
+      <FormField id="nombre" label="Nombre de unidad" type="text" placeholder="Nombre" />
+      <div class="flex justify-end space-x-4">
+        <button type="button" class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md" onclick="document.getElementById('addModal').close()">Cancelar</button>
+        <button type="button" id="addBtn" class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md">Enviar</button>
+      </div>
+    </form>
+  </Modal>
+
+  <Modal id="editModal" title="Editar unidad">
+    <form name="editForm" method="POST" class="space-b-4" autocomplete="off">
+      <FormField id="nombre" label="Nombre de unidad" type="text" placeholder="Nombre" />
+      <input type="hidden" name="id" />
+      <div class="flex justify-end space-x-4">
+        <button type="button" class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md" onclick="document.getElementById('editModal').close()">Cancelar</button>
+        <button type="button" id="editSubmit" class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md">Editar</button>
+      </div>
+    </form>
+  </Modal>
 </Layout>
-
-<Modal id="addModal" title="Agregar unidad">
-  <form name="addForm" method="POST" class="space-b-4" autocomplete="off">
-    <FormField id="nombre" label="Nombre de unidad" type="text" placeholder="Nombre" />
-    <div class="flex justify-end space-x-4">
-      <button type="button" class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md" onclick="document.getElementById('addModal').close()">Cancelar</button>
-      <button type="button" id="addBtn" class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md">Enviar</button>
-    </div>
-  </form>
-</Modal>
-
-<Modal id="editModal" title="Editar unidad">
-  <form name="editForm" method="POST" class="space-b-4" autocomplete="off">
-    <FormField id="nombre" label="Nombre de unidad" type="text" placeholder="Nombre" />
-    <input type="hidden" name="id" />
-    <div class="flex justify-end space-x-4">
-      <button type="button" class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md" onclick="document.getElementById('editModal').close()">Cancelar</button>
-      <button type="button" id="editSubmit" class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md">Editar</button>
-    </div>
-  </form>
-</Modal>
-
-
-
-
 
 <script>
   const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("token"))
     .split("=")[1];
-  
+
   document.getElementById("acciones").addEventListener("click", () => {
     document.querySelectorAll(".acciones").forEach((el) => el.classList.toggle("hidden"));
   });
@@ -282,104 +267,3 @@ try {
     }
   });
 </script>
-<style>
-  @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #6c757d;
-    border-radius: 4px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: #495057;
-  }
-
-  .scrollbar-custom {
-    scrollbar-width: thin;
-    scrollbar-color: #6c757d transparent;
-  }
-
-  .container input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-  }
-
-  .container {
-    display: block;
-    position: relative;
-    cursor: pointer;
-    font-size: 1.5rem;
-    user-select: none;
-  }
-
-  .checkmark {
-    --clr: #0b6e4f;
-    position: relative;
-    top: 0;
-    left: 0;
-    height: 1.3em;
-    width: 1.3em;
-    background-color: #ccc;
-    border-radius: 50%;
-    transition: 300ms;
-  }
-
-  .container input:checked ~ .checkmark {
-    background-color: var(--clr);
-    border-radius: 0.5rem;
-    animation: pulse 500ms ease-in-out;
-  }
-
-  .checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
-  }
-
-  .container input:checked ~ .checkmark:after {
-    display: block;
-  }
-
-  .container .checkmark:after {
-    left: 0.45em;
-    top: 0.25em;
-    width: 0.25em;
-    height: 0.5em;
-    border: solid #e0e0e2;
-    border-width: 0 0.15em 0.15em 0;
-    transform: rotate(45deg);
-  }
-
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 #0b6e4f90;
-      rotate: 20deg;
-    }
-
-    50% {
-      rotate: -20deg;
-    }
-
-    75% {
-      box-shadow: 0 0 0 10px #0b6e4f60;
-    }
-
-    100% {
-      box-shadow: 0 0 0 13px #0b6e4f30;
-      rotate: 0;
-    }
-  }
-</style>

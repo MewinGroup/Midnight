@@ -10,8 +10,8 @@ interface UserProps {
 const { Userinfo } = Astro.props as UserProps;
 ---
 
-
-<div class="flex items-center justify-end mb-6">
+{Userinfo && (
+  <div class="flex items-center justify-end mb-6">
     <div class="flex items-center space-x-2">
       <div
         class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-500"
@@ -37,3 +37,4 @@ const { Userinfo } = Astro.props as UserProps;
       </div>
     </div>
   </div>
+)}

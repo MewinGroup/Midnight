@@ -1,3 +1,10 @@
+---
+export interface Props {
+  headers: string[];
+}
+
+const { headers } = Astro.props;
+---
 <table
   class="min-w-full mt-4 table-auto border-collapse border border-gray-300 dark:border-gray-700 w-full rounded-lg"
 >
@@ -7,14 +14,9 @@
         class="px-4 border border-gray-300 dark:border-gray-700 hidden acciones"
         > </th
       >
-      <th class="px-4 border border-gray-300 dark:border-gray-700">Nombre</th>
-      <th class="px-4 border border-gray-300 dark:border-gray-700"
-        >Tipo Cliente</th
-      >
-      <th class="px-4 border border-gray-300 dark:border-gray-700">Giro</th>
-      <th class="px-4 border border-gray-300 dark:border-gray-700"
-        >Fecha de Registro</th
-      >
+      {headers.map(header => (
+        <th class="px-4 border border-gray-300 dark:border-gray-700">{header}</th>
+      ))}
     </tr>
   </thead>
   <tbody class="bg-white dark:bg-gray-900">
