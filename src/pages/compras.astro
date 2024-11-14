@@ -8,6 +8,7 @@ import Card from "@components/menu/Card.astro";
 import Tabla from "@components/compras/Tabla.astro";
 import Modal from "@components/dialog.astro";
 import Alertas from "@components/alertas.astro";
+import { Fetcher } from "@Lib/fetcher";
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -33,11 +34,16 @@ try {
 
 const user = res;
 
-const tipoClienteMap = {
-  1: "Natural",
-  2: "Jurídico",
-  // Agrega más tipos según sea necesario
-};
+let compras = []
+try{
+    const res = await Fetcher ("cabcompras","listar",token);
+    if (res.status!==200){
+      throw new Error("Error al obtener las compras");
+    }
+    compras = await res.data;
+  } catch (error){
+    console.error("Error al obtener las compras", error);
+  }
 ---
 
 <style>
@@ -124,10 +130,13 @@ const tipoClienteMap = {
           </Card>
 
           <Card title="Total de compras" description="El ultimo mes"
-            ><i class="fa-solid fa-money-bill-1"></i> 200</Card
+            ><i class="fa-solid fa-money-bill-1"></i> {" " + compras.length || 0}</Card
           >
           <Card title="Compras Recientes" description="Últimas 24 horas">
-            <i class="fa-solid fa-coins"></i> 10 
+            <i class="fa-solid fa-coins"></i>  {
+              " " + compras [compras.length - 1]?.idcab_compra ||
+                "No hay ventas recientes"
+            }
         </Card>
         
         </div>
@@ -138,25 +147,25 @@ const tipoClienteMap = {
         >
           <h2 class="text-xl font-semibold">Compras</h2>
                  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-          <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
-            <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
-              <h2 class="text-xl font-semibold text-white dark:text-slate-900">Compra No: 1</h2>
+                   { compras.map((compra) => (
+            <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
+              <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
+                <h2 class="text-xl font-semibold text-white dark:text-slate-900">Compra No: {compra.Idcab_compra}</h2>
+              </div>
+              <div class="p-4 text-gray-800 dark:text-gray-300">
+                <p><strong>Id Compra:</strong> {compra.Idcab_compra}</p>
+                <p><strong>Documento Fiscal:</strong> {compra.Iddocumento_fiscal}</p>
+                <p><strong>Correlativo:</strong> {compra.correlativo_documento_fiscal}</p>
+                <p><strong>Proveedor:</strong> {compra.idproveedor}</p>
+                <p><strong>Condición de Compra:</strong> {compra.condicion_compra}</p>
+                <p><strong>Fecha de Compra:</strong> {new Date(compra.fecha_compra).toLocaleDateString()}</p>
+                <p><strong>Sumas:</strong> ${compra.sumas.toFixed(2)}</p>
+                <p><strong>IVA:</strong> ${compra.iva.toFixed(2)} (13%)</p>
+                <p><strong>Percepción:</strong> ${compra.percepcion.toFixed(2)}</p>
+                <p><strong>Total:</strong> ${compra.total.toFixed(2)}</p>
+              </div>
             </div>
-            <div class="p-4 text-gray-800 dark:text-gray-300">
-              <p><strong>Id Compra:</strong> 1</p>
-              <p><strong>Documento Fiscal:</strong> Factura</p>
-              <p><strong>Correlativo:</strong> CCF-001</p>
-              <p><strong>Proveedor:</strong> Proveedor Ejemplo</p>
-              <p><strong>Condición de Compra:</strong> Contado</p>
-              <p><strong>Fecha de Compra:</strong> 05/10/2023</p>
-              <p><strong>Sumas:</strong> $500.00</p>
-              <p><strong>IVA:</strong> $65.00 (13%)</p>
-              <p><strong>Percepción:</strong> $10.00</p>
-              <p><strong>Total:</strong> $575.00</p>
-            </div>
-          </div>
-        </div>
-        </div>
+          ))}
       <!--Detalles-->
       <Modal id="Detailmodal">
         <div
