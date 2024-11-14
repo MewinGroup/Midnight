@@ -223,7 +223,7 @@ function updateCartDisplay() {
 
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartDisplay();
-    alert(`Añadido al carrito: ${producto.nombre}`);
+    window.showAlert(`Añadido al carrito: ${producto.nombre}`,"success");
   }
 
 document.addEventListener("DOMContentLoaded", () => {
