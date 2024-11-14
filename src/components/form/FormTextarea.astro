@@ -1,0 +1,21 @@
+---
+interface FormTextareaProps {
+  id: string;
+  label: string;
+  placeholder: string;
+  disabled?: boolean;
+}
+
+const { id, label, placeholder, disabled } = Astro.props as FormTextareaProps;
+---
+
+<label for={id} class="text-sm text-gray-700 dark:text-gray-300 mt-2">{label}</label>
+<textarea
+  id={id}
+  name={id}
+  placeholder={placeholder}
+  required
+  disabled={disabled}
+  rows="2"
+  class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+></textarea>

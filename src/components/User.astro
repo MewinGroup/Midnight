@@ -1,0 +1,39 @@
+---
+interface UserProps {
+    Userinfo: {
+    nombre: string;
+    imagen: string;
+    tipo_perfil: number;
+  };
+}
+
+const { Userinfo } = Astro.props as UserProps;
+---
+
+
+<div class="flex items-center justify-end mb-6">
+    <div class="flex items-center space-x-2">
+      <div
+        class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-500"
+      >
+        <img
+          src={Userinfo.imagen ||
+            "https://avatars.githubusercontent.com/u/178928214?v=4"}
+          alt="Foto de perfil"
+          class="w-full h-full object-cover"
+        />
+      </div>
+      <div class="text-right">
+        <h1 class="text-xl font-bold">Hola, {Userinfo.nombre}</h1>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">
+          {
+            Userinfo.tipo_perfil == 1
+              ? "Administrador"
+              : Userinfo.tipo_perfil == 2
+                ? "Vendedor"
+                : "Usuario"
+          }
+        </p>
+      </div>
+    </div>
+  </div>

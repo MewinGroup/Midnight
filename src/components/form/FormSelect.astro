@@ -1,0 +1,23 @@
+---
+interface FormSelectProps {
+  id: string;
+  label: string;
+  options: { value: string; text: string }[];
+  disabled?: boolean;
+}
+
+const { id, label, options, disabled } = Astro.props as FormSelectProps;
+---
+
+<label for={id} class="text-sm text-gray-700 dark:text-gray-300 mt-2">{label}</label>
+<select
+  id={id}
+  name={id}
+  required
+  disabled={disabled}
+  class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+>
+  {options.map(option => (
+    <option value={option.value}>{option.text}</option>
+  ))}
+</select>

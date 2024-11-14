@@ -38,9 +38,13 @@ const user = res;
 const proveedores = await Fetcher("proveedores", "listar", token);
 let listaproveedores = [];
 try {
-  listaproveedores = await proveedores.data;
+  const response = await proveedores;
+  if (response && response.data) {
+    listaproveedores = Array.isArray(response.data) ? response.data : [];
+  }
 } catch (error) {
   console.error("Error al obtener la lista de proveedores:", error);
+  listaproveedores = []; // Ensure it's an empty array on error
 }
 
 let rankingProveedores = [];
@@ -197,7 +201,7 @@ try {
         <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <Alertas />
-          <Card title="Herramientas" description="Manejo de datos de empleado">
+          <Card title="Herramientas" description="Manejo de datos de Proveedores">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               <div class="flex justify-center">
                 <a
@@ -248,22 +252,26 @@ try {
             description="Último Proveedor Añadido"
           >
             <i class="fa-solid fa-warehouse"></i>
-            {" " + listaproveedores[listaproveedores.length - 1].nombre || "0"}
+                        {listaproveedores?.length > 0 
+              ? " " + listaproveedores[listaproveedores.length - 1].nombre 
+              : "No hay proveedores"}
             <br />
             <i class="fa-solid fa-clipboard-list"></i>
-            {
-              " " +
-                (Number(
-                  listaproveedores[listaproveedores.length - 1].tipo_proveedor
-                ) == 1
-                  ? "Proveedor de Consumibles"
-                  : Number(
-                        listaproveedores[listaproveedores.length - 1]
-                          .tipo_proveedor
-                      ) == 2
-                    ? "Proveedor de Servicios"
-                    : "Proveedor de Productos")
-            }
+                        {(() => {
+                if (!listaproveedores?.length) return "No hay proveedores";
+                
+                const lastProvider = listaproveedores[listaproveedores.length - 1];
+                const tipo = Number(lastProvider?.tipo_proveedor);
+                
+                switch (tipo) {
+                    case 1:
+                        return " Proveedor de Consumibles";
+                    case 2:
+                        return " Proveedor de Servicios";
+                    default:
+                        return " Proveedor de Productos";
+                }
+            })()}
           </Card>
         </div>
 

@@ -1,11 +1,10 @@
 ---
-interface DialogProps {
-  open: boolean;
-  onClose: () => void;
+interface ModalProps {
   id: string;
+  title: string;
 }
 
-const { open, onClose, id } = Astro.props as DialogProps;
+const { id, title } = Astro.props as ModalProps;
 ---
 
 <style>
@@ -40,9 +39,7 @@ const { open, onClose, id } = Astro.props as DialogProps;
 
 </style>
 
-<dialog
-  id={id}
-  class=" inset-0 bg-gray-600 bg-opacity-50 items-center transition-opacity duration-300 ease-in-out rounded-lg"
->
+<dialog id={id} class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown">
+  <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">{title}</h2>
   <slot />
 </dialog>
