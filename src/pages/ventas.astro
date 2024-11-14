@@ -6,7 +6,7 @@ import Layout from "@Layouts/layout.astro";
 import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
 //Aqui va para conseguir el total de ventas
-import Tabla from "@components/ventas/Tabla.astro";
+import { Fetcher } from "@Lib/fetcher";
 import Modal from "@components/dialog.astro";
 
 if ((await verify(data.token?.value)) == false) {
@@ -30,19 +30,102 @@ try {
     statusText: "Internal Server Error",
   });
 }
-//Hay que cambiar esto
-const user = res;
-/*
-const clients = (await clientes(token)) || [];
-const total = (await totalclientes(token)) || { total: 0 };
-*/
-const tipoClienteMap = {
-  1: "Natural",
-  2: "Jurídico",
-  // Agrega más tipos según sea necesario
-};
----
 
+const user = res;
+
+let ventas = []
+try{
+  const res = await Fetcher ("ventas","listar",token);
+  if (res.status!==200){
+    throw new Error("Error al obtener las ventas");
+  }
+  ventas = await res.data;
+} catch (error){
+  console.error("Error al obtener las ventas", error);
+}
+
+let usuarios = []
+try{
+  const res = await Fetcher ("usuarios","listar",token);
+  if (res.status!==200){
+    throw new Error("Error al obtener los usuarios");
+  }
+  usuarios = await res.data;
+} catch (error){
+  console.error("Error al obtener los usuarios", error);
+}
+function obtenerNombreUsuario(id) {
+    const usuario = usuarios.find(user => user.Idusuario === id);
+    return usuario ? usuario.nombre : "Desconocido";
+}
+
+let clientes = []
+try{
+  const res = await Fetcher ("clientes","listar",token);
+  if (res.status!==200){
+    throw new Error("Error al obtener los clientes");
+  }
+  clientes = await res.data;
+} catch (error){
+  console.error("Error al obtener los clientes", error);
+}
+function obtenerNombreCliente(id) {
+    const cliente = clientes.find(client => client.Idcliente === id);
+    return cliente ? cliente.nombre : "Desconocido";
+  }
+  
+  let documentosFiscales = []
+  try{
+    const res = await Fetcher ("documentos","listar",token);
+    if (res.status!==200){
+      throw new Error("Error al obtener los documentos fiscales");
+    }
+    documentosFiscales = await res.data;
+  } catch (error){
+    console.error("Error al obtener los documentos fiscales", error);
+  }
+  function obtenerNombreDocumentoFiscal(id) {
+    const documentoFiscal = documentosFiscales.find(doc => doc.Iddocumento_fiscal === id);
+    return documentoFiscal ? documentoFiscal.nombre : "Desconocido";
+  }
+  let metodosPago = []
+  try{
+    const res = await Fetcher ("metodos","listar",token);
+    if (res.status!==200){
+      throw new Error("Error al obtener los metodos de pago");
+    }
+    metodosPago = await res.data;
+  } catch (error){
+    console.error("Error al obtener los metodos de pago", error);
+  }
+  function obtenerNombreMetodoPago(id) {
+    const metodoPago = metodosPago.find(metodo => metodo.Idmetodo_pago === id);
+    return metodoPago ? metodoPago.nombre : "Desconocido";
+  }
+---
+<script>
+    document.addEventListener("astro:page-load", actualizarEstados);
+
+    function actualizarEstados() {
+      const estados = document.querySelectorAll('p');
+    
+      estados.forEach(function (estado) {
+        if (estado.innerHTML.includes("Estado:")) {
+          const estadoTexto = estado.textContent.trim().split(":")[1].trim();
+    
+          if (estadoTexto.toLowerCase() === "finalizado") {
+            estado.classList.add("text-green-500");
+            estado.classList.remove("text-red-200");
+          } else if (estadoTexto.toLowerCase() === "pendiente") {
+            estado.classList.add("text-red-300");
+            estado.classList.remove("text-green-300");
+          }
+        }
+      });
+    }
+    
+    document.addEventListener('DOMContentLoaded', actualizarEstados);
+</script>
 <style>
   @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
   ::-webkit-scrollbar {
@@ -146,10 +229,13 @@ const tipoClienteMap = {
           </Card>
 
           <Card title="Total de Ventas" description="Total"
-            ><i class="fa-solid fa-money-check-dollar"></i> 0</Card
+            ><i class="fa-solid fa-money-check-dollar"></i> {" " + ventas.length || 0}</Card
           >
           <Card title="Ventas Recientes" description="El ultimo Mes"
-            ><i class="fa-solid fa-receipt"></i> 0
+            ><i class="fa-solid fa-receipt"></i> {
+              " " + ventas [ventas.length - 1]?.Idcab_venta ||
+                "No hay ventas recientes"
+            }
           </Card>
         </div>
 
@@ -159,114 +245,29 @@ const tipoClienteMap = {
         >
           <h2 class="text-xl font-semibold">Ventas</h2><br />
         <!-- Contenedor principal para las tarjetas -->
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-  
-  <!-- Tarjeta 1 -->
-  <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
-    <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
-      <h2 class="text-xl font-semibold text-white dark:text-slate-900">Venta No: 1</h2>
-    </div>
-    <div class="p-4 text-gray-800 dark:text-gray-300">
-      <p><strong>Número:</strong> 0001</p>
-      <p><strong>Documento Fiscal:</strong> Factura</p>
-      <p><strong>Correlativo:</strong> CCF</p>
-      <p><strong>Fecha de Venta:</strong> 04/11/2024</p>
-      <p><strong>Cliente:</strong> John Jarrison</p>
-      <p><strong>Condición de Venta:</strong> Orden de compra</p>
-      <p><strong>Método de Pago:</strong> Efectivo</p>
-      <p><strong>Estado:</strong> Finalizado</p>
-      <p><strong>Sumas:</strong> $1007.99</p>
-      <p><strong>IVA:</strong> $131.04 (13%)</p>
-      <p><strong>Total:</strong> $1,139.03</p>
-      <p><strong>Vendedor:</strong> Juan</p>
-    </div>
-  </div>
-
-  <!-- Tarjeta 2 -->
-  <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
-    <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
-      <h2 class="text-xl font-semibold text-white dark:text-gray-900">Venta No: 2</h2>
-    </div>
-    <div class="p-4 text-gray-800 dark:text-gray-300">
-      <p><strong>Número:</strong> 0002</p>
-      <p><strong>Documento Fiscal:</strong> Factura</p>
-      <p><strong>Correlativo:</strong> CCF</p>
-      <p><strong>Fecha de Venta:</strong> 05/11/2024</p>
-      <p><strong>Cliente:</strong> Alice Cooper</p>
-      <p><strong>Condición de Venta:</strong> Crédito</p>
-      <p><strong>Método de Pago:</strong> Transferencia</p>
-      <p><strong>Estado:</strong> Pendiente</p>
-      <p><strong>Sumas:</strong> $500.00</p>
-      <p><strong>IVA:</strong> $65.00 (13%)</p>
-      <p><strong>Total:</strong> $565.00</p>
-      <p><strong>Vendedor:</strong> Marta</p>
-    </div>
-  </div>
-
-  <!-- Tarjeta 3 -->
-  <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
-    <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
-      <h2 class="text-xl font-semibold text-white dark:text-gray-900">Venta No: 3</h2>
-    </div>
-    <div class="p-4 text-gray-800 dark:text-gray-300">
-      <p><strong>Número:</strong> 0003</p>
-      <p><strong>Documento Fiscal:</strong> Factura</p>
-      <p><strong>Correlativo:</strong> CCF</p>
-      <p><strong>Fecha de Venta:</strong> 06/11/2024</p>
-      <p><strong>Cliente:</strong> Bob Marley</p>
-      <p><strong>Condición de Venta:</strong> Pago al contado</p>
-      <p><strong>Método de Pago:</strong> Efectivo</p>
-      <p><strong>Estado:</strong> Finalizado</p>
-      <p><strong>Sumas:</strong> $700.00</p>
-      <p><strong>IVA:</strong> $91.00 (13%)</p>
-      <p><strong>Total:</strong> $791.00</p>
-      <p><strong>Vendedor:</strong> Luis</p>
-    </div>
-  </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const estados = document.querySelectorAll('p');
-  
-      estados.forEach(function (estado) {
-        if (estado.innerHTML.includes("Estado:")) {
-          const estadoTexto = estado.textContent.trim().split(":")[1].trim();
-  
-          if (estadoTexto.toLowerCase() === "finalizado") {
-            estado.classList.add("text-green-500");
-            estado.classList.remove("text-red-200");
-          } else if (estadoTexto.toLowerCase() === "pendiente") {
-            estado.classList.add("text-red-300");
-            estado.classList.remove("text-green-300");
-          }
-        }
-      });
-    });
-  </script>
-  
-
-  <!-- Tarjeta 4 -->
-  <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
-    <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
-      <h2 class="text-xl font-semibold text-white dark:text-gray-900">Venta No: 4</h2>
-    </div>
-    <div class="p-4 text-gray-800 dark:text-gray-300">
-      <p><strong>Número:</strong> 0004</p>
-      <p><strong>Documento Fiscal:</strong> Factura</p>
-      <p><strong>Correlativo:</strong> CCF</p>
-      <p><strong>Fecha de Venta:</strong> 07/11/2024</p>
-      <p><strong>Cliente:</strong> Jane Doe </p>
-      <p><strong>Condición de Venta:</strong> Crédito</p>
-      <p><strong>Método de Pago:</strong> Cheque</p>
-      <p><strong>Estado:</strong> Pendiente</p>
-      <p><strong>Sumas:</strong> $850.00</p>
-      <p><strong>IVA:</strong> $110.50 (13%)</p>
-      <p><strong>Total:</strong> $960.50</p>
-      <p><strong>Vendedor:</strong> Ana</p>
-    </div>
-  </div>
-
-</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+                        { ventas.map((venta) => (
+              <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
+                <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
+                  <h2 class="text-xl font-semibold text-white dark:text-slate-900">Venta No: {venta.Idcab_venta}</h2>
+                </div>
+                <div class="p-4 text-gray-800 dark:text-gray-300">
+                  <p><strong>Número: </strong> {venta.Idcab_venta}</p>
+                  <p><strong>Documento Fiscal: </strong> {obtenerNombreDocumentoFiscal(venta.Iddocumento_fiscal)}</p>
+                  <p><strong>Correlativo: </strong> {venta.correlativo_documento_fiscal}</p>
+                  <p><strong>Fecha de Venta: </strong> {new Date(venta.fecha_venta).toLocaleDateString()}</p>
+                  <p><strong>Cliente: </strong> {obtenerNombreCliente(venta.Idcliente)}</p>
+                  <p><strong>Condición de Venta: </strong> {venta.condicion_venta}</p>
+                  <p><strong>Método de Pago: </strong> {obtenerNombreMetodoPago(venta.Idmetodo_pago)}</p>
+                  <p><strong>Estado: </strong> {venta.estado}</p>
+                  <p><strong>Sumas: </strong> ${venta.sumas.toFixed(2)}</p>
+                  <p><strong>IVA: </strong> ${venta.iva.toFixed(2)} (13%)</p>
+                  <p><strong>Total:</strong> ${venta.total.toFixed(2)}</p>
+                  <p><strong>Vendedor: </strong> {obtenerNombreUsuario(venta.Idusuario_vendedor)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <!-- Addmodal Content -->

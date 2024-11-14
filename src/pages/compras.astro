@@ -136,45 +136,26 @@ const tipoClienteMap = {
         <div
           class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
         >
-          <h2 class="text-xl font-semibold">Movimientos</h2>
-          <Tabla>
-            <slot>
-              <!--foreach cliente fill a column -->
-                    <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
-                      </td>
-                      <td class="px-2 py-2 max-w-full overflow-hidden text-ellipsis">
-                        01
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        Recibo
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        Recibo
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        La Constancia
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis">
-                        Abasto
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center">
-                        08/11/2024
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center">
-                        $226.00
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center">
-                        $26.00
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center">
-                        Ingreso
-                      </td>
-                      <td class="px-1 py-2 max-w-full overflow-hidden text-ellipsis items-center">
-                        $200.00
-                      </td>
-                    </tr>
-            </slot>
-          </Tabla>
+          <h2 class="text-xl font-semibold">Compras</h2>
+                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+          <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
+            <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
+              <h2 class="text-xl font-semibold text-white dark:text-slate-900">Compra No: 1</h2>
+            </div>
+            <div class="p-4 text-gray-800 dark:text-gray-300">
+              <p><strong>Id Compra:</strong> 1</p>
+              <p><strong>Documento Fiscal:</strong> Factura</p>
+              <p><strong>Correlativo:</strong> CCF-001</p>
+              <p><strong>Proveedor:</strong> Proveedor Ejemplo</p>
+              <p><strong>Condición de Compra:</strong> Contado</p>
+              <p><strong>Fecha de Compra:</strong> 05/10/2023</p>
+              <p><strong>Sumas:</strong> $500.00</p>
+              <p><strong>IVA:</strong> $65.00 (13%)</p>
+              <p><strong>Percepción:</strong> $10.00</p>
+              <p><strong>Total:</strong> $575.00</p>
+            </div>
+          </div>
+        </div>
         </div>
       <!--Detalles-->
       <Modal id="Detailmodal">
