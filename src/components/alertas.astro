@@ -1,51 +1,70 @@
 <script>
   (function () {
-    function showAlert(
-      message: string,
-      type: string = "info",
-      options: {
-        color?: string;
-        size?: string;
-        duration?: number;
-        textColor?: string;
-        onCancel?: () => void;
-        onAccept?: () => void;
-      } = {}
-    ) {
+    let isAlertActive = false;
+    const alertQueue: Array<{
+      message: string;
+      type: string;
+      options: any;
+    }> = [];
+
+    function processAlertQueue() {
+      if (alertQueue.length > 0 && !isAlertActive) {
+        const nextAlert = alertQueue.shift();
+        if (nextAlert) {
+          showAlertImpl(nextAlert.message, nextAlert.type, nextAlert.options);
+        }
+      }
+    }
+
+    type AlertOptions = {
+      color?: string;
+      size?: string;
+      duration?: number;
+      textColor?: string;
+      onCancel?: () => void;
+      onAccept?: () => void;
+    }
+
+    function showAlert(message: string, type: string = "info", options: AlertOptions = {}) {
+      if (isAlertActive) {
+        alertQueue.push({ message, type, options });
+        return;
+      }
+      showAlertImpl(message, type, options);
+    }
+
+    function showAlertImpl(message: string, type: string, options: AlertOptions) {
+      isAlertActive = true;
       const alertDiv = document.createElement("div");
       alertDiv.role = "alert";
 
       alertDiv.className = `fixed z-1050 top-4 left-1/2 transform -translate-x-1/2 p-2 rounded-lg flex flex-col items-center transition duration-300 ease-in-out hover:scale-105 ${
-        type === "info"
-          ? "bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 dark:border-blue-700 text-blue-900 dark:text-blue-100 hover:bg-blue-200 dark:hover:bg-blue-800"
-          : type === "success"
-            ? "bg-green-100 dark:bg-green-900 border-l-4 border-green-500 dark:border-green-700 text-green-900 dark:text-green-100 hover:bg-green-200 dark:hover:bg-green-800"
-            : type === "warning"
-              ? "bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 dark:border-yellow-700 text-yellow-900 dark:text-yellow-100 hover:bg-yellow-200 dark:hover:bg-yellow-800"
-              : type === "confirm"
-                ? "bg-gray-100 dark:bg-gray-900 border-l-4 border-gray-500 dark:border-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-800"
-                : "bg-red-100 dark:bg-red-900 border-l-4 border-red-500 dark:border-red-700 text-red-900 dark:text-red-100 hover:bg-red-200 dark:hover:bg-red-800"
+        type === "info" ? "bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 dark:border-blue-700 text-blue-900 dark:text-blue-100 hover:bg-blue-200 dark:hover:bg-blue-800"
+        : type === "success" ? "bg-green-100 dark:bg-green-900 border-l-4 border-green-500 dark:border-green-700 text-green-900 dark:text-green-100 hover:bg-green-200 dark:hover:bg-green-800"
+        : type === "warning" ? "bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 dark:border-yellow-700 text-yellow-900 dark:text-yellow-100 hover:bg-yellow-200 dark:hover:bg-yellow-800"
+        : type === "confirm" ? "bg-gray-100 dark:bg-gray-900 border-l-4 border-gray-500 dark:border-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-800"
+        : "bg-red-100 dark:bg-red-900 border-l-4 border-red-500 dark:border-red-700 text-red-900 dark:text-red-100 hover:bg-red-200 dark:hover:bg-red-800"
       }`;
 
-      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      svg.setAttribute("stroke", "currentColor");
-      svg.setAttribute("viewBox", "0 0 24 24");
-      svg.setAttribute("fill", "none");
-      svg.classList.add("h-5", "w-5", "flex-shrink-0", "mr-2");
-      const path = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "path"
-      );
-      path.setAttribute(
-        "d",
-        "M13 16h-1v-4h1m0-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-      );
-      path.setAttribute("stroke-width", "2");
-      path.setAttribute("stroke-linejoin", "round");
-      path.setAttribute("stroke-linecap", "round");
-      svg.appendChild(path);
+      const getTopElement = () => {
+        const point = { x: window.innerWidth / 2, y: 20 };
+        const elements = document.elementsFromPoint(point.x, point.y);
+        return elements.find(el => el !== alertDiv && !el.matches('html, body, head, script, style, link'));
+      };
 
-      alertDiv.appendChild(svg);
+      if (document.querySelector("dialog")?.open) {
+        document.querySelector("dialog")?.appendChild(alertDiv);
+      } else {
+        const topElement = getTopElement();
+        if (topElement) {
+          topElement.appendChild(alertDiv);
+          alertDiv.style.position = 'absolute';
+          alertDiv.style.top = '0';
+          alertDiv.style.left = '50%';
+        } else {
+          document.body.appendChild(alertDiv);
+        }
+      }
 
       message.split("\n").forEach((line) => {
         const messageP = document.createElement("p");
@@ -62,16 +81,16 @@
         cancelButton.className = "bg-red-500 text-white px-2 py-1 rounded";
         cancelButton.textContent = "Cancelar";
         cancelButton.onclick = () => {
-          if (options.onCancel) options.onCancel();
-          alertDiv.remove();
+          options.onCancel?.();
+          removeAlert();
         };
 
         const acceptButton = document.createElement("button");
         acceptButton.className = "bg-green-500 text-white px-2 py-1 rounded";
         acceptButton.textContent = "Aceptar";
         acceptButton.onclick = () => {
-          if (options.onAccept) options.onAccept();
-          alertDiv.remove();
+          options.onAccept?.();
+          removeAlert();
         };
 
         buttonContainer.appendChild(cancelButton);
@@ -79,22 +98,18 @@
         alertDiv.appendChild(buttonContainer);
       }
 
-      
-      //si hay un elemento dialog haz append sobre el
-      if (document.querySelector("dialog")?.open) {
-        document.querySelector("dialog").appendChild(alertDiv);
-      } else {
-        document.body.appendChild(alertDiv);
+      function removeAlert() {
+        alertDiv.style.opacity = "0";
+        alertDiv.style.transform = "translateY(-20px)";
+        setTimeout(() => {
+          alertDiv.remove();
+          isAlertActive = false;
+          processAlertQueue();
+        }, 300);
       }
 
       if (type !== "confirm") {
-        setTimeout(() => {
-          alertDiv.style.opacity = "0";
-          alertDiv.style.transform = "translateY(-20px)";
-          setTimeout(() => {
-            alertDiv.remove();
-          }, 300);
-        }, options.duration || 3000);
+        setTimeout(() => removeAlert(), options.duration || 3000);
       }
     }
 

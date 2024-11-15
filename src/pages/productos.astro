@@ -5,11 +5,47 @@ import { verify, userinfo } from "@Lib/auth";
 import Layout from "@Layouts/layout.astro";
 import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
-//Aqui la lib empleados
-import Tabla from "@components/productos/Tabla.astro";
+import Userdiv from "@components/User.astro";
 import Modal from "@components/dialog.astro";
 import Alertas from "@components/alertas.astro";
 import { Fetcher } from "@Lib/fetcher";
+
+// Definir las entidades a consultar
+const entities = [
+  { name: "productos", var: "productos" },
+  { name: "marcas", var: "marcas" },
+  { name: "categorias", var: "categorias" },
+  { name: "ubicaciones", var: "ubicaciones" },
+  { name: "presentaciones", var: "presentaciones" },
+  { name: "unidades", var: "unidades" },
+];
+
+// Inicializar variables
+let productos = [],
+  marcas = [],
+  categorias = [],
+  ubicaciones = [],
+  presentaciones = [],
+  unidades = [];
+
+try {
+  const results = await Promise.all(
+    entities.map(async (entity) => {
+      const res = await Fetcher(entity.name, "listar", data.token?.value);
+      if (res.status !== 200) {
+        throw new Error(`Error al obtener ${entity.name}`);
+      }
+      return { name: entity.var, data: res.data };
+    })
+  );
+
+  // Asignar resultados a variables
+  results.forEach((result) => {
+    eval(`${result.name} = result.data`);
+  });
+} catch (error) {
+  console.error("Error en la obtención de datos:", error);
+}
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -34,46 +70,8 @@ try {
 }
 
 const user = res;
-
-let productos = []
-try{
-  const res = await Fetcher ("productos","listar",token);
-  if (res.status!==200){
-    throw new Error("Error al obtener los productos");
-  }
-  productos = await res.data;
-} catch (error){
-  console.error("Error al obtener los productos", error);
-}
 ---
 
-<style>
-  @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #6c757d;
-    border-radius: 4px;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: #495057;
-  }
-
-  .scrollbar-custom {
-    scrollbar-width: thin;
-    scrollbar-color: #6c757d transparent;
-  }
-</style>
 <Layout title="Panel de Control">
   <!-- height: max-content; -->
   <div
@@ -87,32 +85,7 @@ try{
           <i class="fa-solid fa-box"></i> Listado de Productos
         </h1>
 
-        <div class="flex items-center justify-end mb-6">
-          <div class="flex items-center space-x-2">
-            <div
-              class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-500"
-            >
-              <img
-                src={user.imagen ||
-                  "https://avatars.githubusercontent.com/u/178928214?v=4"}
-                alt="Foto de perfil"
-                class="w-full h-full object-cover"
-              />
-            </div>
-            <div class="text-right">
-              <h1 class="text-xl font-bold">Hola, {user.nombre}</h1>
-              <p class="text-gray-600 dark:text-gray-400 text-sm">
-                {
-                  user.tipo_perfil == 1
-                    ? "Administrador"
-                    : user.tipo_perfil == 2
-                      ? "Vendedor"
-                      : "Usuario"
-                }
-              </p>
-            </div>
-          </div>
-        </div>
+        <Userdiv userinfo={user} />
         <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <Alertas />
@@ -122,52 +95,24 @@ try{
                 <a
                   id="add"
                   class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-indigo-500 bg-sky-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Addmodal').showModal()"
                 >
                   <i class="fa-solid fa-plus text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Agregar</span>
                 </a>
               </div>
-              <div class="flex justify-center">
-                <div
-                  id="editButton"
-                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-emerald-500 bg-lime-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Editmodal').showModal()"
-                >
-                  <i class="fa-solid fa-pen text-xl md:text-3xl"></i>
-                  <span class="text-xs md:text-sm font-bold">Editar</span>
-                </div>
-              </div>
-              <div class="flex justify-center">
-                <div
-                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-rose-500 bg-pink-600 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Deletemodal').showModal()"
-                >
-                  <i class="fa-solid fa-trash text-xl md:text-3xl"></i>
-                  <span class="text-xs md:text-sm font-bold">Eliminar</span>
-                </div>
-              </div>
-              <div class="flex justify-center">
-                <div
-                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-amber-500 bg-orange-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
-                  onclick="document.getElementById('Detailmodal').showModal()"
-                >
-                  <i class="fa-solid fa-chart-pie text-xl md:text-3xl"></i>
-                  <span class="text-xs md:text-sm font-bold">Detalles</span>
-                </div>
-              </div>
             </div>
           </Card>
 
           <Card title="Total de Productos" description="Total"
-            ><i class="fa-solid fa-list"></i>  {" " + productos.length || 0}</Card
+            ><i class="fa-solid fa-list"></i>
+            {" " + productos.length || 0}</Card
           >
           <Card
             title="Producto Reciente"
             description="Último Producto agregado"
           >
-          <i class="fa-solid fa-badge-check"></i>{
-              " " + productos [productos.length - 1]?.nombre ||
+            <i class="fa-solid fa-badge-check"></i>{
+              " " + productos[productos.length - 1]?.nombre ||
                 "No hay productos"
             }
           </Card>
@@ -178,1068 +123,1331 @@ try{
           class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
         >
           <h2 class="text-xl font-semibold">Productos</h2>
-                    <!-- Contenedor de tarjetas -->
-          <div class="container mx-auto p-6 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            { productos.map((producto) => (
-              <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-slate-500 overflow-hidden transition-colors duration-300">
-                <div class="producto-card">
-                  <div class="p-4 dark:bg-gray-800 bg-slate-100 text-center">
-                    <h2 class="text-xl font-semibold text-slate-700 dark:text-white">{producto.nombre}</h2>
+          <!-- Contenedor de tarjetas -->
+          <div
+            class="mx-auto p-6 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+          >
+            {
+              productos.map((producto) => (
+                <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-slate-500 overflow-hidden transition-colors duration-300 transform hover:scale-108 transition-transform cursor-pointer">
+                  <div class="producto-card" id={producto.Idproducto}>
+                    <div class="p-4 dark:bg-gray-800 bg-slate-100 text-center">
+                      <h2 class="text-xl font-semibold text-slate-700 dark:text-white">
+                        {producto.nombre}
+                      </h2>
+                    </div>
+                    <div class="flex justify-center py-6">
+                      <img
+                        src={producto.imagen}
+                        alt="Imagen de la tarjeta"
+                        class="w-32 h-32 rounded-full border-4 border-gray-300 dark:border-gray-700 object-cover"
+                      />
+                    </div>
+                    <div class="p-4 text-center">
+                      <h3 class="text-xs font-semibold text-gray-800 dark:text-gray-200">
+                        {producto.detalles}
+                      </h3>
+                    </div>
+                    {producto.existencias < producto.existencias_minimas ? (
+                      <div class="p-4 bg-red-500 dark:bg-red-700 flex justify-center items-center">
+                        <p class="text-white font-semibold">
+                          Existencias bajas
+                        </p>
+                      </div>
+                    ) : (
+                      <div class="p-4 bg-green-500 dark:bg-green-700 flex justify-center items-center">
+                        <p class="text-white font-semibold">
+                          Existencias normales
+                        </p>
+                      </div>
+                    )}
+                    <div class="p-4 bg-gray-100 dark:bg-gray-800 flex justify-center items-center">
+                      {/* precio*/}
+
+                      <div class="flex flex-col">
+                        <p class="text-lg font-bold text-gray-800 dark:text-gray-200">
+                          ${producto.precio_venta1.toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div class="flex justify-center py-6">
-                    <img src={producto.imagen} alt="Imagen de la tarjeta" class="w-32 h-32 rounded-full border-4 border-gray-300 dark:border-gray-700 object-cover">
+                </div>
+              ))
+            }
+          </div>
+        </div>
+        <Modal id="Addmodal">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+            >
+              Agregar Producto
+            </h2>
+
+            <!-- Formulario -->
+            <form name="agregar" method="POST" class="space-b-4">
+              <label
+                for="nombre"
+                class="text-x1 text-gray-700 dark:text-gray-300">Nombre</label
+              >
+              <input
+                type="text"
+                id="nombre"
+                name="Nombre"
+                placeholder="Nombre"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="detalles"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Detalles</label
+              >
+              <textarea
+                id="Detalles"
+                name="detalles"
+                rows="2"
+                required
+                placeholder="Detalles del producto"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              ></textarea>
+
+              <label
+                for="Marca"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Marca</label
+              >
+              <select
+                id="Marca"
+                name="Marca"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="" hidden>--Selecciona una marca--</option>
+                {
+                  marcas.map((marca) => (
+                    <option value={marca.Idmarca}>{marca.nombre}</option>
+                  ))
+                }
+              </select>
+
+              <label
+                for="Categoria"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Categoria</label
+              >
+              <select
+                id="Categoria"
+                name="Categoria"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="" hidden>--Selecciona una categoría--</option>
+                {
+                  categorias.map((categoria) => (
+                    <option value={categoria.Idcategoria}>
+                      {categoria.nombre}
+                    </option>
+                  ))
+                }
+              </select>
+
+              <label
+                for="Ubicacion"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Ubicacion Fisica</label
+              >
+              <select
+                id="Ubicacion"
+                name="Ubicacion"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="" hidden>--Selecciona una ubicación--</option>
+                {
+                  ubicaciones.map((ubicacion) => (
+                    <option value={ubicacion.Idubicacione_fisica}>
+                      {ubicacion.nombre}
+                    </option>
+                  ))
+                }
+              </select>
+
+              <label
+                for="Presentacion"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Presentacion</label
+              >
+              <select
+                id="Presentacion"
+                name="Presentacion"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="" hidden>--Selecciona una presentación--</option>
+                {
+                  presentaciones.map((presentacion) => (
+                    <option value={presentacion.Idpresentacion}>
+                      {presentacion.nombre}
+                    </option>
+                  ))
+                }
+              </select>
+
+              <label
+                for="Unidad"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Unidad de Medida</label
+              >
+              <select
+                id="Medida"
+                name="Unidad"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="" hidden
+                  >--Selecciona una unidad de medida--</option
+                >
+                {
+                  unidades.map((unidades) => (
+                    <option value={unidades.Idunidades_medida}>
+                      {unidades.nombre}
+                    </option>
+                  ))
+                }
+              </select>
+
+              <label
+                for="existencias_minimas"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Existencias Minimas</label
+              >
+              <input
+                id="Existencias"
+                name="existencias_minimas"
+                type="text"
+                required
+                placeholder="Existencias Minimas de producto"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <label
+                for="existencias"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Existencias</label
+              >
+              <input
+                id="Existencias"
+                name="existencias"
+                type="text"
+                required
+                placeholder="Existencias de producto"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="precio_venta1"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Precio de venta 1</label
+              >
+              <input
+                id="Precio1"
+                name="precio_venta1"
+                type="number"
+                required
+                placeholder="$5.99"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="precio_venta2"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Precio de venta 2</label
+              >
+              <input
+                id="Precio2"
+                name="precio_venta2"
+                type="number"
+                required
+                placeholder="$6.99"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="precio_venta3"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Precio de venta 3</label
+              >
+
+              <input
+                id="Precio3"
+                name="precio_venta3"
+                type="number"
+                required
+                placeholder="$7.99"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="codigo_interno"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Codigo Interno</label
+              >
+
+              <input
+                id="Codigo"
+                name="codigo_interno"
+                type="text"
+                required
+                placeholder="9823"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="codigo_barras"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Codigo de Barras</label
+              >
+
+              <input
+                id="Barras"
+                name="codigo_barras"
+                type="text"
+                required
+                placeholder="98732312"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="imagen"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >
+                Imagen del Producto
+              </label>
+              <input
+                id="imagen"
+                name="imagen"
+                type="file"
+                accept="image/*"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <label
+                for="Activo"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >
+                Activo
+              </label>
+              <select
+                id="Activo"
+                name="Activo"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="1">Si</option>
+                <option value="2">No</option>
+              </select>
+
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Addmodal').close()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  id="addcl"
+                  class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  Enviar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
+
+        <Modal id="Detallitos">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                Detalles del Producto
+              </h2>
+              <p id="prodid" hidden></p>
+              <div class="flex gap-2">
+                <button
+                  class="p-2 text-yellow-600 hover:bg-yellow-100 rounded-full"
+                  title="Editar"
+                  id="edit"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M13.586 3.586a2 2 0 112.828 2.828l-12 12a2 2 0 01-2.828 0l-1.414-1.414a2 2 0 010-2.828l12-12z"
+                    ></path>
+                    <path d="M12 2l4 4-12 12H0v-4l12-12z"></path>
+                  </svg>
+                </button>
+                <button
+                  class="p-2 text-red-600 hover:bg-red-100 rounded-full"
+                  title="Eliminar"
+                  id="delete"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                </button>
+                <button
+                  class="p-2 text-gray-600 hover:bg-gray-100 rounded-full"
+                  title="Cerrar"
+                  onclick="document.getElementById('Detallitos').close()"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="col-span-2 rounded-lg">
+                <img
+                  src="https://cdns-images.dzcdn.net/images/cover/45e64df61bde6c7a7a9bfca4a8f9aed8/0x1900-000000-80-0-0.jpg"
+                  alt="Imagen del producto"
+                  id="prodimg"
+                  class="w-full h-48 object-contain mb-4"
+                />
+              </div>
+
+              <div class="info-group">
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                >
+                  Nombre
+                </h3>
+                <p class="text-gray-900 dark:text-gray-100" id="prodname">
+                  Teoria del cabello Ondulado 🙀🙀🙀
+                </p>
+              </div>
+
+              <div class="info-group">
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                >
+                  Marca
+                </h3>
+                <p class="text-gray-900 dark:text-gray-100" id="prodmarca"></p>
+              </div>
+
+              <div class="info-group">
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                >
+                  Categoría
+                </h3>
+                <p class="text-gray-900 dark:text-gray-100" id="prodcategoria">
+                </p>
+              </div>
+
+              <div class="info-group">
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                >
+                  Ubicación
+                </h3>
+                <p class="text-gray-900 dark:text-gray-100" id="produbicacion">
+                </p>
+              </div>
+
+              <div class="col-span-2">
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                >
+                  Detalles
+                </h3>
+                <p class="text-gray-900 dark:text-gray-100" id="proddetalle">
+                  Si eres empleado no deberias estar leyendo esto, contacta con
+                  soporte
+                </p>
+              </div>
+
+              <div class="info-group">
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                >
+                  Presentación
+                </h3>
+                <p
+                  class="text-gray-900 dark:text-gray-100"
+                  id="prodpresentacion"
+                >
+                  En bolsa
+                </p>
+              </div>
+
+              <div class="info-group">
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                >
+                  Unidad de Medida
+                </h3>
+                <p class="text-gray-900 dark:text-gray-100" id="produnidad"></p>
+              </div>
+
+              <div class="info-group">
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                >
+                  Existencias Mínimas
+                </h3>
+                <p
+                  class="text-gray-900 dark:text-gray-100"
+                  id="prodexistenciamin"
+                >
+                </p>
+              </div>
+              <div class="info-group">
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                >
+                  Existencias
+                </h3>
+                <p class="text-gray-900 dark:text-gray-100" id="prodexistencia">
+                </p>
+              </div>
+
+              <div class="info-group">
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                >
+                  Estado
+                </h3>
+                <p
+                  class="text-gray-900 dark:text-gray-100"
+                  id="prodEstadodeisrael"
+                >
+                </p>
+              </div>
+
+              <div class="col-span-2">
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2"
+                >
+                  Precios
+                </h3>
+                <div class="grid grid-cols-3 gap-4">
+                  <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded">
+                    <span class="block text-xs text-gray-500 dark:text-gray-400"
+                      >Precio 1</span
+                    >
+                    <span class="font-semibold dark:text-white" id="prodprice1"
+                      >2 centavos</span
+                    >
                   </div>
-                  <div class="p-4 text-center">
-                    <h3 class="text-xs font-semibold text-gray-800 dark:text-gray-200">{producto.detalles}</h3>
+                  <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded">
+                    <span class="block text-xs text-gray-500 dark:text-gray-400"
+                      >Precio 2</span
+                    >
+                    <span class="font-semibold dark:text-white" id="prodprice2"
+                      >1 peso</span
+                    >
                   </div>
-                  <div class="p-4 bg-gray-100 dark:bg-gray-800 flex justify-center items-center">
-                    <img src={"https://barcodeapi.org/api/128/"+producto.codigo_barras} alt="Código de barras" class="h-20">
+                  <div class="bg-gray-50 dark:bg-gray-700 p-2 rounded">
+                    <span class="block text-xs text-gray-500 dark:text-gray-400"
+                      >Precio 3</span
+                    >
+                    <span class="font-semibold dark:text-white" id="prodprice3"
+                    ></span>
                   </div>
                 </div>
               </div>
-            ))}
+
+              <div
+                class="info-group p-4 border rounded-lg bg-white dark:bg-gray-800"
+              >
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                >
+                  Código Interno
+                </h3>
+                <div
+                  class="w-full max-w-[300px] h-[80px] object-contain bg-white p-2 rounded-md flex flex-col items-center justify-center"
+                >
+                  <p class="text-center font-bold" id="prodcodinterno">
+                    Fuera de servicio
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="info-group p-4 border rounded-lg bg-white dark:bg-gray-800"
+              >
+                <h3
+                  class="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2"
+                >
+                  Código de Barras
+                </h3>
+                <img
+                  src="https://barcodeapi.org/api/128/12345678"
+                  alt="Código de barras del producto"
+                  id="prodbarra"
+                  class="w-full max-w-[300px] h-[80px] object-contain bg-white p-2 rounded-md"
+                />
+              </div>
+            </div>
           </div>
+        </Modal>
+
+        <Modal id="Editar">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
+          >
+            <h2
+              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
+            >
+              Editar Producto
+            </h2>
+
+            <!-- Formulario -->
+            <form name="formedit" class="space-b-4" autocomplete="off">
+              <input type="text" id="Idproducto" hidden />
+              <label
+                for="nombre"
+                class="text-x1 text-gray-700 dark:text-gray-300">Nombre</label
+              >
+              <input
+                type="text"
+                id="nombre"
+                name="Nombre"
+                placeholder="Nombre"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="detalles"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Detalles</label
+              >
+              <textarea
+                id="Detalles"
+                name="detalles"
+                rows="2"
+                required
+                placeholder="Detalles del producto"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              ></textarea>
+
+              <label
+                for="Marca"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Marca</label
+              >
+              <select
+                id="Marca"
+                name="Marca"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="" hidden>--Selecciona una marca--</option>
+                {
+                  marcas.map((marca) => (
+                    <option value={marca.Idmarca}>{marca.nombre}</option>
+                  ))
+                }
+              </select>
+
+              <label
+                for="Categoria"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Categoria</label
+              >
+              <select
+                id="Categoria"
+                name="Categoria"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="" hidden>--Selecciona una categoría--</option>
+                {
+                  categorias.map((categoria) => (
+                    <option value={categoria.Idcategoria}>
+                      {categoria.nombre}
+                    </option>
+                  ))
+                }
+              </select>
+
+              <label
+                for="Ubicacion"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Ubicacion Fisica</label
+              >
+              <select
+                id="Ubicacion"
+                name="Ubicacion"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="" hidden>--Selecciona una ubicación--</option>
+                {
+                  ubicaciones.map((ubicacion) => (
+                    <option value={ubicacion.Idubicacione_fisica}>
+                      {ubicacion.nombre}
+                    </option>
+                  ))
+                }
+              </select>
+
+              <label
+                for="Presentacion"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Presentacion</label
+              >
+              <select
+                id="Presentacion"
+                name="Presentacion"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="" hidden>--Selecciona una presentación--</option>
+                {
+                  presentaciones.map((presentacion) => (
+                    <option value={presentacion.Idpresentacion}>
+                      {presentacion.nombre}
+                    </option>
+                  ))
+                }
+              </select>
+
+              <label
+                for="Unidad"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Unidad de Medida</label
+              >
+              <select
+                id="Medida"
+                name="Unidad"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="" hidden
+                  >--Selecciona una unidad de medida--</option
+                >
+                {
+                  unidades.map((unidades) => (
+                    <option value={unidades.Idunidades_medida}>
+                      {unidades.nombre}
+                    </option>
+                  ))
+                }
+              </select>
+
+              <label
+                for="existencias_minimas"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Existencias Minimas</label
+              >
+              <input
+                id="Existencias"
+                name="existencias_minimas"
+                type="text"
+                required
+                placeholder="Existencias Minimas de producto"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <label
+                for="existencias"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Existencias</label
+              >
+              <input
+                id="Existencias"
+                name="existencias"
+                type="text"
+                required
+                placeholder="Existencias de producto"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="precio_venta1"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Precio de venta 1</label
+              >
+              <input
+                id="Precio1"
+                name="precio_venta1"
+                type="number"
+                required
+                placeholder="$5.99"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="precio_venta2"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Precio de venta 2</label
+              >
+              <input
+                id="Precio2"
+                name="precio_venta2"
+                type="number"
+                required
+                placeholder="$6.99"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="precio_venta3"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Precio de venta 3</label
+              >
+
+              <input
+                id="Precio3"
+                name="precio_venta3"
+                type="number"
+                required
+                placeholder="$7.99"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="codigo_interno"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Codigo Interno</label
+              >
+
+              <input
+                id="Codigo"
+                name="codigo_interno"
+                type="text"
+                required
+                placeholder="9823"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="codigo_barras"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+                >Codigo de Barras</label
+              >
+
+              <input
+                id="Barras"
+                name="codigo_barras"
+                type="text"
+                required
+                placeholder="98732312"
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+
+              <label
+                for="imagen"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >
+                Imagen del Producto
+              </label>
+              <input
+                id="imagen"
+                name="imagen"
+                type="file"
+                accept="image/*"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              />
+              <label
+                for="Activo"
+                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
+              >
+                Activo
+              </label>
+              <select
+                id="Activo"
+                name="Activo"
+                required
+                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="1">Si</option>
+                <option value="2">No</option>
+              </select>
+
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
+                  onclick="document.getElementById('Addmodal').close()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  id="editbtns"
+                  class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  Enviar
+                </button>
+              </div>
+            </form>
+          </div>
+        </Modal>
       </div>
-      <Modal id="Addmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Agregar Producto
-          </h2>
-
-          <!-- Formulario -->
-          <form name="agregar" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Detalles"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Detalles</label
-            >
-            <textarea
-              id="Detalles"
-              name="Detalles"
-              rows="2"
-              required
-              placeholder="Detalles del producto"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></textarea>
-
-            <label
-              for="Marca"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Marca</label
-            >
-            <select
-              id="Marca"
-              name="Marca"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="">--Selecciona una marca--</option>
-              <option>Cuscatlecos</option>
-            </select>
-
-            <label
-              for="Categoria"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Categoria</label
-            >
-            <select
-              id="Categoria"
-              name="Categoria"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>Consumibles</option>
-            </select>
-
-            <label
-              for="Ubicacion"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Ubicacion Fisica</label
-            >
-            <select
-              id="Ubicacion"
-              name="Ubicacion"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>Pasillo2</option>
-            </select>
-
-            <label
-              for="Presentacion"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Presentacion</label
-            >
-            <select
-              id="Presentacion"
-              name="Presentacion"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>Caja</option>
-            </select>
-
-            <label
-              for="Medida"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Unidad de Medida</label
-            >
-            <select
-              id="Medida"
-              name="Medida"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>KG</option>
-              <option>LB</option>
-            </select>
-
-            <label
-              for="Existencias"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Existencias Minimas</label
-            >
-            <input
-              id="Existencias"
-              name="Existencias"
-              type="text"
-              required
-              placeholder="Existencias Minimas de producto"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Precio1"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Precio de venta 1</label
-            >
-            <input
-              id="Precio1"
-              name="Precio1"
-              type="number"
-              required
-              placeholder="$5.99"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Precio2"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Precio de venta 2</label
-            >
-            <input
-              id="Precio2"
-              name="Precio2"
-              type="number"
-              required
-              placeholder="$6.99"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Precio3"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Precio de venta 3</label
-            >
-
-            <input
-              id="Precio3"
-              name="Precio3"
-              type="number"
-              required
-              placeholder="$7.99"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Codigo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Codigo Interno</label
-            >
-
-            <input
-              id="Codigo"
-              name="Codigo"
-              type="text"
-              required
-              placeholder="9823"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Barras"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Codigo de Barras</label
-            >
-
-            <input
-              id="Barras"
-              name="Barras"
-              type="text"
-              required
-              placeholder="98732312"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="imagen"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-            >
-              Imagen del Producto
-            </label>
-            <input
-              id="imagen"
-              name="imagen"
-              type="file"
-              accept="image/*"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Fecha"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-            >
-              Fecha de Registro
-            </label>
-            <input
-              id="Fecha"
-              name="Fecha"
-              type="date"
-              required
-              placeholder="08/11/2024"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label
-              for="Activo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-            >
-              Activo
-            </label>
-            <select
-              id="Activo"
-              name="Activo"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="1">Si</option>
-              <option value="2">No</option>
-            </select>
-
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Addmodal').close()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                id="addcl"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Enviar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <!--EDITAR -->
-      <Modal id="Editmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Editar Producto
-          </h2>
-
-          <!-- Formulario -->
-          <form name="editar" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Detalles"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Detalles</label
-            >
-            <textarea
-              id="Detalles"
-              name="Detalles"
-              rows="2"
-              required
-              placeholder="Detalles del producto"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></textarea>
-
-            <label
-              for="Marca"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Marca</label
-            >
-            <select
-              id="Marca"
-              name="Marca"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="">--Selecciona una marca--</option>
-              <option>Cuscatlecos</option>
-            </select>
-
-            <label
-              for="Categoria"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Categoria</label
-            >
-            <select
-              id="Categoria"
-              name="Categoria"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>Consumibles</option>
-            </select>
-
-            <label
-              for="Ubicacion"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Ubicacion Fisica</label
-            >
-            <select
-              id="Ubicacion"
-              name="Ubicacion"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>Pasillo2</option>
-            </select>
-
-            <label
-              for="Presentacion"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Presentacion</label
-            >
-            <select
-              id="Presentacion"
-              name="Presentacion"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>Caja</option>
-            </select>
-
-            <label
-              for="Medida"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Unidad de Medida</label
-            >
-            <select
-              id="Medida"
-              name="Medida"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>KG</option>
-              <option>LB</option>
-            </select>
-
-            <label
-              for="Existencias"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Existencias Minimas</label
-            >
-            <input
-              id="Existencias"
-              name="Existencias"
-              type="text"
-              required
-              placeholder="Existencias Minimas de producto"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Precio1"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Precio de venta 1</label
-            >
-            <input
-              id="Precio1"
-              name="Precio1"
-              type="number"
-              required
-              placeholder="$5.99"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Precio2"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Precio de venta 2</label
-            >
-            <input
-              id="Precio2"
-              name="Precio2"
-              type="number"
-              required
-              placeholder="$6.99"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Precio3"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Precio de venta 3</label
-            >
-
-            <input
-              id="Precio3"
-              name="Precio3"
-              type="number"
-              required
-              placeholder="$7.99"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Codigo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Codigo Interno</label
-            >
-
-            <input
-              id="Codigo"
-              name="Codigo"
-              type="text"
-              required
-              placeholder="9823"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Barras"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Codigo de Barras</label
-            >
-
-            <input
-              id="Barras"
-              name="Barras"
-              type="text"
-              required
-              placeholder="98732312"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="imagen"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-            >
-              Imagen del Producto
-            </label>
-            <input
-              id="imagen"
-              name="imagen"
-              type="file"
-              accept="image/*"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Fecha"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-            >
-              Fecha de Registro
-            </label>
-            <input
-              id="Fecha"
-              name="Fecha"
-              type="date"
-              required
-              placeholder="08/11/2024"
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label
-              for="Activo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-            >
-              Activo
-            </label>
-            <select
-              id="Activo"
-              name="Activo"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="1">Si</option>
-              <option value="2">No</option>
-            </select>
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Editmodal').close()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onclick="editempleado()"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Editar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <!--Eliminar -->
-      <Modal id="Deletemodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Eliminar Producto
-          </h2>
-
-          <!-- Formulario -->
-          <form name="editar" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Detalles"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Detalles</label
-            >
-            <textarea
-              id="Detalles"
-              name="Detalles"
-              rows="2"
-              required
-              placeholder="Detalles del producto"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></textarea>
-
-            <label
-              for="Marca"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Marca</label
-            >
-            <select
-              id="Marca"
-              name="Marca"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="">--Selecciona una marca--</option>
-              <option>Cuscatlecos</option>
-            </select>
-
-            <label
-              for="Categoria"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Categoria</label
-            >
-            <select
-              id="Categoria"
-              name="Categoria"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>Consumibles</option>
-            </select>
-
-            <label
-              for="Ubicacion"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Ubicacion Fisica</label
-            >
-            <select
-              id="Ubicacion"
-              name="Ubicacion"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>Pasillo2</option>
-            </select>
-
-            <label
-              for="Presentacion"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Presentacion</label
-            >
-            <select
-              id="Presentacion"
-              name="Presentacion"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>Caja</option>
-            </select>
-
-            <label
-              for="Medida"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Unidad de Medida</label
-            >
-            <select
-              id="Medida"
-              name="Medida"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>KG</option>
-              <option>LB</option>
-            </select>
-
-            <label
-              for="Existencias"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Existencias Minimas</label
-            >
-            <input
-              id="Existencias"
-              name="Existencias"
-              type="text"
-              required
-              placeholder="Existencias Minimas de producto"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Precio1"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Precio de venta 1</label
-            >
-            <input
-              id="Precio1"
-              name="Precio1"
-              type="number"
-              required
-              placeholder="$5.99"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Precio2"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Precio de venta 2</label
-            >
-            <input
-              id="Precio2"
-              name="Precio2"
-              type="number"
-              required
-              placeholder="$6.99"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Precio3"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Precio de venta 3</label
-            >
-            <input
-              id="Precio3"
-              name="Precio3"
-              type="number"
-              required
-              placeholder="$7.99"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Codigo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Codigo Interno</label
-            >
-            <input
-              id="Codigo"
-              name="Codigo"
-              type="text"
-              required
-              placeholder="9823"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Barras"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Codigo de Barras</label
-            >
-            <input
-              id="Barras"
-              name="Barras"
-              type="text"
-              required
-              placeholder="98732312"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="imagen"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Imagen del Producto</label
-            >
-            <div style="width: 200px; height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 8px;">
-              <img src="https://bitworks-multimedia.superselectos.com/api/selectos/multimedia/493b631c-8c38-46d9-b6c2-863862b44b8b/content" alt="Descripción de la imagen" style="max-width: 100%; max-height: 100%;">
-          </div>
-
-            <label
-              for="Fecha"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Fecha de Registro</label
-            >
-            <input
-              id="Fecha"
-              name="Fecha"
-              type="date"
-              required
-              placeholder="08/11/2024"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Activo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Activo</label
-            >
-            <select
-              id="Activo"
-              name="Activo"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="1">Si</option>
-              <option value="2">No</option>
-            </select>
-
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Deletemodal').close()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onclick="deleteproveedor()"
-                class="btn btn-submit bg-red-500 text-white px-4 py-2 rounded-md"
-              >
-                Eliminar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
-      <!--Detalles-->
-      <Modal id="Detailmodal">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Detalle de Producto
-          </h2>
-
-          <!-- Formulario -->
-          <form name="detalle" method="POST" class="space-b-4">
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre</label
-            >
-            <input
-              type="text"
-              id="nombre"
-              name="Nombre"
-              placeholder="Nombre"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Detalles"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Detalles</label
-            >
-            <textarea
-              id="Detalles"
-              name="Detalles"
-              rows="2"
-              required
-              placeholder="Detalles del producto"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            ></textarea>
-
-            <label
-              for="Marca"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Marca</label
-            >
-            <select
-              id="Marca"
-              name="Marca"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="">--Selecciona una marca--</option>
-              <option>Cuscatlecos</option>
-            </select>
-
-            <label
-              for="Categoria"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Categoria</label
-            >
-            <select
-              id="Categoria"
-              name="Categoria"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>Consumibles</option>
-            </select>
-
-            <label
-              for="Ubicacion"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Ubicacion Fisica</label
-            >
-            <select
-              id="Ubicacion"
-              name="Ubicacion"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>Pasillo2</option>
-            </select>
-
-            <label
-              for="Presentacion"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Presentacion</label
-            >
-            <select
-              id="Presentacion"
-              name="Presentacion"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>Caja</option>
-            </select>
-
-            <label
-              for="Medida"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Unidad de Medida</label
-            >
-            <select
-              id="Medida"
-              name="Medida"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option>KG</option>
-              <option>LB</option>
-            </select>
-
-            <label
-              for="Existencias"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Existencias Minimas</label
-            >
-            <input
-              id="Existencias"
-              name="Existencias"
-              type="text"
-              required
-              placeholder="Existencias Minimas de producto"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Precio1"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Precio de venta 1</label
-            >
-            <input
-              id="Precio1"
-              name="Precio1"
-              type="number"
-              required
-              placeholder="$5.99"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Precio2"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Precio de venta 2</label
-            >
-            <input
-              id="Precio2"
-              name="Precio2"
-              type="number"
-              required
-              placeholder="$6.99"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Precio3"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Precio de venta 3</label
-            >
-            <input
-              id="Precio3"
-              name="Precio3"
-              type="number"
-              required
-              placeholder="$7.99"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Codigo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Codigo Interno</label
-            >
-            <input
-              id="Codigo"
-              name="Codigo"
-              type="text"
-              required
-              placeholder="9823"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Barras"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Codigo de Barras</label
-            >
-            <input
-              id="Barras"
-              name="Barras"
-              type="text"
-              required
-              placeholder="98732312"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="imagen"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Imagen del Producto</label
-            >
-            <div style="width: 200px; height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 8px;">
-              <img src="https://bitworks-multimedia.superselectos.com/api/selectos/multimedia/493b631c-8c38-46d9-b6c2-863862b44b8b/content" alt="Descripción de la imagen" style="max-width: 100%; max-height: 100%;">
-          </div>
-            <label
-              for="Fecha"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Fecha de Registro</label
-            >
-            <input
-              id="Fecha"
-              name="Fecha"
-              type="date"
-              required
-              placeholder="08/11/2024"
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Activo"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Activo</label
-            >
-            <select
-              id="Activo"
-              name="Activo"
-              required
-              disabled
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            >
-              <option value="1">Si</option>
-              <option value="2">No</option>
-            </select>
-
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Detailmodal').close()"
-              >
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
-      </Modal>
     </Sidebar>
   </div>
 </Layout>
+
+<style>
+  .producto-card {
+    transition: all 0.3s;
+  }
+
+  .producto-card:hover {
+    transform: scale(1.02);
+  }
+  .info-group {
+    @apply mb-2;
+  }
+  .info-group h3 {
+    @apply mb-1;
+  }
+  .info-group p {
+    @apply font-medium;
+  }
+</style>
+
+<script type="module">
+  //obtener todos los elementos con la clase producto-card
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token"))
+    .split("=")[1];
+  const formadd = document.forms.agregar;
+
+  //obtener categorias marcas etc del form add para usarlos en detalles
+
+  const cards = document.querySelectorAll(".producto-card");
+
+  //agregar un evento click a cada tarjeta
+  cards.forEach((card) => {
+    card.addEventListener("click", () => {
+      //obtener el id de la tarjeta
+      const id = card.id;
+      //redireccionar a la página de detalles del producto
+      fetch(`http://localhost:8000/productos/detalles/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          return res.json();
+        })
+        .then((data) => {
+          document.getElementById("prodid").innerText = data.Idproducto;
+          document.getElementById("prodimg").src = data.imagen;
+          document.getElementById("prodname").innerText = data.nombre;
+          document.getElementById("prodmarca").innerText = data.marca;
+          document.getElementById("prodcategoria").innerText = data.categoria;
+          document.getElementById("produbicacion").innerText = data.ubicacion;
+          document.getElementById("proddetalle").innerText = data.detalles;
+          document.getElementById("prodpresentacion").innerText =
+            data.presentacion;
+          document.getElementById("produnidad").innerText = data.medida;
+          document.getElementById("prodexistenciamin").innerText =
+            data.existencias_minimas;
+          document.getElementById("prodexistencia").innerText =
+            data.existencias;
+          document.getElementById("prodEstadodeisrael").innerText =
+            data.activo == 1 ? "Activo" : "Inactivo";
+          document.getElementById("prodprice1").innerText = data.precio_venta1;
+          document.getElementById("prodprice2").innerText = data.precio_venta2;
+          document.getElementById("prodprice3").innerText = data.precio_venta3;
+          document.getElementById("prodcodinterno").innerText =
+            data.codigo_interno;
+          document.getElementById("prodbarra").src =
+            `https://barcodeapi.org/api/128/${data.codigo_barras}`;
+          document.getElementById("Detallitos").showModal();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          window.showAlert(
+            "Error al obtener los detalles del producto: " + error.message,
+            "error"
+          );
+        });
+    });
+  });
+
+  const deletebtn = document.getElementById("delete");
+
+  deletebtn.addEventListener("click", async () => {
+    const id = document.getElementById("prodid").innerText;
+
+    const confirmacion = await new Promise((resolve) => {
+      window.showAlert(
+        `¿Estás seguro de eliminar el producto con Nombre: ${document.getElementById("prodname").innerText}?`,
+        "confirm",
+        {
+          onCancel: () => {
+            console.log("Operación cancelada");
+            resolve(false);
+          },
+          onAccept: () => {
+            resolve(true);
+          },
+        }
+      );
+    });
+    if (!confirmacion) return;
+
+    fetch(`http://localhost:8000/productos/eliminar/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        window.showAlert(data.message, "success");
+        document.getElementById("Detallitos").close();
+        location.reload();
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        window.showAlert(
+          "Error al eliminar el producto: " + error.message,
+          "error"
+        );
+      });
+  });
+
+  const addbtn = document.getElementById("add");
+
+  addbtn.addEventListener("click", () => {
+    document.getElementById("Addmodal").showModal();
+  });
+
+  const addcl = document.getElementById("addcl");
+
+  // Configuración de validación de imágenes
+  const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif"];
+  const MAX_SIZE = 10 * 1024 * 1024; // 5MB
+
+  // Función de validación de imagen
+  function validateImage(file) {
+    if (!file) {
+      throw new Error("Debe seleccionar una imagen");
+    }
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      throw new Error("Formato de imagen no válido. Use JPG, PNG o GIF");
+    }
+    if (file.size > MAX_SIZE) {
+      throw new Error("La imagen debe ser menor a 5MB");
+    }
+  }
+  addcl.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    try {
+      const formdata = new FormData(formadd);
+      const file = formadd.imagen.files[0];
+
+      // Validar imagen
+      validateImage(file);
+
+      // Validar campos requeridos
+
+      const reader = new FileReader();
+
+      reader.onloadend = function () {
+        const base64String = reader.result;
+
+        // Estructurar datos según el schema
+        const formObject = {
+          Idproducto: 0,
+          nombre: formdata.get("Nombre"),
+          detalles: formdata.get("detalles"),
+          Idmarca: parseInt(formdata.get("Marca")),
+          Idcategoria: parseInt(formdata.get("Categoria")),
+          Idubicacion_fisica: parseInt(formdata.get("Ubicacion")),
+          Idpresentacion: parseInt(formdata.get("Presentacion")),
+          Idunidad_medida: parseInt(formdata.get("Unidad")),
+          existencias_minimas: parseFloat(formdata.get("existencias_minimas")),
+          precio_venta1: parseFloat(formdata.get("precio_venta1")),
+          precio_venta2: parseFloat(formdata.get("precio_venta2")),
+          precio_venta3: parseFloat(formdata.get("precio_venta3")),
+          codigo_interno: formdata.get("codigo_interno"),
+          codigo_barras: formdata.get("codigo_barras"),
+          imagen: base64String,
+          existencias: parseFloat(formdata.get("existencias")),
+          activo: 1,
+          fecha_registro: new Date().toISOString().split("T")[0],
+        };
+
+        // Enviar datos
+        fetch("http://localhost:8000/productos/agregar", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formObject),
+        })
+          .then((res) => {
+            if (!res.ok) {
+              return res.json().then((err) => Promise.reject(err));
+            }
+            return res.json();
+          })
+          .then((data) => {
+            window.showAlert(data.message, "success");
+            document.getElementById("Addmodal").close();
+            location.reload();
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            window.showAlert(
+              "Error al agregar el producto: " +
+                (error.message || error.detail || "Error desconocido"),
+              "error"
+            );
+          });
+      };
+
+      reader.onerror = () => {
+        window.showAlert("Error al procesar la imagen", "error");
+      };
+
+      reader.readAsDataURL(file);
+    } catch (error) {
+      window.showAlert(error.message, "error");
+    }
+  });
+
+  const editbtn = document.getElementById("edit");
+
+  editbtn.addEventListener("click", () => {
+    //rellenar los campos del formulario con los datos del producto
+    const formedit = document.forms.formedit;
+    formedit.Idproducto.value = document.getElementById("prodid").innerText;
+    formedit.Nombre.value = document.getElementById("prodname").innerText;
+    formedit.detalles.value = document.getElementById("proddetalle").innerText;
+
+    // Usar selectByText para los selects
+    selectByText(
+      formedit.Marca,
+      document.getElementById("prodmarca").innerText
+    );
+    selectByText(
+      formedit.Categoria,
+      document.getElementById("prodcategoria").innerText
+    );
+    selectByText(
+      formedit.Ubicacion,
+      document.getElementById("produbicacion").innerText
+    );
+    selectByText(
+      formedit.Presentacion,
+      document.getElementById("prodpresentacion").innerText
+    );
+    selectByText(
+      formedit.Unidad,
+      document.getElementById("produnidad").innerText
+    );
+
+    formedit.existencias_minimas.value =
+      document.getElementById("prodexistenciamin").innerText;
+    formedit.existencias.value =
+      document.getElementById("prodexistencia").innerText;
+    formedit.precio_venta1.value =
+      document.getElementById("prodprice1").innerText;
+    formedit.precio_venta2.value =
+      document.getElementById("prodprice2").innerText;
+    formedit.precio_venta3.value =
+      document.getElementById("prodprice3").innerText;
+    formedit.codigo_interno.value =
+      document.getElementById("prodcodinterno").innerText;
+    formedit.codigo_barras.value = document
+      .getElementById("prodbarra")
+      .src.split("/")
+      .pop();
+    document.getElementById("Editar").showModal();
+  });
+
+  // Función auxiliar para seleccionar opción por texto
+  function selectByText(select, text) {
+    for (let option of select.options) {
+      if (option.text === text) {
+        option.selected = true;
+        return;
+      }
+    }
+  }
+  const editcl = document.getElementById("editbtns");
+
+  editcl.addEventListener("click", async (e) => {
+      try {
+          const formdata = new FormData(formedit);
+          const idProducto = formedit.Idproducto.value;
+          let updatedFields = {};
+  
+          // Lista de campos a verificar
+          const fields = [
+              "Nombre",
+              "detalles",
+              "Marca", 
+              "Categoria",
+              "Ubicacion",
+              "Presentacion", 
+              "Unidad",
+              "existencias_minimas",
+              "existencias",
+              "precio_venta1",
+              "precio_venta2", 
+              "precio_venta3",
+              "codigo_interno",
+              "codigo_barras"
+          ];
+  
+          // Procesar imagen si existe
+          const file = formedit.imagen.files[0];
+          if (file) {
+              validateImage(file);
+              const imageData = await readFileAsDataURL(file);
+              updatedFields.imagen = imageData;
+          }
+  
+          // Procesar resto de campos
+          fields.forEach(field => {
+              const formValue = formdata.get(field);
+              const currentValue = document.getElementById(field)?.innerText;
+              if (formValue && formValue !== currentValue) {
+                  updatedFields[field] = formValue;
+              }
+          });
+  
+          // Verificar si hay campos para actualizar
+          if (Object.keys(updatedFields).length === 0) {
+              throw new Error("No hay cambios para actualizar");
+          }
+  
+          // Enviar actualización
+          updatedFields.imagen = updatedFields.imagen || document.getElementById("prodimg").src;
+          await sendUpdate(updatedFields, idProducto);
+          
+          // Cerrar modal y mostrar mensaje de éxito
+          document.getElementById('Editmodal').close();
+          window.showAlert("Producto actualizado correctamente", "success");
+          setTimeout(() => window.location.reload(), 1000);
+  
+      } catch (error) {
+          window.showAlert(error.message || "Error al actualizar el producto", "error");
+      }
+  });
+  
+  // Función auxiliar para leer archivo como DataURL
+  function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error("Error al leer el archivo"));
+          reader.readAsDataURL(file);
+      });
+  }
+
+  function sendUpdate(updatedFields, id) {
+      // Si no hay campos modificados, mostrar mensaje y salir
+      if (Object.keys(updatedFields).length === 0) {
+          window.showAlert("No se han realizado cambios", "info");
+          return;
+      }
+  
+      // Mapear los campos al formato esperado por la API
+      const mappedFields = {
+          nombre: updatedFields.Nombre,
+          Idmarca: parseInt(updatedFields.Marca),
+          Idcategoria: parseInt(updatedFields.Categoria),
+          Idubicacion_fisica: parseInt(updatedFields.Ubicacion),
+          Idpresentacion: parseInt(updatedFields.Presentacion),
+          Idunidad_medida: parseInt(updatedFields.Unidad),
+          detalles: updatedFields.detalles,
+          existencias_minimas: parseFloat(updatedFields.existencias_minimas),
+          existencias: parseFloat(updatedFields.existencias),
+          precio_venta1: parseFloat(updatedFields.precio_venta1),
+          precio_venta2: parseFloat(updatedFields.precio_venta2),
+          precio_venta3: parseFloat(updatedFields.precio_venta3),
+          codigo_interno: updatedFields.codigo_interno,
+          codigo_barras: updatedFields.codigo_barras,
+          imagen: updatedFields.imagen,
+          activo: 1,
+          fecha_registro: new Date().toISOString().split("T")[0],
+          Idproducto: parseInt(id)
+      };
+  
+      fetch("http://localhost:8000/productos/actualizar/" + id, {
+          method: "PUT",
+          headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(mappedFields),
+      })
+      .then((res) => {
+          if (!res.ok) {
+              return res.json().then((err) => Promise.reject(err));
+          }
+          return res.json();
+      })
+      .then((data) => {
+          window.showAlert(data.message, "success");
+          document.getElementById("Editar").close();
+          location.reload();
+      })
+      .catch((error) => {
+          console.error("Error:", error);
+          window.showAlert(
+              "Error al actualizar el producto: " +
+              (error.message || error.detail || "Error desconocido"),
+              "error"
+          );
+      });
+  }
+</script>
