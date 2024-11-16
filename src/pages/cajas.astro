@@ -9,12 +9,7 @@ import Tabla from "@components/Tabla.astro";
 import Userdiv from "@components/User.astro"
 //definimos headers de la tabla
 const header = ["Nombre"];
-
-
-
-
 import Modal from "@components/dialog.astro";
-import Alertas from "@components/alertas.astro";
 import { Fetcher } from "@Lib/fetcher";
 
 if ((await verify(data.token?.value)) == false) {
@@ -52,7 +47,7 @@ try {
 }
 ---
 
-<Alertas />
+
 <Layout title="Panel de Control">
   <!-- height: max-content; -->
   <div
@@ -69,7 +64,7 @@ try {
          <Userdiv Userinfo={user} />
           <!-- Contenido de tarjetas -->
           <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <Alertas />
+
             <Card title="Herramientas" description="Manejo de datos de cajas">
               <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                 <div class="flex justify-center">

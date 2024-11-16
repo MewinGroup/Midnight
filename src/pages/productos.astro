@@ -7,7 +7,6 @@ import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
 import Userdiv from "@components/User.astro";
 import Modal from "@components/dialog.astro";
-import Alertas from "@components/alertas.astro";
 import { Fetcher } from "@Lib/fetcher";
 
 // Definir las entidades a consultar
@@ -29,19 +28,26 @@ let productos = [],
   unidades = [];
 
 try {
-  const results = await Promise.all(
+  const results = await Promise.allSettled(
     entities.map(async (entity) => {
-      const res = await Fetcher(entity.name, "listar", data.token?.value);
-      if (res.status !== 200) {
-        throw new Error(`Error al obtener ${entity.name}`);
+      try {
+        const res = await Fetcher(entity.name, "listar", data.token?.value);
+        if (res.status !== 200) {
+          throw new Error(`Error al obtener ${entity.name}`);
+        }
+        return { name: entity.var, data: res.data };
+      } catch (error) {
+        console.error(`Error al obtener ${entity.name}:`, error);
+        return { name: entity.var, data: [] }; // Return an empty array or appropriate default value
       }
-      return { name: entity.var, data: res.data };
-    })
+    }),
   );
 
   // Asignar resultados a variables
   results.forEach((result) => {
-    eval(`${result.name} = result.data`);
+    if (result.status === "fulfilled") {
+      eval(`${result.value.name} = result.value.data`);
+    }
   });
 } catch (error) {
   console.error("Error en la obtención de datos:", error);
@@ -88,7 +94,7 @@ const user = res;
         <Userdiv userinfo={user} />
         <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Alertas />
+
           <Card title="Herramientas" description="Manejo de datos de productos">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               <div class="flex justify-center">
@@ -98,6 +104,52 @@ const user = res;
                 >
                   <i class="fa-solid fa-plus text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Agregar</span>
+                </a>
+              </div>
+                           <div class="flex justify-center">
+                <a
+                  href="/marcas"
+                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-yellow-500 bg-yellow-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                >
+                  <i class="fa-solid fa-edit text-xl md:text-3xl"></i>
+                  <span class="text-xs md:text-sm font-bold">Marcas</span>
+                </a>
+              </div>
+              <div class="flex justify-center">
+                <a
+                  href="/categorias"
+                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-green-500 bg-green-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                >
+                  <i class="fa-solid fa-tags text-xl md:text-3xl"></i>
+                  <span class="text-xs md:text-sm font-bold">Categorías</span>
+                </a>
+              </div>
+              <div class="flex justify-center">
+                <a
+                  href="/unidades"
+                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-blue-500 bg-blue-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                >
+                  <i class="fa-solid fa-ruler text-xl md:text-3xl"></i>
+                  <span class="text-xs md:text-sm font-bold">Medidas</span>
+                </a>
+              </div>
+              <div class="flex justify-center">
+                <a
+                  href="/ubicaciones"
+                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-red-500 bg-red-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                >
+                  <i class="fa-solid fa-map-marker-alt text-xl md:text-3xl"></i>
+                  <span class="text-xs md:text-sm font-bold">Ubicaciones</span>
+                </a>
+              </div>
+              <!-- presentaciones -->
+              <div class="flex justify-center">
+                <a
+                  href="/presentaciones"
+                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-purple-500 bg-purple-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                >
+                  <i class="fa-solid fa-box-open text-xl md:text-3xl"></i>
+                  <span class="text-xs md:text-sm font-bold">Presentaciones</span>
                 </a>
               </div>
             </div>
@@ -1104,7 +1156,7 @@ const user = res;
           console.error("Error:", error);
           window.showAlert(
             "Error al obtener los detalles del producto: " + error.message,
-            "error"
+            "error",
           );
         });
     });
@@ -1127,7 +1179,7 @@ const user = res;
           onAccept: () => {
             resolve(true);
           },
-        }
+        },
       );
     });
     if (!confirmacion) return;
@@ -1154,7 +1206,7 @@ const user = res;
         console.error("Error:", error);
         window.showAlert(
           "Error al eliminar el producto: " + error.message,
-          "error"
+          "error",
         );
       });
   });
@@ -1247,7 +1299,7 @@ const user = res;
             window.showAlert(
               "Error al agregar el producto: " +
                 (error.message || error.detail || "Error desconocido"),
-              "error"
+              "error",
             );
           });
       };
@@ -1274,23 +1326,23 @@ const user = res;
     // Usar selectByText para los selects
     selectByText(
       formedit.Marca,
-      document.getElementById("prodmarca").innerText
+      document.getElementById("prodmarca").innerText,
     );
     selectByText(
       formedit.Categoria,
-      document.getElementById("prodcategoria").innerText
+      document.getElementById("prodcategoria").innerText,
     );
     selectByText(
       formedit.Ubicacion,
-      document.getElementById("produbicacion").innerText
+      document.getElementById("produbicacion").innerText,
     );
     selectByText(
       formedit.Presentacion,
-      document.getElementById("prodpresentacion").innerText
+      document.getElementById("prodpresentacion").innerText,
     );
     selectByText(
       formedit.Unidad,
-      document.getElementById("produnidad").innerText
+      document.getElementById("produnidad").innerText,
     );
 
     formedit.existencias_minimas.value =
@@ -1324,130 +1376,133 @@ const user = res;
   const editcl = document.getElementById("editbtns");
 
   editcl.addEventListener("click", async (e) => {
-      try {
-          const formdata = new FormData(formedit);
-          const idProducto = formedit.Idproducto.value;
-          let updatedFields = {};
-  
-          // Lista de campos a verificar
-          const fields = [
-              "Nombre",
-              "detalles",
-              "Marca", 
-              "Categoria",
-              "Ubicacion",
-              "Presentacion", 
-              "Unidad",
-              "existencias_minimas",
-              "existencias",
-              "precio_venta1",
-              "precio_venta2", 
-              "precio_venta3",
-              "codigo_interno",
-              "codigo_barras"
-          ];
-  
-          // Procesar imagen si existe
-          const file = formedit.imagen.files[0];
-          if (file) {
-              validateImage(file);
-              const imageData = await readFileAsDataURL(file);
-              updatedFields.imagen = imageData;
-          }
-  
-          // Procesar resto de campos
-          fields.forEach(field => {
-              const formValue = formdata.get(field);
-              const currentValue = document.getElementById(field)?.innerText;
-              if (formValue && formValue !== currentValue) {
-                  updatedFields[field] = formValue;
-              }
-          });
-  
-          // Verificar si hay campos para actualizar
-          if (Object.keys(updatedFields).length === 0) {
-              throw new Error("No hay cambios para actualizar");
-          }
-  
-          // Enviar actualización
-          updatedFields.imagen = updatedFields.imagen || document.getElementById("prodimg").src;
-          await sendUpdate(updatedFields, idProducto);
-          
-          // Cerrar modal y mostrar mensaje de éxito
-          document.getElementById('Editmodal').close();
-          window.showAlert("Producto actualizado correctamente", "success");
-          setTimeout(() => window.location.reload(), 1000);
-  
-      } catch (error) {
-          window.showAlert(error.message || "Error al actualizar el producto", "error");
+    try {
+      const formdata = new FormData(formedit);
+      const idProducto = formedit.Idproducto.value;
+      let updatedFields = {};
+
+      // Lista de campos a verificar
+      const fields = [
+        "Nombre",
+        "detalles",
+        "Marca",
+        "Categoria",
+        "Ubicacion",
+        "Presentacion",
+        "Unidad",
+        "existencias_minimas",
+        "existencias",
+        "precio_venta1",
+        "precio_venta2",
+        "precio_venta3",
+        "codigo_interno",
+        "codigo_barras",
+      ];
+
+      // Procesar imagen si existe
+      const file = formedit.imagen.files[0];
+      if (file) {
+        validateImage(file);
+        const imageData = await readFileAsDataURL(file);
+        updatedFields.imagen = imageData;
       }
+
+      // Procesar resto de campos
+      fields.forEach((field) => {
+        const formValue = formdata.get(field);
+        const currentValue = document.getElementById(field)?.innerText;
+        if (formValue && formValue !== currentValue) {
+          updatedFields[field] = formValue;
+        }
+      });
+
+      // Verificar si hay campos para actualizar
+      if (Object.keys(updatedFields).length === 0) {
+        throw new Error("No hay cambios para actualizar");
+      }
+
+      // Enviar actualización
+      updatedFields.imagen =
+        updatedFields.imagen || document.getElementById("prodimg").src;
+      await sendUpdate(updatedFields, idProducto);
+
+      // Cerrar modal y mostrar mensaje de éxito
+      document.getElementById("Editmodal").close();
+      window.showAlert("Producto actualizado correctamente", "success");
+      setTimeout(() => window.location.reload(), 1000);
+    } catch (error) {
+      window.showAlert(
+        error.message || "Error al actualizar el producto",
+        "error",
+      );
+    }
   });
-  
+
   // Función auxiliar para leer archivo como DataURL
   function readFileAsDataURL(file) {
-      return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = () => reject(new Error("Error al leer el archivo"));
-          reader.readAsDataURL(file);
-      });
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Error al leer el archivo"));
+      reader.readAsDataURL(file);
+    });
   }
 
   function sendUpdate(updatedFields, id) {
-      // Si no hay campos modificados, mostrar mensaje y salir
-      if (Object.keys(updatedFields).length === 0) {
-          window.showAlert("No se han realizado cambios", "info");
-          return;
-      }
-  
-      // Mapear los campos al formato esperado por la API
-      const mappedFields = {
-          nombre: updatedFields.Nombre,
-          Idmarca: parseInt(updatedFields.Marca),
-          Idcategoria: parseInt(updatedFields.Categoria),
-          Idubicacion_fisica: parseInt(updatedFields.Ubicacion),
-          Idpresentacion: parseInt(updatedFields.Presentacion),
-          Idunidad_medida: parseInt(updatedFields.Unidad),
-          detalles: updatedFields.detalles,
-          existencias_minimas: parseFloat(updatedFields.existencias_minimas),
-          existencias: parseFloat(updatedFields.existencias),
-          precio_venta1: parseFloat(updatedFields.precio_venta1),
-          precio_venta2: parseFloat(updatedFields.precio_venta2),
-          precio_venta3: parseFloat(updatedFields.precio_venta3),
-          codigo_interno: updatedFields.codigo_interno,
-          codigo_barras: updatedFields.codigo_barras,
-          imagen: updatedFields.imagen,
-          activo: 1,
-          fecha_registro: new Date().toISOString().split("T")[0],
-          Idproducto: parseInt(id)
-      };
-  
-      fetch("http://localhost:8000/productos/actualizar/" + id, {
-          method: "PUT",
-          headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(mappedFields),
-      })
+    // Si no hay campos modificados, mostrar mensaje y salir
+    if (Object.keys(updatedFields).length === 0) {
+      window.showAlert("No se han realizado cambios", "info");
+      return;
+    }
+
+    // Mapear los campos al formato esperado por la API
+    const mappedFields = {
+      nombre: updatedFields.Nombre,
+      Idmarca: parseInt(updatedFields.Marca),
+      Idcategoria: parseInt(updatedFields.Categoria),
+      Idubicacion_fisica: parseInt(updatedFields.Ubicacion),
+      Idpresentacion: parseInt(updatedFields.Presentacion),
+      Idunidad_medida: parseInt(updatedFields.Unidad),
+      detalles: updatedFields.detalles,
+      existencias_minimas: parseFloat(updatedFields.existencias_minimas),
+      existencias: parseFloat(updatedFields.existencias),
+      precio_venta1: parseFloat(updatedFields.precio_venta1),
+      precio_venta2: parseFloat(updatedFields.precio_venta2),
+      precio_venta3: parseFloat(updatedFields.precio_venta3),
+      codigo_interno: updatedFields.codigo_interno,
+      codigo_barras: updatedFields.codigo_barras,
+      imagen: updatedFields.imagen,
+      activo: 1,
+      fecha_registro: new Date().toISOString().split("T")[0],
+      Idproducto: parseInt(id),
+    };
+
+    fetch("http://localhost:8000/productos/actualizar/" + id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(mappedFields),
+    })
       .then((res) => {
-          if (!res.ok) {
-              return res.json().then((err) => Promise.reject(err));
-          }
-          return res.json();
+        if (!res.ok) {
+          return res.json().then((err) => Promise.reject(err));
+        }
+        return res.json();
       })
       .then((data) => {
-          window.showAlert(data.message, "success");
-          document.getElementById("Editar").close();
-          location.reload();
+        window.showAlert(data.message, "success");
+        document.getElementById("Editar").close();
+        location.reload();
       })
       .catch((error) => {
-          console.error("Error:", error);
-          window.showAlert(
-              "Error al actualizar el producto: " +
-              (error.message || error.detail || "Error desconocido"),
-              "error"
-          );
+        console.error("Error:", error);
+        window.showAlert(
+          "Error al actualizar el producto: " +
+            (error.message || error.detail || "Error desconocido"),
+          "error",
+        );
       });
   }
 </script>

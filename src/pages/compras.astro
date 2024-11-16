@@ -5,9 +5,7 @@ import { verify, userinfo } from "@Lib/auth";
 import Layout from "@Layouts/layout.astro";
 import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
-import Tabla from "@components/compras/Tabla.astro";
 import Modal from "@components/dialog.astro";
-import Alertas from "@components/alertas.astro";
 import { Fetcher } from "@Lib/fetcher";
 
 if ((await verify(data.token?.value)) == false) {
@@ -114,7 +112,7 @@ try{
         </div>
         <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Alertas />
+     
           <Card title="Herramientas" description="Detallar datos de compras">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               <div class="flex justify-center">

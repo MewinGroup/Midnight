@@ -1,6 +1,5 @@
 ---
 export const prerender = false;
-import Alertas from "@components/alertas.astro";
 
 import Layout from "@Layouts/layout.astro";
 import { verify } from "@Lib/auth";
@@ -14,7 +13,6 @@ if ((await verify(data.token?.value)) == true) {
   });
 }
 ---
-<Alertas />
 
 <Layout title="Inicio">
   <div

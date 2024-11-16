@@ -5,9 +5,8 @@ import { verify, userinfo } from "@Lib/auth";
 import Layout from "@Layouts/layout.astro";
 import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
-import Tabla from "@components/facturas/Tabla.astro";
+import Tabla from "@components/Tabla.astro";
 import Modal from "@components/dialog.astro";
-import Alertas from "@components/alertas.astro";
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -32,12 +31,6 @@ try {
 }
 
 const user = res
-
-const tipoClienteMap = {
-  1: "Natural",
-  2: "Jurídico",
-  // Agrega más tipos según sea necesario
-};
 ---
 
 <style>
@@ -108,7 +101,6 @@ const tipoClienteMap = {
         </div>
         <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Alertas />
           <Card title="Herramientas" description="Detallar datos de movimientos">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               <div class="flex justify-center">

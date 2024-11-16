@@ -8,7 +8,7 @@ import Card from "@components/menu/Card.astro";
 import Userdiv from "@components/User.astro";
 import Tabla from "@components/Tabla.astro";
 import Modal from "@components/dialog.astro";
-import Alertas from "@components/alertas.astro";
+
 import { Fetcher } from "@Lib/fetcher";
 import FormField from '@components/form/FormField.astro';
 
@@ -48,8 +48,6 @@ try {
 }
 ---
 
-
-<Alertas />
 <Layout title="Panel de Control">
   <div class="flex flex-col md:flex-row bg-gray-100 dark:bg-gray-800 dark:text-white h-full">
     <br /><br />
@@ -61,7 +59,6 @@ try {
 
         <Userdiv Userinfo={user} />
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Alertas />
           <Card title="Herramientas" description="Manejo de datos de unidades">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               <div class="flex justify-center">
@@ -91,6 +88,15 @@ try {
                   <i class="fa-solid fa-trash text-xl md:text-3xl"></i>
                   <span class="text-xs md:text-sm font-bold">Eliminar</span>
                 </div>
+              </div>
+              <div class="flex justify-center">
+                <a
+                  onclick="window.history.back()"
+                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 dark:bg-amber-500 bg-yellow-500 rounded-xl flex flex-col justify-center items-center text-gray-200 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                >
+                  <i class="fa-solid fa-arrow-left text-xl md:text-3xl"></i>
+                  <span class="text-xs md:text-sm font-bold">Regresar</span>
+                </a>
               </div>
             </div>
           </Card>

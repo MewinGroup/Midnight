@@ -8,7 +8,6 @@ import Card from "@components/menu/Card.astro";
 //Aqui la lib empleados
 import Tabla from "@components/Tabla.astro";
 import Modal from "@components/dialog.astro";
-import Alertas from "@components/alertas.astro";
 import Userdiv from "@components/User.astro"
 import { Fetcher } from "@Lib/fetcher";
 
@@ -46,7 +45,6 @@ try {
   console.error("Error al obtener las documentos:", error);
 }
 ---
-<Alertas />
 <Layout title="Panel de Control">
   <div
     class="flex flex-col md:flex-row bg-gray-100 dark:bg-gray-800 dark:text-white h-full"
@@ -61,7 +59,6 @@ try {
         <Userdiv Userinfo={user} />
         <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Alertas />
           <Card
             title="Herramientas"
             description="Manejo de datos de documentos"
