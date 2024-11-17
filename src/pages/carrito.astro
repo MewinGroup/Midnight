@@ -87,12 +87,14 @@ try {
         >
           <i class="fas fa-trash-alt mr-2"></i> Vaciar Carrito
         </button>
-        <a href="/pago">
+        <a href="/pago" id="checkout-link" class="block">
           <button
-            class="bg-indigo-600 text-white mt-4 w-full py-2 rounded-lg hover:bg-indigo-700"
+            id="checkout-btn"
+            class="bg-indigo-600 text-white mt-4 w-full py-2 rounded-lg hover:bg-indigo-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled
           >
-            <i class="fa-solid fa-credit-card"></i> Proceder al Pago</button
-          >
+            <i class="fa-solid fa-credit-card"></i> Proceder al Pago
+          </button>
         </a>
       </aside>
     </section>
@@ -169,7 +171,15 @@ try {
         localStorage.removeItem("cart");
         loadCart();
       };
-
+      if (cart.length === 0) {
+      checkoutBtn.disabled = true;
+      checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      checkoutLink.onclick = (e) => e.preventDefault();
+    } else {
+      checkoutBtn.disabled = false;
+      checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      checkoutLink.onclick = null;
+    }
       loadCart();
     </script>
   </body>
