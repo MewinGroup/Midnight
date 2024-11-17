@@ -169,16 +169,10 @@ try {
             Agregar marca
           </h2>
 
-          <!-- Formulario -->
-          <form
-            name="agregar"
-            method="POST"
-            class="space-b-4"
-            autocomplete="off"
-          >
-            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
-              >Nombre de marca</label
-            >
+          <form name="agregar" method="POST" class="space-b-4" autocomplete="off">
+            <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300">
+              Nombre de marca
+            </label>
             <input
               type="text"
               id="nombre"
@@ -187,6 +181,26 @@ try {
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
+            
+                      <!-- Agregar campo de enlace de imagen -->
+            <label for="imagen" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
+              Enlace de la Imagen de la Marca
+            </label>
+            <input
+              type="text"
+              id="imagen"
+              name="imagen"
+              placeholder="https://example.com/imagen.jpg"
+              class="mb-2 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            />
+            <div class="mb-5 flex justify-center">
+              <img
+                id="preview-imagen"
+                src="/placeholder-image.png"
+                alt="Vista previa"
+                class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+              />
+            </div>
             <!-- Botones -->
             <div class="flex justify-end space-x-4">
               <button
@@ -223,6 +237,7 @@ try {
             class="space-b-4"
             autocomplete="off"
           >
+          <input type="hidden" id="idmarca" name="idmarca" />
             <label for="nombre" class="text-x1 text-gray-700 dark:text-gray-300"
               >Nombre de marca</label
             >
@@ -234,6 +249,37 @@ try {
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
+           <!-- Agregar campo de enlace de imagen -->
+      <label for="imagen-edit" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
+        Enlace de la Imagen de la Marca
+      </label>
+      <input
+        type="text"
+        id="imagen-edit"
+        name="imagen"
+        placeholder="https://example.com/imagen.jpg"
+        class="mb-2 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+      />
+      <div class="mb-5 flex justify-center space-x-4">
+        <div>
+          <p class="text-sm text-gray-700 dark:text-gray-300">Imagen Anterior</p>
+          <img
+            id="preview-imagen-actual"
+            src="/placeholder-image.png"
+            alt="Vista previa"
+            class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+          />
+        </div>
+        <div>
+          <p class="text-sm text-gray-700 dark:text-gray-300">Nueva Imagen</p>
+          <img
+            id="preview-imagen-edit"
+            src="/placeholder-image.png"
+            alt="Vista previa"
+            class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+          />
+        </div>
+            </div>
             <!-- Botones -->
             <div class="flex justify-end space-x-4">
               <button
@@ -259,6 +305,21 @@ try {
 </Layout>
 
 <script>
+// Función para previsualizar imagen
+  function setupImagePreview(inputId, previewId) {
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+    
+    input.addEventListener('input', (e) => {
+      const url = e.target.value;
+      preview.src = url || '/placeholder-image.png';
+    });
+  }
+
+  // Configurar previsualización para ambos formularios
+  setupImagePreview('imagen', 'preview-imagen');
+  setupImagePreview('imagen-edit', 'preview-imagen-edit');
+
   const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("token"))
@@ -275,12 +336,17 @@ try {
 
   const addcl = document.getElementById("addcl");
   const editButton = document.getElementById("editButton");
+
   addcl.addEventListener("click", async () => {
     const form = document.forms.agregar;
     const nombre = form.Nombre.value;
+    const imagen = document.getElementById('imagen').value; // Obtener el enlace de la imagen
+
     const data = {
       nombre: nombre,
+      imagen: imagen,
     };
+
     const res = await fetch("http://localhost:8000/marcas/agregar", {
       method: "POST",
       headers: {
@@ -289,6 +355,7 @@ try {
       },
       body: JSON.stringify(data),
     });
+
     if (res.ok) {
       document.getElementById("Addmodal").close();
       window.showAlert("Marca agregada correctamente", "success");
@@ -299,19 +366,26 @@ try {
       window.showAlert("Error al agregar la marca", "error");
     }
   });
-  editButton.addEventListener("click", async () => {
+editButton.addEventListener("click", async () => {
+  const form = document.forms.editar;
+  const marca = document.querySelector('input[name="marca"]:checked');
+  const editar = document.getElementById("edit");
+
+  async function edit() {
     const form = document.forms.editar;
-    const marca = document.querySelector('input[name="marca"]:checked');
-    const editar = document.getElementById("edit");
+    const nombre = form.Nombre.value;
+    const imagen = document.getElementById('imagen-edit').value;
+    const idmarca = document.getElementById('idmarca').value; // Usar un campo oculto
 
-    async function edit() {
-      const form = document.forms.editar;
-      const nombre = form.Nombre.value;
-      const idmarca = form.idmarca;
+    // Si no hay nueva imagen, mantener la anterior
+    const imagenFinal = imagen || document.getElementById('preview-imagen-actual').src;
 
-      const data = {
-        nombre: nombre,
-      };
+    const data = {
+      nombre: nombre,
+      imagen: imagenFinal
+    };
+
+    try {
       const res = await fetch(
         "http://localhost:8000/marcas/actualizar/" + idmarca,
         {
@@ -323,6 +397,7 @@ try {
           body: JSON.stringify(data),
         }
       );
+
       if (res.ok) {
         document.getElementById("Editmodal").close();
         window.showAlert("Marca editada correctamente", "success");
@@ -330,11 +405,18 @@ try {
           window.location.reload();
         }, 1000);
       } else {
-        window.showAlert("Error al editar la marca", "error");
+        const error = await res.json();
+        window.showAlert(`Error al editar la marca: ${error.detail || 'Error desconocido'}`, "error");
       }
+    } catch (error) {
+      console.error('Error:', error);
+      window.showAlert("Error al editar la marca", "error");
     }
-    if (marca) {
-      const idmarca = marca.value;
+  }
+
+  if (marca) {
+    const idmarca = marca.value;
+    try {
       const res = await fetch(
         `http://localhost:8000/marcas/detalles/${idmarca}`,
         {
@@ -345,20 +427,30 @@ try {
           },
         }
       );
+      
       if (res.ok) {
         const data = await res.json();
         form.Nombre.value = data.nombre;
-        form.idmarca = idmarca;
+        document.getElementById('idmarca').value = idmarca; // Guardar ID en campo oculto
+        document.getElementById('imagen-edit').value = data.imagen || ''; // Mostrar enlace actual
+        document.getElementById('preview-imagen-actual').src = data.imagen || '/placeholder-image.png';
+        document.getElementById('preview-imagen-edit').src = data.imagen || '/placeholder-image.png';
         document.getElementById("Editmodal").showModal();
+        
+        // Remover listener anterior si existe
+        editar.removeEventListener("click", edit);
         editar.addEventListener("click", edit);
       } else {
         window.showAlert("Error al obtener la marca", "error");
       }
-    } else {
-      window.showAlert("Seleccione una marca", "error");
+    } catch (error) {
+      console.error('Error:', error);
+      window.showAlert("Error al obtener la marca", "error");
     }
-  });
-
+  } else {
+    window.showAlert("Seleccione una marca", "error");
+  }
+});
   const deleteButton = document.getElementById("delete");
   deleteButton.addEventListener("click", async () => {
     let seleccionado = false;

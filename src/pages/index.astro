@@ -5,6 +5,7 @@ import { Fetcher } from "@Lib/fetcher";
 import { Image } from 'astro:assets';
 const data = Astro.locals;
 import { verify, userinfo } from "@Lib/auth";
+import Alertas from "@components/alertas.astro";
 // Fetch products at build time
 const productos = await Fetcher("productos", "listar");
 const productsData = productos.data || [];
@@ -34,6 +35,28 @@ try {
 }
 
 const user = res;
+
+let marcas = [];
+try {
+  const res = await Fetcher("marcas", "listar", token);
+  if (res.status !== 200) {
+    throw new Error("Error al obtener las marcas");
+  }
+  marcas = await res.data;
+} catch (error) {
+  console.error("Error al obtener las marcas:", error);
+}
+
+let categorias = [];
+try {
+  const res = await Fetcher("categorias", "listar", token);
+  if (res.status !== 200) {
+    throw new Error("Error al obtener las categorías");
+  }
+  categorias = await res.data;
+} catch (error) {
+  console.error("Error al obtener las categorías:", error);
+}
 ---
 
 <Layout title="Midnight Shop">
@@ -137,7 +160,61 @@ const user = res;
         </div>
       </div>
     </section>
-
+        <section class="container mx-auto px-6 py-16">
+      <h2 class="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">
+        Nuestras Marcas
+      </h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        {marcas.map((marca) => (
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 text-center hover:shadow-xl transition-shadow duration-300">
+            <div class="flex items-center justify-center h-24">
+              {marca.imagen ? (
+                <img 
+                  src={marca.imagen}
+                  alt={marca.nombre}
+                  class="h-16 object-contain"
+                />
+              ) : (
+                <i class="fas fa-image text-4xl text-gray-400 dark:text-gray-600"></i>
+              )}
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mt-4">
+              {marca.nombre}
+            </h3>
+          </div>
+        ))}
+      </div>
+    </section>
+        <section class="container mx-auto px-6 py-16">
+      <h2 class="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">
+        Categorías
+      </h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        {categorias.map((categoria) => (
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 text-center hover:shadow-xl transition-shadow duration-300 cursor-pointer flex flex-col justify-between h-64">
+            <div class="flex items-center justify-center h-1/2 overflow-hidden">
+              {categoria.imagen ? (
+                <img 
+                  src={categoria.imagen} 
+                  alt={categoria.nombre}
+                  class="w-full h-full object-cover rounded-lg"
+                />
+              ) : (
+                <i class="fas fa-boxes-stacked text-4xl text-gray-400 dark:text-gray-600"></i>
+              )}
+            </div>
+            <div class="mt-4">
+              <h3 class="text-lg font-semibold text-gray-800 dark:text-white">
+                {categoria.nombre}
+              </h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                {categoria.descripcion}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
     <section class="container mx-auto px-6 py-16">
       <h2
         class="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white"
@@ -270,3 +347,4 @@ const user = res;
       window.location.href = "/";
     });
 </script>
+<Alertas />

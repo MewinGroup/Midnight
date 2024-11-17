@@ -191,6 +191,25 @@ try {
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
+            <!-- Agregar campo de imagen -->
+      <label for="imagen" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
+        Enlace de la Imagen
+      </label>
+      <input
+        type="text"
+        id="imagen"
+        name="imagen"
+        placeholder="https://ejemplo.com/imagen.jpg"
+        class="mb-2 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+      />
+      <div class="mb-5 flex justify-center">
+        <img
+          id="preview-imagen"
+          src="/placeholder-image.png"
+          alt="Vista previa"
+          class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+        />
+      </div>
             <!-- Botones -->
             <div class="flex justify-end space-x-4">
               <button
@@ -238,6 +257,39 @@ try {
               required
               class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             />
+            
+      <!-- Campo de imagen para editar -->
+      <label for="imagen-edit" class="text-sm text-gray-700 dark:text-gray-300 mt-2">
+        Enlace de la Imagen
+      </label>
+      <input type="hidden" id="idcategoria" name="idcategoria" />
+      <input
+        type="text"
+        id="imagen-edit"
+        name="imagen"
+        placeholder="https://ejemplo.com/imagen.jpg"
+        class="mb-2 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
+      />
+      <div class="mb-5 flex justify-center space-x-4">
+        <div>
+          <p class="text-sm text-gray-700 dark:text-gray-300">Imagen Anterior</p>
+          <img
+            id="preview-imagen-actual"
+            src="/placeholder-image.png"
+            alt="Vista previa"
+            class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+          />
+        </div>
+        <div>
+          <p class="text-sm text-gray-700 dark:text-gray-300">Nueva Imagen</p>
+          <img
+            id="preview-imagen-edit"
+            src="/placeholder-image.png"
+            alt="Vista previa"
+            class="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
+          />
+        </div>
+      </div>
             <!-- Botones -->
             <div class="flex justify-end space-x-4">
               <button
@@ -263,6 +315,20 @@ try {
 </Layout>
 
 <script>
+function setupImagePreview(inputId, previewId) {
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+    
+    input.addEventListener('input', (e) => {
+      const url = e.target.value;
+      preview.src = url || '/placeholder-image.png';
+    });
+  }
+
+  // Configurar previsualización para ambos formularios
+  setupImagePreview('imagen', 'preview-imagen');
+  setupImagePreview('imagen-edit', 'preview-imagen-edit');
+
   const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("token"))
@@ -282,8 +348,10 @@ try {
   addcl.addEventListener("click", async () => {
     const form = document.forms.agregar;
     const nombre = form.Nombre.value;
+    const imagen = document.getElementById("imagen").value;
     const data = {
       nombre: nombre,
+      imagen: imagen
     };
     const res = await fetch("http://localhost:8000/categorias/agregar", {
       method: "POST",
@@ -311,10 +379,12 @@ try {
     async function edit() {
       const form = document.forms.editar;
       const nombre = form.Nombre.value;
-      const idcategoria = form.idcategoria;
+      const imagen = document.getElementById("imagen-edit").value;
+      const idcategoria = document.getElementById("idcategoria").value;
 
       const data = {
         nombre: nombre,
+        imagen: imagen || document.getElementById("preview-imagen-actual").src,
       };
       const res = await fetch(
         "http://localhost:8000/categorias/actualizar/" + idcategoria,
@@ -352,10 +422,13 @@ try {
       if (res.ok) {
         const data = await res.json();
         form.Nombre.value = data.nombre;
-        form.idcategoria = idcategoria;
+        document.getElementById('idcategoria').value = idcategoria;
+        document.getElementById('imagen-edit').value = data.imagen || '';
+        document.getElementById('preview-imagen-actual').src = data.imagen || '/placeholder-image.png';
+        document.getElementById('preview-imagen-edit').src = data.imagen || '/placeholder-image.png';
         document.getElementById("Editmodal").showModal();
         editar.addEventListener("click", edit);
-      } else {
+      }else {
         window.showAlert("Error al obtener la categoria", "error");
       }
     } else {
