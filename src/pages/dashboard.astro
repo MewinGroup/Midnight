@@ -17,7 +17,14 @@ if ((await verify(data.token?.value)) == false) {
 const token = data.token?.value;
 const res = await userinfo(token);
 const user = res;
-
+if (user.tipo_perfil==3) {
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: "/",
+    },
+  });
+}
 ---
 
 <Layout title="Panel de Control">
