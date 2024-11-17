@@ -44,6 +44,28 @@
 
       document.body.appendChild(alertDiv);
 
+      if (type === "warning") {
+    const icon = document.createElement("i");
+    icon.className = "fa-regular fa-circle-exclamation mr-2";
+    alertDiv.appendChild(icon);
+  } else if (type === "success") {
+    const icon = document.createElement("i");
+    icon.className = "fa-regular fa-circle-check mr-2";
+    alertDiv.appendChild(icon);
+  } else if (type === "info") { 
+    const icon = document.createElement("i");
+    icon.className = "fa-regular fa-circle-info mr-2";
+    alertDiv.appendChild(icon);
+  } else if (type === "error") {
+    const icon = document.createElement("i");
+    icon.className = "fa-regular fa-circle-xmark mr-2";
+    alertDiv.appendChild(icon);
+  } else if (type === "confirm") {
+    const icon = document.createElement("i");
+    icon.className = "fa-regular fa-circle-question mr-2";
+    alertDiv.appendChild(icon);
+  }
+
       message.split("\n").forEach((line) => {
         const messageP = document.createElement("p");
         messageP.className = "text-xs font-semibold";

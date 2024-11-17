@@ -3,6 +3,7 @@ export const prerender = false;
 const data = Astro.locals;
 import { verify, userinfo } from "@Lib/auth";
 import { Fetcher } from "@Lib/fetcher";
+import Alertas from "@components/alertas.astro";
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -65,6 +66,7 @@ try {
       </div>
     </header>
     <!--Hola juan -->
+    <Alertas />
     <section class="container mx-auto px-6 py-8 flex">
       <div class="w-full lg:w-2/3">
         <div id="cart-items" class="grid grid-cols-1 gap-6"></div>
@@ -91,7 +93,6 @@ try {
           <button
             id="checkout-btn"
             class="bg-indigo-600 text-white mt-4 w-full py-2 rounded-lg hover:bg-indigo-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled
           >
             <i class="fa-solid fa-credit-card"></i> Proceder al Pago
           </button>
@@ -107,6 +108,27 @@ try {
         let subtotal = document.getElementById("subtotal");
         let total = document.getElementById("total");
         cartItemsContainer.innerHTML = "";
+
+               if (cart.length === 0) {
+          const checkoutBtn = document.getElementById("checkout-btn");
+          const checkoutLink = document.getElementById("checkout-link");
+          
+          checkoutBtn.classList.add("disabled");
+          checkoutLink.href = "#";
+          
+          // Agregar event listener para mostrar la alerta al hacer clic
+          checkoutLink.onclick = (e) => {
+            e.preventDefault();
+              window.showAlert(`No hay productos en el carrito para proceder al pago`, "warning");
+          };
+        } else {
+          const checkoutBtn = document.getElementById("checkout-btn");
+          const checkoutLink = document.getElementById("checkout-link");
+          
+          checkoutBtn.classList.remove("disabled");
+          checkoutLink.href = "/pago";
+          checkoutLink.onclick = null; // Remover el event listener si existe
+        }
 
         cart.forEach((item, index) => {
           item.quantity = item.quantity || 1;
@@ -167,19 +189,19 @@ try {
         loadCart();
       };
 
-      window.emptyCart = function () {
+      window.emptyCart = function() {
+    window.showAlert("¿Estás seguro de que deseas vaciar el carrito?", "confirm", {
+      onAccept: () => {
         localStorage.removeItem("cart");
         loadCart();
-      };
-      if (cart.length === 0) {
-      checkoutBtn.disabled = true;
-      checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
-      checkoutLink.onclick = (e) => e.preventDefault();
-    } else {
-      checkoutBtn.disabled = false;
-      checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-      checkoutLink.onclick = null;
-    }
+        window.showAlert("Carrito vaciado", "success");
+      },
+      onCancel: () => {
+        window.showAlert("Operación cancelada", "info");
+      }
+    });
+  };
+
       loadCart();
     </script>
   </body>
