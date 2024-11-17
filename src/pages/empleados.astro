@@ -68,7 +68,7 @@ try {
     <Sidebar tipo={user.tipo_perfil}>
       <div class="flex-1 p-4 md:p-6 dark:bg-gray-800">
         <h1 class="text-3xl font-bold mb-6">
-          <i class="fa-solid fa-user-tie"></i> Listado de Empleados
+          <i class="fa-solid fa-user-tie"></i> Listado de Empleados y Usuarios
         </h1>
         <Userdiv Userinfo={user} />
         <!-- Contenido de tarjetas -->
@@ -115,10 +115,17 @@ try {
             </div>
           </Card>
 
-          <Card title="Total de Empleados" description="Total"
-            ><i class="fa-solid fa-id-card-clip"></i>
-            {" " + listaEmpleados.length}</Card
-          >
+                   <div class="grid grid-cols-2 gap-4">
+            <Card title="Total de Empleados" description="Administradores y Vendedores">
+              <i class="fa-solid fa-id-card-clip"></i>
+              {" " + listaEmpleados.filter(empleado => empleado.tipo_perfil === 1 || empleado.tipo_perfil === 2).length}
+            </Card>
+          
+            <Card title="Total de Usuarios" description="Clientes">
+              <i class="fa-solid fa-users"></i>
+              {" " + listaEmpleados.filter(empleado => empleado.tipo_perfil === 3).length}
+            </Card>
+          </div>
           <Card title="Empleado del Mes" description="El ultimo Mes">
             {
               empleados && empleados.length > 0 ? (
@@ -147,58 +154,106 @@ try {
               <i class="fa-solid fa-clipboard-check" id="Activar"></i> Seleccionar
             </button>
           </div>
-          <Tabla headers={["Nombre","Usuario","Tipo","Estado","Foto"]} >
+                  <Tabla headers={["Nombre", "Usuario", "Tipo", "Estado", "Foto"]}>
             {
-              listaEmpleados.map((empleado) => (
-                <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
-                  <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center hidden acciones">
-                    <label class="container relative block cursor-pointer text-lg select-none">
-                      <input
-                        type="checkbox"
-                        name="empleado"
-                        value={empleado.Idusuario}
-                        class="absolute opacity-0 cursor-pointer h-0 w-0"
+              listaEmpleados
+                .filter(empleado => empleado.tipo_perfil === 1 || empleado.tipo_perfil === 2)
+                .map((empleado) => (
+                  <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center hidden acciones">
+                      <label class="container relative block cursor-pointer text-lg select-none">
+                        <input
+                          type="checkbox"
+                          name="empleado"
+                          value={empleado.Idusuario}
+                          class="absolute opacity-0 cursor-pointer h-0 w-0"
+                        />
+                        <div class="checkmark relative top-0 left-0 h-5 w-5 bg-gray-300 rounded-full transition duration-300 mx-auto" />
+                      </label>
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
+                      {empleado.nombre}
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
+                      {empleado.usuario}
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
+                      {empleado.tipo_perfil == 1
+                        ? "Administrador"
+                        : empleado.tipo_perfil == 2
+                          ? "Vendedor"
+                          : "Usuario"}
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
+                      <span
+                        class={`px-2 py-1 rounded-full text-xs font-semibold
+                          ${empleado.activo == 1
+                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                          }`}
+                      >
+                        {empleado.activo == 1 ? "Activo" : "Inactivo"}
+                      </span>
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
+                      <img
+                        src={empleado.imagen || "/user.png"}
+                        alt="Foto de perfil"
+                        class="w-8 h-8 rounded-full mx-auto"
                       />
-                      <div class="checkmark relative top-0 left-0 h-5 w-5 bg-gray-300 rounded-full transition duration-300 mx-auto" />
-                    </label>
-                  </td>
-                  <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
-                    {empleado.nombre}
-                  </td>
-                  <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
-                    {empleado.usuario}
-                  </td>
-                  <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
-                    {empleado.tipo_perfil == 1
-                      ? "Administrador"
-                      : empleado.tipo_perfil == 2
-                        ? "Vendedor"
-                        : "Usuario"}
-                  </td>
-
-                  <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
-                    <span
-                      class={`px-2 py-1 rounded-full text-xs font-semibold
-            ${
-              empleado.activo == 1
-                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-            }`}
-                    >
-                      {empleado.activo == 1 ? "Activo" : "Inactivo"}
-                    </span>
-                  </td>
-                  <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
-                    <img
-                      src={empleado.imagen || "/user.png"}
-                      alt="Foto de perfil"
-                      class="w-8 h-8 rounded-full mx-auto"
-                    />
-                  </td>
-                </tr>
-              ))
+                    </td>
+                  </tr>
+                ))
             }
-
+          </Tabla><br><br><br>
+          <h2 class="text-xl font-semibold">Usuarios</h2>
+                    <Tabla headers={["Nombre", "Usuario", "Tipo", "Estado", "Foto"]}>
+            {
+              listaEmpleados
+                .filter(empleado => empleado.tipo_perfil === 3)
+                .map((empleado) => (
+                  <tr class="break-words hover:bg-gray-100 dark:hover:bg-gray-800">
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis align-middle text-center hidden acciones">
+                      <label class="container relative block cursor-pointer text-lg select-none">
+                        <input
+                          type="checkbox"
+                          name="empleado"
+                          value={empleado.Idusuario}
+                          class="absolute opacity-0 cursor-pointer h-0 w-0"
+                        />
+                        <div class="checkmark relative top-0 left-0 h-5 w-5 bg-gray-300 rounded-full transition duration-300 mx-auto" />
+                      </label>
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
+                      {empleado.nombre}
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
+                      {empleado.usuario}
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
+                      {"Usuario"}
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
+                      <span
+                        class={`px-2 py-1 rounded-full text-xs font-semibold
+                          ${empleado.activo == 1
+                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                          }`}
+                      >
+                        {empleado.activo == 1 ? "Activo" : "Inactivo"}
+                      </span>
+                    </td>
+                    <td class="px-2 py-1 max-w-full overflow-hidden text-ellipsis text-center">
+                      <img
+                        src={empleado.imagen || "/user.png"}
+                        alt="Foto de perfil"
+                        class="w-8 h-8 rounded-full mx-auto"
+                      />
+                    </td>
+                  </tr>
+                ))
+            }
           </Tabla>
             <!-- Actualizaciones recientes -->
             <div

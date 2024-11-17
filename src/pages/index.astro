@@ -3,9 +3,37 @@ export const prerender = false;
 import Layout from "@Layouts/layout.astro";
 import { Fetcher } from "@Lib/fetcher";
 import { Image } from 'astro:assets';
+const data = Astro.locals;
+import { verify, userinfo } from "@Lib/auth";
 // Fetch products at build time
 const productos = await Fetcher("productos", "listar");
 const productsData = productos.data || [];
+
+const token = data.token?.value;
+
+if (token) {
+  if ((await verify(token)) == false) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: "/",
+      },
+    });
+  }
+}
+
+let res;
+try {
+  res = await userinfo(token);
+} catch (error) {
+  console.error("Error al obtener la información del usuario:", error);
+  return new Response(null, {
+    status: 500,
+    statusText: "Internal Server Error",
+  });
+}
+
+const user = res;
 ---
 
 <Layout title="Midnight Shop">
@@ -39,27 +67,44 @@ const productsData = productos.data || [];
             class="text-gray-600 hover:text-indigo-600 px-3 py-2">Contacto</a
           >
         </nav>
-
-        <!-- Cart and Mobile Menu -->
-        <div class="flex items-center space-x-4">
-          <span
-            id="cart-total"
-            class="text-gray-600 font-semibold hidden md:inline">$0.00</span
-          >
-          <a href="/carrito" class="relative">
-            <i
-              class="fas fa-shopping-cart text-xl text-gray-600 hover:text-yellow-500"
-            ></i>
-            <span
-              id="cart-count"
-              class="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
-              >0</span
-            >
-          </a>
-          <button class="md:hidden text-gray-600 focus:outline-none">
-            <i class="fas fa-bars text-2xl"></i>
-          </button>
-        </div>
+<!-- Cart and Mobile Menu -->
+<div class="flex items-center space-x-4">
+  <span
+    id="cart-total"
+    class="text-gray-600 font-semibold hidden md:inline">$0.00</span
+  >
+  <a href="/carrito" class="relative">
+    <i
+      class="fas fa-shopping-cart text-xl text-gray-600 hover:text-yellow-500"
+    ></i>
+    <span
+      id="cart-count"
+      class="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+      >0</span
+    >
+  </a>
+  <button class="md:hidden text-gray-600 focus:outline-none">
+    <i class="fas fa-bars text-2xl"></i>
+  </button>
+</div>
+<div class="flex items-center space-x-2">
+  {user && user.imagen && user.nombre ? (
+    <>
+      <a href="/profile" class="text-gray-600 hover:text-indigo-600 flex items-center space-x-2">
+        <img src={user.imagen} alt="Imagen de usuario" class="w-10 h-10 rounded-full object-cover border-slate-600 border" />
+        <span class="text-x2 font-bold">{user.nombre}</span>
+      </a>
+      <button id="logout" class="ml-2 text-gray-600 hover:text-red-600">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </>
+  ) : (
+    <a href="/login" class="text-gray-600 hover:text-indigo-600 flex items-center space-x-2">
+      <i class="fas fa-user text-xl"></i>
+      <span>Iniciar Sesión</span>
+    </a>
+  )}
+</div>
       </div>
     </div>
   </header>
@@ -213,4 +258,15 @@ const productsData = productos.data || [];
 
   // Initialize cart display
   updateCartDisplay();
+
+  logout?.addEventListener("click", () => {
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token"))
+        ?.split("=")[1];
+      if (token) {
+        document.cookie = `token=${token}; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      }
+      window.location.href = "/";
+    });
 </script>

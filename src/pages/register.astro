@@ -1,0 +1,179 @@
+---
+export const prerender = false;
+
+import Layout from "@Layouts/layout.astro";
+import { verify } from "@Lib/auth";
+import { Fetcher } from "@Lib/fetcher";
+import Alertas from "@components/alertas.astro";
+const data = Astro.locals;
+if ((await verify(data.token?.value)) == true) {
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: "/dashboard",
+    },
+  });
+}
+---
+
+<Layout title="Inicio">
+  <div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-slate-900">
+  <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full dark:bg-gray-800">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6 dark:text-cyan-300">
+      Registrarse
+    </h2>
+<Alertas />
+    <form id="registerForm" class="space-y-6">
+      <div>
+        <label for="nombre" class="block text-sm font-medium text-gray-700 dark:text-cyan-300">
+          Nombre Completo
+        </label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          required
+          class="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-600 dark:text-gray-100"
+          placeholder="Ingresa tu nombre completo"
+          autocomplete="off"
+        />
+      </div>
+
+      <div>
+        <label for="usuario" class="block text-sm font-medium text-gray-700 dark:text-cyan-300">
+          Usuario
+        </label>
+        <input
+          type="text"
+          id="usuario"
+          name="usuario"
+          required
+          class="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-600 dark:text-gray-100"
+          placeholder="Ingresa tu nombre de usuario"
+          autocomplete="off"
+        />
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-cyan-300">
+          Contraseña
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          class="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-600 dark:text-gray-100"
+          placeholder="Ingresa tu contraseña"
+        />
+      </div>
+
+      <div>
+        <label for="imagen" class="block text-sm font-medium text-gray-700 dark:text-cyan-300">
+          Imagen de Perfil
+        </label>
+        <input
+          type="file"
+          id="imagen"
+          name="imagen"
+          accept="image/*"
+          required
+          class="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-600 dark:text-gray-100"
+        />
+      </div>
+      <div class="flex justify-center">
+        <div class="w-32 h-32 border-2 border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
+          <img
+            id="preview"
+            src="/user.png"
+            alt="Vista previa"
+            class="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <div class="text-sm">
+          <a
+            href="/login"
+            class="font-medium text-blue-600 hover:text-blue-500 dark:text-gray-200 dark:hover:text-gray-300"
+          >
+            ¿Ya tienes una cuenta? Inicia sesión aquí
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          class="w-full py-2 px-4 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Registrarse
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+    document.getElementById('imagen').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('preview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const nombre = (document.getElementById("nombre") as HTMLInputElement).value;
+      const usuario = (document.getElementById("usuario") as HTMLInputElement).value;
+      const password = (document.getElementById("password") as HTMLInputElement).value;
+      const img = (document.getElementById("imagen") as HTMLInputElement).files[0];
+      let baseimg = "";
+    
+      if (img) {
+        try {
+          const reader = new FileReader();
+          baseimg = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = () => reject(new Error('Error al leer la imagen'));
+            reader.readAsDataURL(img);
+          });
+        } catch (error) {
+          console.error("Error al leer la imagen:", error);
+          baseimg = "";
+        }
+      }
+    
+      const data = {
+        nombre,
+        usuario,
+        password,
+        imagen: baseimg,
+      };
+    
+      try {
+        const response = await fetch("http://localhost:8000/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data),
+        });
+    
+        if (response.ok) {
+          window.showAlert("Registro exitoso", "success");
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 1000);
+        } else {
+          window.showAlert("Error al registrarse", "error");
+        }
+      } catch (error) {
+        console.error("Error en la petición:", error);
+        window.showAlert("Error al registrarse", "error");
+      }
+    });
+  </script>
