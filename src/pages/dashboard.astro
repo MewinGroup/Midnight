@@ -5,6 +5,7 @@ import Layout from "@Layouts/layout.astro";
 import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
 import { verify, userinfo } from "@Lib/auth";
+import { Fetcher } from "@Lib/fetcher";
 
 if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
@@ -17,7 +18,7 @@ if ((await verify(data.token?.value)) == false) {
 const token = data.token?.value;
 const res = await userinfo(token);
 const user = res;
-if (user.tipo_perfil==3) {
+if (user.tipo_perfil == 3) {
   return new Response(null, {
     status: 302,
     headers: {
@@ -25,9 +26,44 @@ if (user.tipo_perfil==3) {
     },
   });
 }
+
+// Fetch sales data
+let ventasTotales = 0;
+let ventasRecientes = 0;
+let ventasSemanales = 0;
+
+try {
+  const ventas = await Fetcher("ventas", "listar", token);
+  if (ventas.status === 200) {
+    const ventasData = ventas.data;
+
+    // Calculate total sales
+    ventasTotales = ventasData.reduce((total, venta) => total + venta.total, 0);
+
+    // Calculate recent sales (last 24 hours)
+    const now = new Date();
+    const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    ventasRecientes = ventasData
+      .filter(venta => new Date(venta.fecha_venta) >= last24Hours)
+      .reduce((total, venta) => total + venta.total, 0);
+
+    // Calculate weekly sales (last 7 days)
+    const last7Days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    ventasSemanales = ventasData
+      .filter(venta => new Date(venta.fecha_venta) >= last7Days)
+      .reduce((total, venta) => total + venta.total, 0);
+  }
+} catch (error) {
+  console.error("Error fetching sales data:", error);
+}
 ---
 
 <Layout title="Panel de Control">
+  <script
+    type="text/javascript"
+    src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"
+  ></script>
+
   <div
     class="flex flex-col md:flex-row bg-gray-100 h-screen dark:bg-gray-800 dark:text-white"
   >
@@ -64,44 +100,185 @@ if (user.tipo_perfil==3) {
         </div>
         <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <Card title="Ventas Totales" description="El ultimo Mes">${0}</Card>
-          <Card title="Ventas Recientes" description="Ultimas 24 Horas"
-            >${0}</Card
-          >
-          <Card title="Ventas Semanales" description="Ultima Semana">${0}</Card>
+          <Card title="Ventas Totales" description="El ultimo Mes">${ventasTotales.toFixed(2)}</Card>
+          <Card title="Ventas Semanales" description="Ultima Semana">${ventasSemanales.toFixed(2)}</Card>
+          <Card title="Ventas Recientes" description="Ultimas 24 Horas">${ventasRecientes.toFixed(2)}</Card>
         </div>
-
-        <!-- Tabla de órdenes recientes -->
+        <!-- Gráfica de ventas -->
+         <h2 class="text-xl font-bold mt-6">Ventas</h2>
         <div
-          class="mt-6 bg-white p-6 rounded-lg shadow-md overflow-x-auto dark:bg-gray-700"
+          class="mt-6 bg-white p-6 rounded-lg shadow-md dark:bg-gray-700 dark:text-white h-96"
+          id="chart"
         >
-          <h2 class="text-xl font-semibold">Pedidos Recientes</h2>
-          <table class="min-w-full mt-4 table-auto dark:border-gray-700">
-            <thead class="dark:border-gray-700">
-              <tr>
-                <th class="px-4 py-2">Nombre del producto</th>
-                <th class="px-4 py-2">Numero de producto</th>
-                <th class="px-4 py-2">Metodo de pago</th>
-                <th class="px-4 py-2">Estado</th>
-              </tr>
-            </thead>
-            <tbody> </tbody>
-          </table>
         </div>
 
         <!-- Actualizaciones recientes -->
-        <div
-          class="mt-6 bg-white p-6 rounded-lg shadow-md dark:bg-gray-700 dark:text-white"
-        >
-          <h2 class="text-xl font-semibold dark:text-white">
-            Ventas Realizadas Recientemente
-          </h2>
-          <ul class="mt-4 space-y-4"></ul>
-        </div>
       </div>
+
+      <!-- Main Content -->
     </Sidebar>
+    <!-- cdn https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.1/dist/lightweight-charts.standalone.production.min.js -->
 
-    <!-- Main Content -->
+    <script type="text/javascript" is:inline data-astro-rerun>
+      document.addEventListener('astro:page-load', () => {
+        // First define the token
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKdWFuIiwiZXhwIjoxNzMxOTY0ODk2fQ.AqRxzuo9eeLEmaCZNDIHmR33s9FCUqzp5rkA1zV0xzw';
+    
+        // Function to transform API data to candlestick format
+        function transformApiDataToCandlestick(apiData) {
+          //ordenalos por fecha de venta
+          return apiData.map(sale => ({
+            // Convert date string to timestamp
+            time: new Date(sale.fecha_venta).getTime() / 1000,
+            open: 0,
+            high: sale.total,
+            low: 0,
+            close: sale.total
+          }));
+        }
+    
+        // Fetch data and create chart
+        fetch('http://localhost:8000/ventas/listar', {
+          method: 'GET',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => response.json())
+        .then(apiData => {
+          const chartContainer = document.getElementById("chart");
+          const chart = LightweightCharts.createChart(chartContainer, {
+            width: chartContainer.clientWidth,
+            height: chartContainer.clientHeight,
+            layout: {
+              background: { color: "#222" },
+              textColor: "#C3BCDB",
+            },
+            grid: {
+              vertLines: { color: "#444" },
+              horzLines: { color: "#444" },
+            },
+          });
+    
+          chart.priceScale().applyOptions({
+            borderColor: "#71649C",
+          });
+    
+          chart.timeScale().applyOptions({
+            borderColor: "#71649C",
+            barSpacing: 10,
+            timeVisible: true,
+            secondsVisible: false,
+            tickMarkFormatter: (time) => {
+              const date = new Date(time * 1000);
+              return date.toLocaleDateString('es-SV', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+              });
+            }
+          });
+    
+          chart.applyOptions({
+            layout: {
+              fontFamily: "'Roboto', sans-serif",
+            },
+            localization: {
+              priceFormatter: new Intl.NumberFormat('es-SV', {
+                style: "currency",
+                currency: "USD",
+              }).format,
+              timeFormatter: (timestamp) => {
+                const date = new Date(timestamp * 1000);
+                return date.toLocaleDateString('es-SV', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric'
+                });
+              },
+            },
+            crosshair: {
+              mode: LightweightCharts.CrosshairMode.Normal,
+              vertLine: {
+                width: 8,
+                color: "#C3BCDB44",
+                style: LightweightCharts.LineStyle.Solid,
+                labelBackgroundColor: "#9B7DFF",
+              },
+              horzLine: {
+                color: "#9B7DFF",
+                labelBackgroundColor: "#9B7DFF",
+              },
+            },
+          });
+    
+          // Transform API data to candlestick format
+          const candleStickData = transformApiDataToCandlestick(apiData);
+    
+          // Create area series data
+          const lineData = candleStickData.map(datapoint => ({
+            time: datapoint.time,
+            value: (datapoint.close + datapoint.open) / 2,
+          }));
+    
+          // Add area series
+          const areaSeries = chart.addAreaSeries({
+            lastValueVisible: false,
+            crosshairMarkerVisible: false,
+            lineColor: "transparent",
+            topColor: "rgba(56, 33, 110,0.6)",
+            bottomColor: "rgba(56, 33, 110, 0.1)",
+          });
+          areaSeries.setData(lineData);
+    
+          // Add candlestick series
+          const mainSeries = chart.addCandlestickSeries();
+          mainSeries.setData(candleStickData);
+    
+          mainSeries.applyOptions({
+            wickUpColor: "rgb(54, 116, 217)",
+            upColor: "rgb(54, 116, 217)",
+            wickDownColor: "rgb(225, 50, 85)",
+            downColor: "rgb(225, 50, 85)",
+            borderVisible: false,
+          });
+    
+          // Add this after creating the chart and before handling the resize observer
+          // Adjust the visible time range to show the most recent data points
+          const lastIndex = candleStickData.length - 1;
+          if (lastIndex >= 0) {
+            // Show last 30 data points or all if less than 30
+            const visibleRange = {
+              from: candleStickData[Math.max(0, lastIndex - 30)].time,
+              to: candleStickData[lastIndex].time,
+            };
+            
+            chart.timeScale().setVisibleRange(visibleRange);
+            
+            // Optional: Set a fixed ratio for better visualization
+            chart.timeScale().applyOptions({
+              rightOffset: 12,
+              barSpacing: 12,
+            });
+          }
+    
+          // Handle resizing
+          const resizeObserver = new ResizeObserver(entries => {
+            if (entries.length === 0 || entries[0].target !== chartContainer) { 
+              return;
+            }
+            const newRect = entries[0].contentRect;
+            chart.applyOptions({ 
+              width: newRect.width,
+              height: newRect.height 
+            });
+          });
+    
+          resizeObserver.observe(chartContainer);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+      }, { once: true });
+    </script>
   </div>
-
 </Layout>

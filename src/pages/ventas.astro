@@ -7,9 +7,9 @@ import Sidebar from "@components/Sidebar.astro";
 import Card from "@components/menu/Card.astro";
 import { Fetcher } from "@Lib/fetcher";
 import Modal from "@components/dialog.astro";
-import FormField from '@components/form/FormField.astro';
-import FormSelect from '@components/form/FormSelect.astro';
-import FormTextarea from '@components/form/FormTextarea.astro';
+import FormField from "@components/form/FormField.astro";
+import FormSelect from "@components/form/FormSelect.astro";
+import FormTextarea from "@components/form/FormTextarea.astro";
 import Userdiv from "@components/User.astro";
 
 // Auth check
@@ -33,29 +33,36 @@ async function fetchData(endpoint) {
 }
 
 // Fetch all required data
-const [ventas, usuarios, clientes, documentosFiscales, metodosPago] = await Promise.all([
-  fetchData("ventas"),
-  fetchData("usuarios"),
-  fetchData("clientes"),
-  fetchData("documentos"),
-  fetchData("metodos")
-]);
+const [ventas, usuarios, clientes, documentosFiscales, metodosPago] =
+  await Promise.all([
+    fetchData("ventas"),
+    fetchData("usuarios"),
+    fetchData("clientes"),
+    fetchData("documentos"),
+    fetchData("metodos"),
+  ]);
 
 // Generic lookup function
 function getLookupValue(collection, id, idField, nameField = "nombre") {
-  const item = collection.find(item => item[idField] === id);
+  const item = collection.find((item) => item[idField] === id);
   return item ? item[nameField] : "Desconocido";
 }
 
 // Simplified lookup functions
-const obtenerNombreUsuario = id => getLookupValue(usuarios, id, "Idusuario");
-const obtenerNombreCliente = id => getLookupValue(clientes, id, "Idcliente");
-const obtenerNombreDocumentoFiscal = id => getLookupValue(documentosFiscales, id, "Iddocumento_fiscal");
-const obtenerNombreMetodoPago = id => getLookupValue(metodosPago, id, "Idmetodo_pago");
+const obtenerNombreUsuario = (id) => getLookupValue(usuarios, id, "Idusuario");
+const obtenerNombreCliente = (id) => getLookupValue(clientes, id, "Idcliente");
+const obtenerNombreDocumentoFiscal = (id) =>
+  getLookupValue(documentosFiscales, id, "Iddocumento_fiscal");
+const obtenerNombreMetodoPago = (id) =>
+  getLookupValue(metodosPago, id, "Idmetodo_pago");
 
 // Filter recent sales (last 30 days)
-const ventasRecientes = ventas.filter(venta => 
-  !isNaN(new Date(venta.fecha_venta).getTime()) && (new Date().getTime() - new Date(venta.fecha_venta).getTime()) / (1000 * 60 * 60 * 24) <= 30
+const ventasRecientes = ventas.filter(
+  (venta) =>
+    !isNaN(new Date(venta.fecha_venta).getTime()) &&
+    (new Date().getTime() - new Date(venta.fecha_venta).getTime()) /
+      (1000 * 60 * 60 * 24) <=
+      30,
 );
 ---
 
@@ -99,8 +106,8 @@ const ventasRecientes = ventas.filter(venta =>
           <i class="fa-solid fa-cash-register"></i> Listado de Ventas
         </h1>
 
-      <Userdiv Userinfo={user} />
-       <!-- Contenido de tarjetas -->
+        <Userdiv Userinfo={user} />
+        <!-- Contenido de tarjetas -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <Card title="Herramientas" description="Manejo de datos de ventas">
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-2">
@@ -124,7 +131,9 @@ const ventasRecientes = ventas.filter(venta =>
           <Card title="Ventas Recientes" description="El ultimo Mes"
             ><i class="fa-solid fa-receipt"></i>
             {
-              ventasRecientes.length > 0 ? " " + ventasRecientes.length : "No hay ventas recientes"
+              ventasRecientes.length > 0
+                ? " " + ventasRecientes.length
+                : "No hay ventas recientes"
             }
           </Card>
         </div>
@@ -198,317 +207,31 @@ const ventasRecientes = ventas.filter(venta =>
             }
           </div>
         </div>
-
-    
-        <Modal id="Addmodal">
-          <div
-            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6 animate-slideDown"
-          >
-            <h2
-              class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100"
-            >
-              Agregar Venta
-            </h2>
-
-            <!-- Formulario -->
-            <form name="agregar" method="POST" class="space-b-4">
-              <label
-                for="Documento"
-                class="text-x1 text-gray-700 dark:text-gray-300"
-                >Documento Fiscal</label
-              >
-              <input
-                type="text"
-                id="Documento"
-                name="Documento"
-                placeholder="Documento Fiscal"
-                required
-                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-              />
-
-              <label
-                for="Correlativo"
-                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-                >Correlativo Documento Fiscal</label
-              >
-              <select
-                id="Correlativo"
-                name="Correlativo"
-                required
-                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-              >
-                <option value="1">Natural</option>
-                <option value="2">Jurídico</option>
-              </select>
-
-              <label
-                for="FechaVenta"
-                class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-                >Fecha de Venta</label
-              >
-              <input
-                id="FechaVenta"
-                type="date"
-                name="FechaVenta"
-                required
-                class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-              />
-            </form>
-
-            <label
-              for="Cliente"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Venta</label
-            >
-            <input
-              type="text"
-              id="Cliente"
-              name="Cliente"
-              placeholder="Nombre del Cliente"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="CondicionVenta"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Condicion de venta</label
-            >
-            <input
-              type="text"
-              id="CondicionVenta"
-              name="CondicionVenta"
-              placeholder="Condicion de venta"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="MetodoPago"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Metodo de Pago</label
-            >
-            <input
-              type="text"
-              id="MetodoPago"
-              name="MetodoPago"
-              placeholder="Metodo de pago"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Estado"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Estado</label
-            >
-            <input
-              type="text"
-              id="Estado"
-              name="Estado"
-              placeholder="Estado de la venta"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-
-            <label
-              for="Sumas"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Sumas</label
-            >
-            <input
-              type="text"
-              id="Sumas"
-              name="Sumas"
-              placeholder="Sumas"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label
-              for="IVA"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">IVA</label
-            >
-            <input
-              type="text"
-              id="IVA"
-              name="IVA"
-              placeholder="Iva 13%"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label
-              for="Total"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2">Total</label
-            >
-            <input
-              type="text"
-              id="Total"
-              name="Total"
-              placeholder="Total de la venta"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <label
-              for="Vendedor"
-              class="text-sm text-gray-700 dark:text-gray-300 mt-2"
-              >Vendedor</label
-            >
-            <input
-              type="text"
-              id="Vendedor"
-              name="Vendedor"
-              placeholder="Vendedor"
-              required
-              class="mb-5 form-field w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-            />
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-              <button
-                type="button"
-                class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md"
-                onclick="document.getElementById('Addmodal').close()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                id="addcl"
-                class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Enviar
-              </button>
-            </div>
-          </div>
-        </Modal>
       </div>
-    
+    </Sidebar>
 
+    <script type="module">
+      document.addEventListener("astro:page-load", actualizarEstados);
 
-      <div id="modales">
-      <Modal id="Editmodal" title="Editar Venta">
-        <form name="editar" method="POST" class="space-b-4">
-          <FormField id="Documento" label="Documento Fiscal" type="text" placeholder="Documento Fiscal" disabled />
-          <FormSelect id="Correlativo" label="Correlativo Documento Fiscal" options={[{value: "1", text: "Natural"}, {value: "2", text: "Jurídico"}]} disabled />
-          <FormField id="FechaVenta" label="Fecha de Venta" type="date" disabled />
-          <FormField id="Cliente" label="Cliente" type="text" placeholder="Nombre del Cliente" disabled />
-          <FormField id="CondicionVenta" label="Condicion de venta" type="text" placeholder="Condicion de venta" disabled />
-          <FormField id="MetodoPago" label="Metodo de Pago" type="text" placeholder="Metodo de pago" disabled />
-          <FormField id="Estado" label="Estado" type="text" placeholder="Estado de la venta" />
-          <FormField id="Sumas" label="Sumas" type="text" placeholder="Sumas" disabled />
-          <FormField id="IVA" label="IVA" type="text" placeholder="Iva 13%" disabled />
-          <FormField id="Total" label="Total" type="text" placeholder="Total de la venta" disabled />
-          <FormField id="Vendedor" label="Vendedor" type="text" placeholder="Vendedor" disabled />
-          <div class="flex justify-end space-x-4">
-            <button type="button" class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md" onclick="document.getElementById('Editmodal').close()">Cancelar</button>
-            <button type="button" onclick="editcliente()" class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md">Enviar</button>
-          </div>
-        </form>
-      </Modal>
-      
-      <Modal id="Deletemodal" title="Eliminar Venta">
-        <form name="detalles" method="POST" class="space-b-4">
-          <FormField id="Documento" label="Documento Fiscal" type="text" placeholder="Documento Fiscal" disabled />
-          <FormSelect id="Correlativo" label="Correlativo Documento Fiscal" options={[{value: "1", text: "Natural"}, {value: "2", text: "Jurídico"}]} disabled />
-          <FormField id="FechaVenta" label="Fecha de Venta" type="date" disabled />
-          <FormField id="Cliente" label="Cliente" type="text" placeholder="Nombre del Cliente" disabled />
-          <FormField id="CondicionVenta" label="Condicion de venta" type="text" placeholder="Condicion de venta" disabled />
-          <FormField id="MetodoPago" label="Metodo de Pago" type="text" placeholder="Metodo de pago" disabled />
-          <FormField id="Estado" label="Estado" type="text" placeholder="Estado de la venta" disabled />
-          <FormField id="Sumas" label="Sumas" type="text" placeholder="Sumas" disabled />
-          <FormField id="IVA" label="IVA" type="text" placeholder="Iva 13%" disabled />
-          <FormField id="Total" label="Total" type="text" placeholder="Total de la venta" disabled />
-          <FormField id="Vendedor" label="Vendedor" type="text" placeholder="Vendedor" disabled />
-          <div class="flex justify-end space-x-4">
-            <button type="button" class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md" onclick="document.getElementById('Deletemodal').close()">Cancelar</button>
-            <button type="button" onclick="deletecliente()" class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md">Enviar</button>
-          </div>
-        </form>
-      </Modal>
-      
-      <Modal id="Detailmodal" title="Detalle Venta">
-        <form name="agregar" method="POST" class="space-b-4">
-          <FormField id="nombre" label="Nombre" type="text" placeholder="Nombre" disabled />
-          <FormSelect id="tipo" label="Tipo Cliente" options={[{value: "1", text: "Natural"}, {value: "2", text: "Jurídico"}]} disabled />
-          <FormTextarea id="Direccion" label="Dirección" placeholder="Dirección" disabled />
-          <FormField id="Telefono" label="Teléfono" type="text" placeholder="Teléfono" disabled />
-          <FormField id="Dui" label="DUI" type="text" placeholder="DUI" disabled />
-          <FormField id="Nit" label="NIT" type="text" placeholder="NIT" disabled />
-          <FormField id="Ncr" label="NCR" type="text" placeholder="NCR" disabled />
-          <FormField id="Giro" label="Giro" type="text" placeholder="Giro" disabled />
-          <div class="flex justify-end space-x-4">
-            <button type="button" class="btn btn-cancel bg-gray-500 text-white px-4 py-2 rounded-md" onclick="document.getElementById('Detailmodal').close()">Cancelar</button>
-            <button type="button" onclick="detailcliente()" class="btn btn-submit bg-blue-500 text-white px-4 py-2 rounded-md">Enviar</button>
-          </div>
-        </form>
-      </Modal>
-    </div>
+      function actualizarEstados() {
+        const estados = document.querySelectorAll("p");
+
+        estados.forEach(function (estado) {
+          if (estado.innerHTML.includes("Estado:")) {
+            const estadoTexto = estado.textContent.trim().split(":")[1].trim();
+
+            if (estadoTexto.toLowerCase() === "finalizado") {
+              estado.classList.add("text-green-500");
+              estado.classList.remove("text-red-200");
+            } else if (estadoTexto.toLowerCase() === "pendiente") {
+              estado.classList.add("text-red-300");
+              estado.classList.remove("text-green-300");
+            }
+          }
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", actualizarEstados);
+    </script>
+  </div>
 </Layout>
-
-<script type="module">
-  const addcl = document.getElementById("addcl");
-  addcl.addEventListener("click", addcliente);
-
-  function addcliente() {
-    const formcliente = document.getElementsByName("agregar")[0];
-    // Verifica que todo esté correcto
-    console.log(formcliente);
-    const nombre = formcliente.Nombre.value;
-    const tipo = formcliente.tipo.value;
-    const direccion = formcliente.Direccion.value;
-    const telefono = formcliente.Telefono.value;
-    const dui = formcliente.Dui.value;
-    const nit = formcliente.Nit.value;
-    const nrc = formcliente.Nrc.value;
-    const giro = formcliente.Giro.value;
-    //get token from cookie
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token"))
-      .split("=")[1];
-    // Envía los datos al servidor
-    fetch("http://localhost:8000/clientes/agregar", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nombre: nombre,
-        tipo_cliente: tipo,
-        direccion: direccion,
-        telefono: telefono,
-        dui: dui,
-        nit: nit,
-        nrc: nrc,
-        giro: giro,
-        fecha_registro: new Date().toISOString(),
-      }),
-    }).then((res) => {
-      if (res.ok) {
-        alert("Cliente agregado correctamente");
-        location.reload();
-      } else {
-        alert("Error al agregar el cliente");
-      }
-    });
-  }
-  document.addEventListener("astro:page-load", actualizarEstados);
-
-function actualizarEstados() {
-  const estados = document.querySelectorAll("p");
-
-  estados.forEach(function (estado) {
-    if (estado.innerHTML.includes("Estado:")) {
-      const estadoTexto = estado.textContent.trim().split(":")[1].trim();
-
-      if (estadoTexto.toLowerCase() === "finalizado") {
-        estado.classList.add("text-green-500");
-        estado.classList.remove("text-red-200");
-      } else if (estadoTexto.toLowerCase() === "pendiente") {
-        estado.classList.add("text-red-300");
-        estado.classList.remove("text-green-300");
-      }
-    }
-  });
-}
-
-document.addEventListener("DOMContentLoaded", actualizarEstados);
-</script>
