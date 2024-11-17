@@ -1,11 +1,7 @@
-<script>
+<script<script>
   (function () {
     let isAlertActive = false;
-    const alertQueue: Array<{
-      message: string;
-      type: string;
-      options: any;
-    }> = [];
+    const alertQueue = [];
 
     function processAlertQueue() {
       if (alertQueue.length > 0 && !isAlertActive) {
@@ -25,7 +21,7 @@
       onAccept?: () => void;
     }
 
-    function showAlert(message: string, type: string = "info", options: AlertOptions = {}) {
+    function showAlert(message, type = "info", options = {}) {
       if (isAlertActive) {
         alertQueue.push({ message, type, options });
         return;
@@ -33,7 +29,7 @@
       showAlertImpl(message, type, options);
     }
 
-    function showAlertImpl(message: string, type: string, options: AlertOptions) {
+    function showAlertImpl(message, type, options) {
       isAlertActive = true;
       const alertDiv = document.createElement("div");
       alertDiv.role = "alert";
@@ -46,25 +42,7 @@
         : "bg-red-100 dark:bg-red-900 border-l-4 border-red-500 dark:border-red-700 text-red-900 dark:text-red-100 hover:bg-red-200 dark:hover:bg-red-800"
       }`;
 
-      const getTopElement = () => {
-        const point = { x: window.innerWidth / 2, y: 20 };
-        const elements = document.elementsFromPoint(point.x, point.y);
-        return elements.find(el => el !== alertDiv && !el.matches('html, body, head, script, style, link'));
-      };
-
-      if (document.querySelector("dialog")?.open) {
-        document.querySelector("dialog")?.appendChild(alertDiv);
-      } else {
-        const topElement = getTopElement();
-        if (topElement) {
-          topElement.appendChild(alertDiv);
-          alertDiv.style.position = 'absolute';
-          alertDiv.style.top = '0';
-          alertDiv.style.left = '50%';
-        } else {
-          document.body.appendChild(alertDiv);
-        }
-      }
+      document.body.appendChild(alertDiv);
 
       message.split("\n").forEach((line) => {
         const messageP = document.createElement("p");
