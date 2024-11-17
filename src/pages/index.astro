@@ -44,7 +44,7 @@ try {
   }
   marcas = await res.data;
 } catch (error) {
-  console.error("Error al obtener las marcas:", error);
+  console.error("Error al obtener las marcas", error);
 }
 
 let categorias = [];
@@ -55,7 +55,7 @@ try {
   }
   categorias = await res.data;
 } catch (error) {
-  console.error("Error al obtener las categorías:", error);
+  console.error("Error al obtener las categorías", error);
 }
 ---
 
@@ -79,8 +79,8 @@ try {
           <a href="/" class="text-gray-600 hover:text-indigo-600 px-3 py-2"
             >Inicio</a
           >
-          <a href="#" class="text-gray-600 hover:text-indigo-600 px-3 py-2"
-            >Tienda</a
+          <a href="#productos" class="text-gray-600 hover:text-indigo-600 px-3 py-2"
+            >Productos</a
           >
           <a href="#" class="text-gray-600 hover:text-indigo-600 px-3 py-2"
             >Blog</a
@@ -215,7 +215,7 @@ try {
         ))}
       </div>
     </section>
-    <section class="container mx-auto px-6 py-16">
+    <section class="container mx-auto px-6 py-16" id="productos">
       <h2
         class="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white"
       >
@@ -335,6 +335,12 @@ try {
 
   // Initialize cart display
   updateCartDisplay();
+
+  // Smooth scroll to "Productos" section
+  document.querySelector('a[href="#productos"]').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.querySelector('#productos').scrollIntoView({ behavior: 'smooth' });
+  });
 
   logout?.addEventListener("click", () => {
       const token = document.cookie

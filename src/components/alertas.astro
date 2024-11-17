@@ -34,7 +34,7 @@
       const alertDiv = document.createElement("div");
       alertDiv.role = "alert";
 
-      alertDiv.className = `fixed z-1050 top-4 left-1/2 transform -translate-x-1/2 p-2 rounded-lg flex flex-col items-center transition duration-300 ease-in-out hover:scale-105 ${
+      alertDiv.className = `fixed z-50 top-5 left-1/2 transform -translate-x-1/2 p-2 rounded-lg flex flex-col items-center transition duration-300 ease-in-out hover:scale-105 ${
         type === "info" ? "bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 dark:border-blue-700 text-blue-900 dark:text-blue-100 hover:bg-blue-200 dark:hover:bg-blue-800"
         : type === "success" ? "bg-green-100 dark:bg-green-900 border-l-4 border-green-500 dark:border-green-700 text-green-900 dark:text-green-100 hover:bg-green-200 dark:hover:bg-green-800"
         : type === "warning" ? "bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 dark:border-yellow-700 text-yellow-900 dark:text-yellow-100 hover:bg-yellow-200 dark:hover:bg-yellow-800"
@@ -43,6 +43,28 @@
       }`;
 
       document.body.appendChild(alertDiv);
+
+      if (type === "warning") {
+    const icon = document.createElement("i");
+    icon.className = "fa-regular fa-circle-exclamation mr-2";
+    alertDiv.appendChild(icon);
+  } else if (type === "success") {
+    const icon = document.createElement("i");
+    icon.className = "fa-regular fa-circle-check mr-2";
+    alertDiv.appendChild(icon);
+  } else if (type === "info") { 
+    const icon = document.createElement("i");
+    icon.className = "fa-regular fa-circle-info mr-2";
+    alertDiv.appendChild(icon);
+  } else if (type === "error") {
+    const icon = document.createElement("i");
+    icon.className = "fa-regular fa-circle-xmark mr-2";
+    alertDiv.appendChild(icon);
+  } else if (type === "confirm") {
+    const icon = document.createElement("i");
+    icon.className = "fa-regular fa-circle-question mr-2";
+    alertDiv.appendChild(icon);
+  }
 
       message.split("\n").forEach((line) => {
         const messageP = document.createElement("p");

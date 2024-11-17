@@ -16,98 +16,170 @@ if ((await verify(data.token?.value)) == false) {
 
 const token = data.token?.value;
 const user = await userinfo(token);
+
+let ventas = [];
+try {
+  const res = await Fetcher("ventas", "listar", token);
+  if (res.status !== 200) {
+    throw new Error("Error al obtener las ventas");
+  }
+  ventas = await res.data;
+} catch (error) {
+  console.error("Error al obtener las ventas", error);
+}
+
+let clientes = [];
+try {
+  const res = await Fetcher("clientes", "listar", token);
+  if (res.status !== 200) {
+    throw new Error("Error al obtener los clientes");
+  }
+  clientes = await res.data;
+} catch (error) {
+  console.error("Error al obtener los clientes", error);
+}
+
+let detventas = [];
+try {
+  const res = await Fetcher("det_ventas", "listar", token);
+  if (res.status !== 200) {
+    throw new Error("Error al obtener los detalles de las ventas");
+  }
+  detventas = await res.data;
+} catch (error) {
+  console.error("Error al obtener los detalles de las ventas", error);
+}
+
+let productos = [];
+try {
+  const res = await Fetcher("productos", "listar", token);
+  if (res.status !== 200) {
+    throw new Error("Error al obtener los productos");
+  }
+  productos = await res.data;
+} catch (error) {
+  console.error("Error al obtener los productos", error);
+}
+
+// Encontrar el cliente logueado usando el idusuario del usuario logueado
+const clienteLogueado = clientes.find(cliente => cliente.idusuario === user.Idusuario);
+const idClienteLogueado = clienteLogueado ? clienteLogueado.idcliente : null;
+
+// Filtrar ventas por idcliente
+const comprasUsuario = ventas.filter(venta => venta.idcliente === idClienteLogueado);
 ---
 <title>Detalles del perfil</title>
 <link
-rel="stylesheet"
-href="https://site-assets.fontawesome.com/releases/v6.6.0/css/all.css"
+  rel="stylesheet"
+  href="https://site-assets.fontawesome.com/releases/v6.6.0/css/all.css"
 />
 <link
-rel="stylesheet"
-href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
 />
 <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-    <!-- Botón de regreso -->
-    <div class="container mx-auto px-4 pt-4">
-      <a
-        href="/"
-        class="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-800 transition-colors duration-200"
-      >
-        <i class="fas fa-arrow-left"></i>
-        <span>Volver a la tienda</span>
-      </a>
-    </div>
-<div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-  <!-- Encabezado del perfil -->
-  <div class="container mx-auto px-4 py-8">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-      <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
-        <!-- Foto de perfil -->
-        <div class="relative">
-          <img
-            src={user.imagen || "/user.png"}
-            alt="Foto de perfil"
-            class="w-32 h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700"
-          />
-          <button class="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600">
-            <i class="fas fa-camera"></i>
-          </button>
-        </div>
+  <!-- Botón de regreso -->
+  <div class="container mx-auto px-4 pt-4">
+    <a
+      href="/"
+      class="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-800 transition-colors duration-200"
+    >
+      <i class="fas fa-arrow-left"></i>
+      <span>Volver a la tienda</span>
+    </a>
+  </div>
+  <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <!-- Encabezado del perfil -->
+    <div class="container mx-auto px-4 py-8">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+          <!-- Foto de perfil -->
+          <div class="relative">
+            <img
+              src={user.imagen || "/user.png"}
+              alt="Foto de perfil"
+              class="w-32 h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700"
+            />
+            <button class="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600">
+              <i class="fas fa-camera"></i>
+            </button>
+          </div>
 
-        <!-- Información del usuario -->
-        <div class="flex-1">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{user.nombre}</h1>
-          <p class="text-gray-600 dark:text-gray-400">@{user.usuario}</p>
-          <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">
-             {user.tipo_perfil === 1 ? "Administrador" : user.tipo_perfil === 2 ? "Vendedor" : "Cliente"}
-          </p>
+          <!-- Información del usuario -->
+          <div class="flex-1">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{user.nombre}</h1> 
+            <p class="text-gray-600 dark:text-gray-400">@{user.usuario}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">
+              {user.tipo_perfil === 1 ? "Administrador" : user.tipo_perfil === 2 ? "Vendedor" : "Cliente"}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Historial de compras -->
-    <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        Historial de Compras
-      </h2>
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead>
-            <tr>
-              <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Fecha
-              </th>
-              <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Producto
-              </th>
-              <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Total
-              </th>
-              <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Estado
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            <!-- Aquí irían los registros del historial de compras -->
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                01/01/2024
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                Producto Ejemplo
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                $99.99
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  Completado
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- Historial de compras -->
+      <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+          Historial de Compras
+        </h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead>
+              <tr>
+                <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Fecha
+                </th>
+                <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Producto
+                </th>
+                <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Cantidad
+                </th>
+                <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Total
+                </th>
+                <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Estado
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              {comprasUsuario.length > 0 ? (
+                comprasUsuario.map((venta) => {
+                  const productosVenta = detventas.filter(det => det.idventa === venta.id);
+                  return productosVenta.map((detventa) => {
+                    const producto = productos.find(prod => prod.id === detventa.idproducto);
+                    return (
+                      <tr key={detventa.idproducto}>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          {new Date(venta.fecha_venta).toLocaleDateString()}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          {producto ? producto.nombre : "Producto no encontrado"}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          {detventa.cantidad}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          ${venta.total.toFixed(2)}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                          <span class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${venta.estado === 'Finalizado' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                            {venta.estado}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  });
+                })) : (
+                <tr>
+                  <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
+                    No hay compras recientes
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
