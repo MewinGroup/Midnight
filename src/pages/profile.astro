@@ -43,7 +43,7 @@ let detventas = [];
 try {
   const res = await Fetcher("det_ventas", "listar", token);
   if (res.status !== 200) {
-    console.error(res);
+
     throw new Error("Error al obtener los detalles de las ventas");
   }
   detventas = await res.data;
@@ -64,7 +64,6 @@ try {
 
 // Encontrar el cliente logueado usando el idusuario del usuario logueado
 const clienteLogueado = clientes.find(cliente => cliente.Idusuario === user.Idusuario);
-console.log(clienteLogueado);
 const idClienteLogueado = clienteLogueado ? clienteLogueado.idcliente : null;
 
 // Filtrar ventas por idcliente
