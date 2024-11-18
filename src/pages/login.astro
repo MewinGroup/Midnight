@@ -106,7 +106,16 @@ if ((await verify(data.token?.value)) == true) {
           if (data.access_token) {
             //create a cookie with the token that expires in 24 hours
             document.cookie = `token=${data.access_token}; max-age=86400; path=/`;
-            window.location.href = "/dashboard";
+            
+          //url login?redirect=/
+          if (window.location.search.includes("redirect")) {
+            const url = window.location.search.split("=")[1];
+            window.location.href = url;
+          }
+            else {
+              window.location.href = "/dashboard";
+            }
+
           } else {
             window.showAlert("Usuario o contraseña incorrectos", "error");
           }

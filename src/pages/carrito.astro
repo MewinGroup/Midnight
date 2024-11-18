@@ -9,7 +9,7 @@ if ((await verify(data.token?.value)) == false) {
   return new Response(null, {
     status: 302,
     headers: {
-      Location: "/login",
+      Location: "/login?redirect=/carrito",
     },
   });
 }

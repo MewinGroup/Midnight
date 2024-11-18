@@ -56,5 +56,30 @@ async function clientes(authcode: string | null): Promise<JSON> {
   }
 }
 
+//getClientData(idusuario)
 
-export { totalclientes, clientes };
+async function getClientData( id: number,authcode:string): Promise<JSON> {
+  if (!authcode) {
+    return;
+  }
+  try {
+    const response = await fetch(`http://localhost:8000/clientes/byuser/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${authcode}`,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.json();
+    } else {
+      return response.json();
+    }
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+}
+
+
+export { totalclientes, clientes, getClientData };
