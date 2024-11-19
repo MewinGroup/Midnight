@@ -32,14 +32,29 @@ async function fetchData(endpoint) {
   }
 }
 
+let detVentas = [];
+try {
+  const res = await Fetcher("det_ventas", "listar", token);
+  if (res.status !== 200) {
+
+    throw new Error("Error al obtener los detalles de las ventas");
+  }
+  detVentas = await res.data;
+} catch (error) {
+  console.error("Error al obtener los detalles de las ventas", error);
+}
+
+
+
 // Fetch all required data
-const [ventas, usuarios, clientes, documentosFiscales, metodosPago] =
+const [ventas, usuarios, clientes, documentosFiscales, metodosPago, productos] =
   await Promise.all([
     fetchData("ventas"),
     fetchData("usuarios"),
     fetchData("clientes"),
     fetchData("documentos"),
     fetchData("metodos"),
+    fetchData("productos"),
   ]);
 
 // Generic lookup function
@@ -55,6 +70,7 @@ const obtenerNombreDocumentoFiscal = (id) =>
   getLookupValue(documentosFiscales, id, "Iddocumento_fiscal");
 const obtenerNombreMetodoPago = (id) =>
   getLookupValue(metodosPago, id, "Idmetodo_pago");
+const obtenerNombreProducto = (id) => getLookupValue(productos, id, "Idproducto");
 
 // Filter recent sales (last 30 days)
 const ventasRecientes = ventas.filter(
@@ -64,6 +80,22 @@ const ventasRecientes = ventas.filter(
       (1000 * 60 * 60 * 24) <=
       30,
 );
+
+ventas.forEach(venta => {
+  venta.vendedor = obtenerNombreUsuario(venta.Idusuario_vendedor);
+});
+
+ventas.forEach(venta => {
+  venta.metodo_pago = obtenerNombreMetodoPago(venta.Idmetodo_pago);
+});
+
+ventas.forEach(venta => {
+  venta.nombre_cliente = obtenerNombreCliente(venta.Idcliente);
+});
+
+ventas.forEach(venta => {
+  venta.nombre_documento_fiscal = obtenerNombreDocumentoFiscal(venta.Iddocumento_fiscal);
+});
 ---
 
 <style>
@@ -148,7 +180,7 @@ const ventasRecientes = ventas.filter(
           >
             {
               ventas.map((venta) => (
-                <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden">
+                <div class="max-w-xs rounded-lg shadow-lg bg-white dark:bg-gray-900 overflow-hidden venta-card" data-venta={JSON.stringify(venta)}>
                   <div class="p-4 bg-gray-800 dark:bg-gray-200 text-center">
                     <h2 class="text-xl font-semibold text-white dark:text-slate-900">
                       Venta No: {venta.Idcab_venta}
@@ -210,6 +242,34 @@ const ventasRecientes = ventas.filter(
       </div>
     </Sidebar>
 
+    <!-- Modal para mostrar detalles de la venta -->
+    <Modal id="VentaModal">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-lg w-full p-6">
+        <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Detalles de la Venta</h2>
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead>
+            <tr>
+              <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Producto
+              </th>
+              <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Cantidad
+              </th>
+              <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                Precio Unitario
+              </th>
+            </tr>
+          </thead>
+          <tbody id="venta-detalles" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <!-- Detalles de la venta se llenarán aquí -->
+          </tbody>
+        </table>
+        <div class="flex justify-end space-x-4 mt-4">
+          <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md" onclick="document.getElementById('VentaModal').close()">Cerrar</button>
+        </div>
+      </div>
+    </Modal>
+
     <script type="module">
       document.addEventListener("astro:page-load", actualizarEstados);
 
@@ -231,7 +291,33 @@ const ventasRecientes = ventas.filter(
         });
       }
 
-      document.addEventListener("DOMContentLoaded", actualizarEstados);
+      document.addEventListener("DOMContentLoaded", () => {
+        actualizarEstados();
+      
+        // Agregar evento de clic a las tarjetas de ventas
+        const ventaCards = document.querySelectorAll(".venta-card");
+        ventaCards.forEach(card => {
+          const detalles = detVentas.filter(det => det.Idcab_venta === JSON.parse(card.dataset.venta).Idcab_venta);
+          card.addEventListener("click", () => {
+            const ventaDetalles = document.getElementById("venta-detalles");
+           
+            ventaDetalles.innerHTML = "";
+
+            detalles.forEach(detalle => {
+              const productoNombre = obtenerNombreProducto(detalle.Idproducto);
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${productoNombre}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">${detalle.cantidad}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">$${detalle.precio_unitario.toFixed(2)}</td>
+              `;
+              ventaDetalles.appendChild(row);
+            });
+
+            document.getElementById("VentaModal").showModal();
+          });
+        });
+      });
     </script>
   </div>
 </Layout>
