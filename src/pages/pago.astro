@@ -474,6 +474,23 @@ const cliente = client[0];
           .then((response) => response.json())
           .then((data) => {
             console.log("Success:", data);
+  //           curl -X 'GET' \
+  // 'http://localhost:8000/ventas/byclient/2' \
+  // -H 'accept: application/json' \
+  // -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKdWFuIiwiZXhwIjoxNzMyMDc1MzE5fQ.uIFC6s-_FJn6sfLDbhlbQF6g2tmP2LJV7eASGMWkTBg'
+
+            fetch(`http://localhost:8000/ventas/byclient/${data.Idcliente}`, {
+              method: "GET",
+              headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            })
+              .then((response) => response.json())
+              .then((data) => {
+               return data.Idcab_venta;
+              });
           })
           .catch((error) => {
             console.error("Error:", error);
