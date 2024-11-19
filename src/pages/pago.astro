@@ -339,33 +339,33 @@ const cliente = client[0];
           };
           let id;
           console.log(formData.get("idcliente"));
-          if (formData.get("idcliente") == 0) {
-            const newClient = await createClient(clientData, token);
-            if (newClient.error) {
-              window.showAlert(newClient.message, "error");
-              return;
-            }
-            //fetch byuser
-            fetch(
-              `http://localhost:8000/clientes/byuser/${formData.get("idusuario")}`,
-              {
-                method: "GET",
-                headers: {
-                  Accept: "application/json",
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-              },
-            )
-              .then((response) => response.json())
-              .then((data) => {
-                id = data[0].idcliente;
-              });
-          } else {
-            id = formData.get("idcliente");
-            updateClient(clientData, token, id);
-          }
-
+          // if (formData.get("idcliente") == 0) {
+          //   const newClient = await createClient(clientData, token);
+          //   if (newClient.error) {
+          //     window.showAlert(newClient.message, "error");
+          //     return;
+          //   }
+          //   //fetch byuser
+          //   fetch(
+          //     `http://localhost:8000/clientes/byuser/${formData.get("idusuario")}`,
+          //     {
+          //       method: "GET",
+          //       headers: {
+          //         Accept: "application/json",
+          //         Authorization: `Bearer ${token}`,
+          //         "Content-Type": "application/json",
+          //       },
+          //     },
+          //   )
+          //     .then((response) => response.json())
+          //     .then((data) => {
+          //       id = data[0].idcliente;
+          //     });
+          // } else {
+          //   id = formData.get("idcliente");
+          //   updateClient(clientData, token, id);
+          // }
+          window.showAlert("Venta realizada con éxito", "success");
           console.log(id);
         });
 
@@ -427,26 +427,6 @@ const cliente = client[0];
             window.showAlert("Ocurrió un error", "error");
           });
       }
-      //crear venta
-      //     curl -X 'POST' \
-      //   'http://localhost:8000/ventas/agregar' \
-      //   -H 'accept: application/json' \
-      //   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKdWFuIiwiZXhwIjoxNzMxOTg2ODYzfQ.o0bGakoRf4paJ-DLOAIalTY6YdzWaG_c4Naveo8fOL8' \
-      //   -H 'Content-Type: application/json' \
-      //   -d '{
-      //   "Idcab_venta": 0,
-      //   "Iddocumento_fiscal": 0,
-      //   "correlativo_documento_fiscal": "string",
-      //   "fecha_venta": "2024-11-18",
-      //   "Idcliente": 0,
-      //   "condicion_venta": "string",
-      //   "Idmetodo_pago": 0,
-      //   "estado": "string",
-      //   "sumas": 0,
-      //   "iva": 0,
-      //   "total": 0,
-      //   "Idusuario_vendedor": 0
-      // }'
 
       function createVenta(data, token) {
         fetch("http://localhost:8000/ventas/agregar", {
