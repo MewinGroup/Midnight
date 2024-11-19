@@ -366,6 +366,11 @@ const cliente = client[0];
           //   updateClient(clientData, token, id);
           // }
           window.showAlert("Venta realizada con éxito", "success");
+          //clear venta
+          localStorage.removeItem("cart");
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 3000);
           console.log(id);
         });
 
