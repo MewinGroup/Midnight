@@ -162,7 +162,7 @@ try {
           0,
         );
         subtotal.textContent = "$" + subtotalAmount.toFixed(2);
-        total.textContent = "$" + subtotalAmount.toFixed(2);
+              total.textContent = "$" + (subtotalAmount * 1.13).toFixed(2);
       }
 
       window.increaseQuantity = function (index) {
